@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "typeFileNameSuffix": ["shared.ts"],
+          "introspectComments": true
+        }
+      }
+    ]
+  }
+}
