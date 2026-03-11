@@ -5,9 +5,9 @@ Same schema, same queries, fair fight.
 ## Currently Testing
 
 ```
-✅ Node.js — Express + Apollo
-✅ Node.js — Fastify + Apollo
-✅ Node.js — Fastify + Mercurius
+✅ NestJS — Express + Apollo
+✅ NestJS — Fastify + Apollo
+✅ NestJS — Fastify + Mercurius
 ```
 
 ## Coming Soon
