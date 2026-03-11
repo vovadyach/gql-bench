@@ -1,0 +1,100 @@
+# ═══════════════════════════════════════════════════════════
+#  GraphQL Bench Suite — Shared Schema
+#  Every language server MUST implement this exact schema.
+#  Same types, same queries, same behavior.
+# ═══════════════════════════════════════════════════════════
+
+enum UserRole {
+    ADMIN
+    EDITOR
+    VIEWER
+}
+
+enum PostStatus {
+    DRAFT
+    PUBLISHED
+    ARCHIVED
+}
+
+type Comment {
+    id: ID!
+    body: String!
+    authorName: String!
+    createdAt: String!
+    likes: Int!
+}
+
+type Post {
+    id: ID!
+    title: String!
+    body: String!
+    status: PostStatus!
+    tags: [String!]!
+    viewCount: Int!
+    rating: Float!
+    createdAt: String!
+    comments: [Comment!]!
+}
+
+type UserStats {
+    totalPosts: Int!
+    totalComments: Int!
+    avgRating: Float!
+    totalViews: Int!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    role: UserRole!
+    bio: String!
+    createdAt: String!
+    posts: [Post!]!
+    stats: UserStats!
+}
+
+type PaginatedUsers {
+    items: [User!]!
+    total: Int!
+    page: Int!
+    pageSize: Int!
+    hasMore: Boolean!
+}
+
+type SearchResult {
+    users: [User!]!
+    posts: [Post!]!
+    totalResults: Int!
+    queryTimeMs: Float!
+}
+
+type HealthCheck {
+    status: String!
+    adapter: String!
+    uptimeSeconds: Float!
+    timestamp: String!
+}
+
+input CreatePostInput {
+    title: String!
+    body: String!
+    tags: [String!]
+}
+
+input SearchInput {
+    query: String!
+    limit: Int = 10
+}
+
+type Query {
+    health: HealthCheck!
+    user(id: Int! = 1): User!
+    users(page: Int! = 1, pageSize: Int! = 10): PaginatedUsers!
+    deepNested(count: Int! = 5): [User!]!
+    search(input: SearchInput!): SearchResult!
+}
+
+type Mutation {
+    createPost(userId: Int!, input: CreatePostInput!): Post!
+}
