@@ -6,7 +6,11 @@
   "scripts": {
     "setup": "cd servers/node && npm install",
     "bench": "node bench/run.js",
-    "bench:quick": "node bench/run.js --quick"
+    "bench:quick": "node bench/run.js --quick",
+    "format": "prettier --write \"**/*.{ts,js}\""
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.8.1"
+  }
 }
