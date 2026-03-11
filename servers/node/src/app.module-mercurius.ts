@@ -1,6 +1,7 @@
 import {Module} from "@nestjs/common";
 import {GraphQLModule} from "@nestjs/graphql";
 import {MercuriusDriver, MercuriusDriverConfig} from "@nestjs/mercurius";
+import {BenchResolver, DataService} from "./shared";
 
 @Module({
   imports: [
@@ -10,6 +11,6 @@ import {MercuriusDriver, MercuriusDriverConfig} from "@nestjs/mercurius";
       graphiql: false
     }),
   ],
-  providers: []
+  providers: [DataService, BenchResolver],
 })
 export class AppModuleMercurius {}
