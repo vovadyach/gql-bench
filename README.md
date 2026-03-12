@@ -18,6 +18,7 @@ Same schema, same queries, fair fight.
 🔜 Go — Gin + gqlgen
 🔜 C# — ASP.NET + Hot Chocolate
 🔜 Java — Spring Boot + Netflix DGS
+🔜 Python — FastAPI + Strawberry   
 ```
 
 ## Prerequisites
