@@ -11,7 +11,7 @@ import http from 'k6/http';
 import { check } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
 
-const SERVER = __ENV.SERVER || 'http://localhost:3001';
+const SERVER = __ENV.SERVER || 'http:// 127.0.0.1:3001';
 const QUERY = __ENV.QUERY || '{ health { status adapter uptimeSeconds timestamp } }';
 
 const gqlErrors = new Rate('graphql_errors');

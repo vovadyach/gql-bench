@@ -41,7 +41,7 @@ async function measureColdStart(entry, port, env) {
   let firstResponseMs = null;
   for (let i = 0; i < 100; i++) {
     try {
-      const res = await fetch(`http://localhost:${port}/graphql`, {
+      const res = await fetch(`http://127.0.0.1:${port}/graphql`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,
@@ -71,7 +71,7 @@ async function measureResponseSizes(port) {
   const sizes = {};
 
   for (const q of QUERIES) {
-    const res = await fetch(`http://localhost:${port}/graphql`, {
+    const res = await fetch(`http://127.0.0.1:${port}/graphql`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: q.query }),
@@ -100,7 +100,7 @@ async function measureResponseSizes(port) {
 // For now, we use process.memoryUsage() indirectly through the health endpoint
 async function measureMemory(port) {
   try {
-    const res = await fetch(`http://localhost:${port}/graphql`, {
+    const res = await fetch(`http://127.0.0.1:${port}/graphql`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: '{ health { status } }' }),

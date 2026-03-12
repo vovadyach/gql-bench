@@ -9,7 +9,7 @@ import http from 'k6/http';
 import { check } from 'k6';
 import { Rate, Trend, Counter } from 'k6/metrics';
 
-const SERVER = __ENV.SERVER || 'http://localhost:3001';
+const SERVER = __ENV.SERVER || 'http:// 127.0.0.1:3001';
 const PROFILE = __ENV.PROFILE || 'standard';
 
 const lightRate = new Trend('light_query_duration');

@@ -76,7 +76,7 @@ const PROFILES = {
 
 // ─── Config from Environment ───────────────────────────
 
-const SERVER = __ENV.SERVER || 'http://localhost:3001';
+const SERVER = __ENV.SERVER || 'http://127.0.0.1:3001';
 const QUERY = __ENV.QUERY || '{ health { status } }';
 const PROFILE = __ENV.PROFILE || 'standard';
 

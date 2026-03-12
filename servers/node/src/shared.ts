@@ -255,7 +255,7 @@ export class BenchResolver {
     };
   }
 
-  @Query(() => User)
+  @Query(() => [User])
   async deepNested(
     @Args('count', { type: () => Int, defaultValue: 5 }) count: number,
   ): Promise<User[]> {

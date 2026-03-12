@@ -132,7 +132,7 @@ async function waitForServer(port, retries = 30) {
   const body = JSON.stringify({ query: '{ health { status } }' });
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(`http://localhost:${port}/graphql`, {
+      const res = await fetch(`http://127.0.0.1:${port}/graphql`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,
@@ -151,10 +151,10 @@ async function waitForServer(port, retries = 30) {
 async function warmup(port, count) {
   const body = JSON.stringify({ query: '{ health { status } }' });
   const batch = 50;
-  for (let i = 0; Math.ceil(count / batch); i++) {
+  for (let i = 0; i < Math.ceil(count / batch); i++) {
     await Promise.all(
       Array.from({ length: batch }, () =>
-        fetch(`http://localhost:${port}/graphql`, {
+        fetch(`http://127.0.0.1:${port}/graphql`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body,
@@ -175,13 +175,15 @@ function runK6(serverUrl, query, profile, outputFile) {
         'run',
         '--summary-export',
         outputFile,
+        '--summary-trend-stats',
+        'avg,min,med,max,p(90),p(95),p(99)',
         '--env',
         `SERVER=${serverUrl}`,
         '--env',
         `QUERY=${query}`,
         '--env',
         `PROFILE=${profile}`,
-        '--quite',
+        '--quiet',
         '--no-color',
         k6Script,
       ],
@@ -229,8 +231,10 @@ function runK6Custom(scriptPath, port, profile, outputFile) {
         'run',
         '--summary-export',
         outputFile,
+        '--summary-trend-stats',
+        'avg,min,med,max,p(90),p(95),p(99)',
         '--env',
-        `SERVER=http://localhost:${port}`,
+        `SERVER=http://127.0.0.1:${port}`,
         '--env',
         `PROFILE=${profile}`,
         '--quiet',
@@ -269,8 +273,10 @@ function runK6CustomWithQuery(scriptPath, port, query, outputFile) {
         'run',
         '--summary-export',
         outputFile,
+        '--summary-trend-stats',
+        'avg,min,med,max,p(90),p(95),p(99)',
         '--env',
-        `SERVER=http://localhost:${port}`,
+        `SERVER=http://127.0.0.1:${port}`,
         '--env',
         `QUERY=${query}`,
         '--quiet',
@@ -364,6 +370,13 @@ async function main() {
   console.log('  ║  NestJS GraphQL Benchmark (k6)                            ║');
   console.log('  ║  Express+Apollo vs Fastify+Apollo vs Fastify+Mercurius    ║');
   console.log('  ╚═══════════════════════════════════════════════════════════╝\n');
+
+  // Cleanup leftover servers from previous runs
+  for (const server of SERVERS) {
+    try {
+      execSync(`kill -9 $(lsof -ti:${server.port}) 2>/dev/null`, { stdio: 'ignore' });
+    } catch {}
+  }
 
   // Step 1: Build TypeScript (Node servers)
   console.log('  📦 Building Node.js servers...');
@@ -503,7 +516,7 @@ async function main() {
         if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
         try {
           const { summary, code } = await runK6(
-            `http://localhost${server.port}`,
+            `http://127.0.0.1:${server.port}`,
             scenario.query,
             PROFILE,
             outputFile,
@@ -680,6 +693,12 @@ async function main() {
 }
 
 main().catch((err) => {
+  for (const server of SERVERS) {
+    try {
+      execSync(`kill -9 $(lsof -ti:${server.port}) 2>/dev/null`, { stdio: 'ignore' });
+    } catch {}
+  }
+
   console.error('Fatal error:', err);
   process.exit(1);
 });
