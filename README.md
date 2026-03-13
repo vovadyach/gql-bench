@@ -1,4 +1,8 @@
 # GraphQL Bench Suite
+![k6](https://img.shields.io/badge/k6-v1.6-7d64ff?logo=k6)
+![NestJS](https://img.shields.io/badge/NestJS-10-e0234e?logo=nestjs)
+![GraphQL](https://img.shields.io/badge/GraphQL-16-e535ab?logo=graphql)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 Same schema, same queries, fair fight.
 
