@@ -1,5 +1,12 @@
 import { MethodologyDrawerProps } from '@/components/layout/MethodologyDrawer/MethodologyDrawer.types';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
   return (
@@ -12,6 +19,7 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
       <SheetContent side="right" className="w-[360px] p-8">
         <SheetHeader>
           <SheetTitle className="text-lg font-bold">Benchmark Methodology</SheetTitle>
+          <SheetDescription>Benchmark setup, environment, and machine details.</SheetDescription>
         </SheetHeader>
         <div className=" space-y-6">
           {meta.methodology.map((m, i) => (

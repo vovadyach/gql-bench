@@ -35,40 +35,6 @@ export const COMPLEXITY_COLORS: Record<string, string> = {
   extreme: '#ff4757',
 };
 
-// Themes
-export const THEMES: Record<'dark' | 'light', Theme> = {
-  dark: {
-    bg: '#0a0b12',
-    panel: '#0e1019',
-    border: '#1a1d2e',
-    borderHi: '#252940',
-    text: '#c8cee0',
-    bright: '#f0f2ff',
-    sec: '#6b7394',
-    ter: '#3d4466',
-    grid: '#161930',
-    axis: '#2a2f4a',
-    shd: '0 4px 24px rgba(0,0,0,.5)',
-    grad: 'radial-gradient(ellipse at 15% 0%,rgba(0,176,255,.04) 0%,transparent 60%),radial-gradient(ellipse at 85% 100%,rgba(255,71,87,.03) 0%,transparent 60%)',
-    scr: '#252940',
-  },
-  light: {
-    bg: '#f4f5f9',
-    panel: '#ffffff',
-    border: '#e2e5ef',
-    borderHi: '#d0d4e2',
-    text: '#2a2f45',
-    bright: '#0f1225',
-    sec: '#4a5070',
-    ter: '#6b7394',
-    grid: '#eceef5',
-    axis: '#c8cdd8',
-    shd: '0 2px 12px rgba(0,0,0,.06)',
-    grad: 'radial-gradient(ellipse at 15% 0%,rgba(0,176,255,.03) 0%,transparent 60%)',
-    scr: '#d0d4e2',
-  },
-};
-
 // Coming soon languages
 export const COMING_SOON = [
   { lang: 'Go', frameworks: 'chi · Gin · Fiber', color: '#00d4ff' },
