@@ -3,3 +3,16 @@ dist/
 results/*.json
 *.log
 .idea/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Next.js
+.next/
+out/
+
+# env files
+.env
+.env.local
+.env.*.local
