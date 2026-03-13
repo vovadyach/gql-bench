@@ -7,7 +7,7 @@
     "setup": "cd servers/node && npm install",
     "bench": "node bench/run.js",
     "bench:quick": "node bench/run.js --quick",
-    "format": "prettier --write \"**/*.{ts,js}\""
+    "format": "prettier --write \"**/*.{ts,js,tsx}\""
   },
   "private": true,
   "devDependencies": {
