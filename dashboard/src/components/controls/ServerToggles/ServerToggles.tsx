@@ -5,14 +5,14 @@ import type { ServerTogglesProps } from './ServerToggles.types';
 
 export function ServerToggles({ visible, onToggle }: ServerTogglesProps) {
   return (
-    <div className="flex gap-2 flex-wrap mb6">
+    <div className="flex gap-2 mb-6 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
       {Object.entries(SERVERS).map(([key, server]) => {
         const isOn = visible.includes(key);
         return (
           <button
             key={key}
             onClick={() => onToggle(key)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold cursor-pointer shadow-none"
+            className="snap-start shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold cursor-pointer"
             style={{
               borderColor: isOn ? `var(--server-${key})` : 'var(--border)',
               backgroundColor: isOn
