@@ -1,5 +1,5 @@
 import { BenchmarkMeta } from '@/lib/types';
 
-export interface HeaderProps {
+export interface MethodologyDrawerProps {
   meta: BenchmarkMeta;
 }

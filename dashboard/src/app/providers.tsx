@@ -1,8 +1,13 @@
 'use client';
 
-import { TooltipProvider } from '@/components/ui/tooltip';
 import { ReactNode } from 'react';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { ThemeProvider } from 'next-themes';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <TooltipProvider>{children}</TooltipProvider>;
+  return (
+    <ThemeProvider attribute="class" defaultTheme="dark">
+      <TooltipProvider>{children}</TooltipProvider>
+    </ThemeProvider>
+  );
 }
