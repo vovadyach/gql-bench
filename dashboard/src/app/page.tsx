@@ -12,6 +12,7 @@ import { ThroughputChart } from '@/components/charts/ThroughputChart/ThroughputC
 import { ScenarioCards } from '@/components/charts/ScenarioCards/ScenarioCards';
 import { LatencyChart } from '@/components/charts/LatencyChart/LatencyChart';
 import { P99AreaChart } from '@/components/charts/P99AreaChart/P99AreaChart';
+import { PerformanceRadar } from '@/components/charts/PerformanceRadar/PerformanceRadarProps';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -48,6 +49,9 @@ export default function Page() {
         </FadeIn>
         <FadeIn delay={700}>
           <P99AreaChart scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
+        </FadeIn>
+        <FadeIn delay={800}>
+          <PerformanceRadar scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
         </FadeIn>
       </div>
     </div>
