@@ -18,6 +18,7 @@ export function ServerToggles({ visible, onToggle }: ServerTogglesProps) {
               backgroundColor: isOn
                 ? `color-mix(in srgb, var(--server-${key}) 10%, transparent)`
                 : 'transparent',
+              opacity: isOn ? 1 : 0.8,
             }}
           >
             <span

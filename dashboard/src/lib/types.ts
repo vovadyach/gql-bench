@@ -9,14 +9,37 @@ export interface ServerConfig {
 
 // Result from one server on one scenario
 export interface ServerResult {
-  rate: number; // requests per second
-  avg: number; // average latency ms
-  med: number; // median (p50) ms
-  p90: number;
-  p95: number;
-  p99: number;
-  max: number;
-  total: number; // total requests sent
+  requests: {
+    total: number;
+    rate: number;
+  };
+  iterations: {
+    total: number;
+    rate: number;
+  };
+  response_size_bytes: {
+    avg: number;
+  };
+  latency_ms: {
+    avg: number;
+    min: number;
+    max: number;
+    med: number;
+    p90: number;
+    p95: number;
+    p99: number;
+  };
+  throughput: {
+    received_mb: number;
+    sent_mb: number;
+  };
+  errors: {
+    http_failure_rate: number;
+    graphql_error_rate: number;
+    valid_response_rate: number;
+  };
+  thresholds: Record<string, boolean>;
+  thresholds_passed: boolean;
 }
 
 // One benchmark scenario
@@ -45,7 +68,13 @@ export interface BenchmarkMeta {
 // The full JSON structure from results/latest.json
 export interface BenchmarkData {
   meta: BenchmarkMeta;
+  preflight: {
+    cold_starts: Record<string, number>;
+    response_sizes: Record<string, Record<string, { bytes: number; valid: boolean }>>;
+  };
   scenarios: Scenario[];
+  mixed_traffic: Record<string, ServerResult> | null;
+  degradation: Record<string, ServerResult> | null;
 }
 
 // Theme colors
