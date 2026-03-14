@@ -57,7 +57,7 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
                 className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums leading-none mt-2"
                 style={{ color: `var(--server-${key})` }}
               >
-                <AnimatedNumber value={data.requests.rate} />
+                <AnimatedNumber value={data.requests.rate} shouldAnimate={isOn} />
                 <span className="text-xs text-muted-foreground ml-2">req/s</span>
               </div>
 
@@ -65,17 +65,17 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
                 <p
                   className={cn(
                     'text-xs',
-                    visible.length <= 1 && 'opacity-0',
-                    key === slowest && visible.length > 1 && 'text-muted-foreground',
-                    key !== slowest && visible.length > 1 && 'font-bold',
+                    (!isOn || visible.length <= 1) && 'opacity-0',
+                    isOn && key === slowest && visible.length > 1 && 'text-muted-foreground',
+                    isOn && key !== slowest && visible.length > 1 && 'font-bold',
                   )}
                   style={
-                    key !== slowest && visible.length > 1
+                    isOn && key !== slowest && visible.length > 1
                       ? { color: `var(--server-${key})` }
                       : undefined
                   }
                 >
-                  {visible.length <= 1
+                  {!isOn || visible.length <= 1
                     ? 'placeholder'
                     : key === slowest
                       ? 'baseline'

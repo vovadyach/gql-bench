@@ -1,11 +1,20 @@
 import { AnimatedNumberProps } from '@/components/shared/AnimatedNumber/AnimatedNumber.types';
 import { useEffect, useRef, useState } from 'react';
 
-export function AnimatedNumber({ value, duration = 900 }: AnimatedNumberProps) {
+export function AnimatedNumber({
+  value,
+  duration = 900,
+  shouldAnimate = true,
+}: AnimatedNumberProps) {
   const [display, setDisplay] = useState(0);
   const ref = useRef<number | null>(null);
 
   useEffect(() => {
+    if (!shouldAnimate) {
+      setDisplay(value);
+      return;
+    }
+
     const start = performance.now();
     const animate = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
@@ -21,7 +30,7 @@ export function AnimatedNumber({ value, duration = 900 }: AnimatedNumberProps) {
         cancelAnimationFrame(ref.current);
       }
     };
-  }, [value, duration]);
+  }, [value, duration, shouldAnimate]);
 
   return <>{Math.round(display).toLocaleString()}</>;
 }
