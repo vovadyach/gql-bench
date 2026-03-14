@@ -9,6 +9,7 @@ import { FadeIn } from '@/components/shared/FadeIn/FadeIn';
 import { ScenarioPicker } from '@/components/controls/ScenarioPicker/ScenarioPicker';
 import { useState } from 'react';
 import { ThroughputChart } from '@/components/charts/ThroughputChart/ThroughputChart';
+import { ScenarioCards } from '@/components/charts/ScenarioCards/ScenarioCards';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -36,6 +37,9 @@ export default function Page() {
             active={activeScenario}
             onChange={setActiveScenario}
           />
+        </FadeIn>
+        <FadeIn delay={500}>
+          <ScenarioCards scenario={BENCHMARK_DATA.scenarios[activeScenario]} visible={visible} />
         </FadeIn>
       </div>
     </div>

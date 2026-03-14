@@ -28,7 +28,7 @@ export function getWinner(scenario: Scenario, visible: string[]): string {
   let best = visible[0];
   let bestRate = 0;
   visible.forEach((k) => {
-    const rate = scenario.servers[k]?.rate || 0;
+    const rate = scenario.servers[k]?.requests?.rate || 0;
     if (rate > bestRate) {
       best = k;
       bestRate = rate;
@@ -42,7 +42,7 @@ export function getSlowest(scenario: Scenario, visible: string[]): string {
   let worst = visible[0];
   let worstRate = Infinity;
   visible.forEach((k) => {
-    const rate = scenario.servers[k]?.rate || 0;
+    const rate = scenario.servers[k]?.requests?.rate || 0;
     if (rate < worstRate) {
       worst = k;
       worstRate = rate;
