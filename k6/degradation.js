@@ -15,6 +15,8 @@ const SERVER = __ENV.SERVER || 'http:// 127.0.0.1:3001';
 const QUERY = __ENV.QUERY || '{ health { status adapter uptimeSeconds timestamp } }';
 
 const gqlErrors = new Rate('graphql_errors');
+const gqlValid = new Rate('graphql_valid');
+const responseSize = new Trend('response_size');
 
 // Step through increasing load levels
 export const options = {
@@ -48,7 +50,7 @@ export const options = {
 };
 
 export default function () {
-  const rest = http.post(`${SERVER}/graphql`, JSON.stringify({ query: QUERY }), {
+  const res = http.post(`${SERVER}/graphql`, JSON.stringify({ query: QUERY }), {
     headers: { 'Content-Type': 'application/json' },
   });
 
@@ -58,6 +60,8 @@ export default function () {
   } catch {
     body = null;
   }
+  const hasData = body && body.data !== undefined;
+  const hasErrors = body?.errors?.length > 0;
 
   check(res, {
     'status 200': (r) => r.status === 200,
@@ -65,4 +69,8 @@ export default function () {
   });
 
   gqlErrors.add(body?.errors?.length > 0 ? 1 : 0);
+  gqlValid.add(hasData && !hasErrors ? 1 : 0);
+  if (res.body) {
+    responseSize.add(res.body.length);
+  }
 }
