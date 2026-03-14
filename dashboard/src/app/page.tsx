@@ -6,9 +6,12 @@ import { useVisibleServers } from '@/hooks/useVisibleServers';
 import { HeroCards } from '@/components/charts/HeroCards/HeroCards';
 import { BENCHMARK_DATA } from '@/lib/data';
 import { FadeIn } from '@/components/shared/FadeIn/FadeIn';
+import { ScenarioPicker } from '@/components/controls/ScenarioPicker/ScenarioPicker';
+import { useState } from 'react';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
+  const [activeScenario, setActiveScenario] = useState(0);
 
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-8">
@@ -21,6 +24,15 @@ export default function Page() {
         </FadeIn>
         <FadeIn delay={200}>
           <HeroCards scenario={BENCHMARK_DATA.scenarios[0]} visible={visible} />
+        </FadeIn>
+
+        <FadeIn delay={300}>
+          <h2 className="text-sm font-bold mb-2">Scenario Deep Dive</h2>
+          <ScenarioPicker
+            scenarios={BENCHMARK_DATA.scenarios}
+            active={activeScenario}
+            onChange={setActiveScenario}
+          />
         </FadeIn>
       </div>
     </div>

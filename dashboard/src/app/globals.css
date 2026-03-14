@@ -83,6 +83,10 @@
   --server-express: #d63444;
   --server-fastify: #00994d;
   --server-mercurius: #0077b3;
+  --complexity-light: #00663d;
+  --complexity-medium: #005c8a;
+  --complexity-heavy: #a35e00;
+  --complexity-extreme: #b52030;
 }
 
 .dark {
@@ -120,6 +124,10 @@
   --server-express: #ff4757;
   --server-fastify: #00e676;
   --server-mercurius: #00b0ff;
+  --complexity-light: #00e676;
+  --complexity-medium: #00b0ff;
+  --complexity-heavy: #ffa726;
+  --complexity-extreme: #ff4757;
 }
 
 @layer base {
@@ -137,4 +145,20 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fade-in-up 0.5s ease-out forwards;
 }

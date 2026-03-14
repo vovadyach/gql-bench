@@ -9,9 +9,9 @@ export function FadeIn({ children, delay = 0, onScroll = false }: FadeInProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!onScroll) {
+    if (onScroll) {
+      // Scroll: use observer
       if (!ref.current) return;
-
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
@@ -21,11 +21,10 @@ export function FadeIn({ children, delay = 0, onScroll = false }: FadeInProps) {
         },
         { threshold: 0.1 },
       );
-
       observer.observe(ref.current);
       return () => observer.disconnect();
     } else {
-      // Page load: trigger after a frame so transition runs
+      // Page load: trigger immediately
       requestAnimationFrame(() => setVisible(true));
     }
   }, [onScroll]);
@@ -33,11 +32,12 @@ export function FadeIn({ children, delay = 0, onScroll = false }: FadeInProps) {
   return (
     <div
       ref={ref}
-      className={cn(
-        'transition-all duration-500 ease-out',
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3',
-      )}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : 'translateY(8px)',
+        transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+        transitionDelay: `${delay}ms`,
+      }}
     >
       {children}
     </div>
