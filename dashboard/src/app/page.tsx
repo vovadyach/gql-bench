@@ -15,6 +15,8 @@ import { P99AreaChart } from '@/components/charts/P99AreaChart/P99AreaChart';
 import { PerformanceRadar } from '@/components/charts/PerformanceRadar/PerformanceRadarProps';
 import { KeyFindings } from '@/components/sections/KeyFindings/KeyFindings';
 import { generateFindings } from '@/lib/utils';
+import { Footer } from '@/components/layout/Footer/Footer';
+import { ComingSoon } from '@/components/sections/ComingSoon/ComingSoon';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -61,6 +63,12 @@ export default function Page() {
             <KeyFindings findings={findings} />
           </FadeIn>
         )}
+        <FadeIn delay={1000}>
+          <ComingSoon />
+        </FadeIn>
+        <FadeIn delay={1100}>
+          <Footer meta={BENCHMARK_DATA.meta} />
+        </FadeIn>
       </div>
     </div>
   );
