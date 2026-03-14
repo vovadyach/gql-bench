@@ -13,10 +13,13 @@ import { ScenarioCards } from '@/components/charts/ScenarioCards/ScenarioCards';
 import { LatencyChart } from '@/components/charts/LatencyChart/LatencyChart';
 import { P99AreaChart } from '@/components/charts/P99AreaChart/P99AreaChart';
 import { PerformanceRadar } from '@/components/charts/PerformanceRadar/PerformanceRadarProps';
+import { KeyFindings } from '@/components/sections/KeyFindings/KeyFindings';
+import { generateFindings } from '@/lib/utils';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
   const [activeScenario, setActiveScenario] = useState(0);
+  const findings = generateFindings(BENCHMARK_DATA.scenarios, visible);
 
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-8">
@@ -53,6 +56,11 @@ export default function Page() {
         <FadeIn delay={800}>
           <PerformanceRadar scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
         </FadeIn>
+        {findings.length && (
+          <FadeIn delay={900}>
+            <KeyFindings findings={findings} />
+          </FadeIn>
+        )}
       </div>
     </div>
   );

@@ -41,31 +41,3 @@ export const COMING_SOON = [
   { lang: 'C#', frameworks: '.NET + Hot Chocolate', color: '#bf5af2' },
   { lang: 'Java', frameworks: 'Spring + Netflix DGS', color: '#ff8a2b' },
 ];
-
-// Key findings (hardcoded for now, auto-generate later)
-export const KEY_FINDINGS: Finding[] = [
-  {
-    icon: '🏆',
-    title: 'Mercurius dominates reads',
-    desc: '31–113% faster than Express on all query types',
-    color: '#00b0ff',
-  },
-  {
-    icon: '⚡',
-    title: 'Fastify loses on heavy queries',
-    desc: '4–11% SLOWER than Express on deep/paginated queries',
-    color: '#00e676',
-  },
-  {
-    icon: '✍️',
-    title: 'Mutations: Fastify wins',
-    desc: 'Mercurius 5% slower on writes — use Fastify+Apollo for write-heavy APIs',
-    color: '#00e676',
-  },
-  {
-    icon: '📉',
-    title: 'Gap shrinks under load',
-    desc: '113% on health → 31% on deep nested. Framework matters less as queries grow',
-    color: '#ffa726',
-  },
-];

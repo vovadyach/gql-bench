@@ -1,4 +1,6 @@
 // Server configuration (colors, labels)
+import { JSX } from 'react';
+
 export interface ServerConfig {
   key: string;
   label: string; // "Express + Apollo"
@@ -96,7 +98,7 @@ export interface Theme {
 
 // Key finding card
 export interface Finding {
-  icon: string;
+  icon: string | any;
   title: string;
   desc: string;
   color: string;
