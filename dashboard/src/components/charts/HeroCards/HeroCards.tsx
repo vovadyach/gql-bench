@@ -61,7 +61,7 @@ export function HeroCards({ scenario, visible }: HeroCardsProps) {
                 <AnimatedNumber value={data.requests.rate} />
               </div>
 
-              <p className="text-xs text-muted-foreground mt-2">req/s</p>
+              <p className="text-xs text-muted-foreground mt-2">req/s on health check</p>
 
               <div className="flex gap-4 mt-3 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {data.latency_ms.avg}ms</span>
