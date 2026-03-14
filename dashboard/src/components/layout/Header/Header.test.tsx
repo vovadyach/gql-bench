@@ -1,7 +1,7 @@
 import { Header } from '@/components/layout/Header/Header';
 import { mockMeta } from '@/components/layout/Header/Header.mocks';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 describe('Header', () => {
   it('renders title', () => {
