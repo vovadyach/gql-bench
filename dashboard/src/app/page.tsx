@@ -25,7 +25,7 @@ export default function Page() {
   const findings = generateFindings(BENCHMARK_DATA.scenarios, visible);
 
   return (
-    <div className="min-h-screen bg-background text-foreground px-6 py-8">
+    <div className="min-h-screen bg-background text-foreground py-8">
       <div className="mx-auto w-full max-w-6xl px-6">
         <FadeIn delay={0}>
           <Header meta={BENCHMARK_DATA.meta} />

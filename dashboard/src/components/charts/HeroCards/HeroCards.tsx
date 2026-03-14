@@ -4,8 +4,6 @@ import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumbe
 import { cn } from '@/lib/utils';
 
 export function HeroCards({ scenario, visible }: HeroCardsProps) {
-  // const vis = Object.entries(SERVERS).filter(([key]) => visible.includes(key));
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
       {Object.entries(SERVERS).map(([key, server]) => {
