@@ -17,6 +17,7 @@ import { KeyFindings } from '@/components/sections/KeyFindings/KeyFindings';
 import { generateFindings } from '@/lib/utils';
 import { Footer } from '@/components/layout/Footer/Footer';
 import { ComingSoon } from '@/components/sections/ComingSoon/ComingSoon';
+import { RawDataTable } from '@/components/sections/RawDataTable/RawDataTable';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -25,48 +26,48 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto w-full max-w-6xl px-6">
         <FadeIn delay={0}>
           <Header meta={BENCHMARK_DATA.meta} />
         </FadeIn>
-        <FadeIn delay={100}>
+        <FadeIn delay={50}>
           <ServerToggles visible={visible} onToggle={toggle} />
         </FadeIn>
-        <FadeIn delay={200}>
+        <FadeIn delay={100}>
           <HeroCards scenario={BENCHMARK_DATA.scenarios[0]} visible={visible} />
         </FadeIn>
-        <FadeIn delay={300}>
+        <FadeIn delay={150}>
           <ThroughputChart scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
         </FadeIn>
-        <FadeIn delay={400}>
-          <h2 className="text-sm font-bold mb-2">Scenario Deep Dive</h2>
+        <FadeIn delay={200}>
           <ScenarioPicker
             scenarios={BENCHMARK_DATA.scenarios}
             active={activeScenario}
             onChange={setActiveScenario}
           />
         </FadeIn>
-        <FadeIn delay={500}>
+        <FadeIn delay={250}>
           <ScenarioCards scenario={BENCHMARK_DATA.scenarios[activeScenario]} visible={visible} />
         </FadeIn>
-        <FadeIn delay={600}>
+        <FadeIn delay={300}>
           <LatencyChart scenario={BENCHMARK_DATA.scenarios[activeScenario]} visible={visible} />
         </FadeIn>
-        <FadeIn delay={700}>
+        <FadeIn delay={350}>
           <P99AreaChart scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
         </FadeIn>
-        <FadeIn delay={800}>
+        <FadeIn delay={400}>
           <PerformanceRadar scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
         </FadeIn>
-        {findings.length && (
-          <FadeIn delay={900}>
-            <KeyFindings findings={findings} />
-          </FadeIn>
-        )}
-        <FadeIn delay={1000}>
+        <FadeIn delay={450}>
+          <KeyFindings findings={findings} />
+        </FadeIn>
+        <FadeIn delay={500}>
+          <RawDataTable scenario={BENCHMARK_DATA.scenarios[0]} visible={visible} />
+        </FadeIn>
+        <FadeIn delay={550}>
           <ComingSoon />
         </FadeIn>
-        <FadeIn delay={1100}>
+        <FadeIn delay={600}>
           <Footer meta={BENCHMARK_DATA.meta} />
         </FadeIn>
       </div>
