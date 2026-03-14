@@ -584,7 +584,7 @@ async function main() {
         if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
 
         const k6Script = path.resolve(__dirname, '../k6/mixed-traffic.js');
-        const { summary, code } = runK6Custom(k6Script, server.port, PROFILE, outputFile);
+        const { summary, code } = await runK6Custom(k6Script, server.port, PROFILE, outputFile);
         results.mixed_traffic[server.name.toLowerCase()] = extractMetrics(summary, code);
 
         const m = results.mixed_traffic[server.name.toLowerCase()];
