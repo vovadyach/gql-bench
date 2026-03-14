@@ -31,7 +31,7 @@ export function HeroCards({ scenario, visible }: HeroCardsProps) {
                 'rounded-xl border p-5 bg-card',
                 'shrink-0 snap-start', // mobile: snap point
                 'w-[280px] sm:w-auto', // mobile: fixed width, desktop: fill grid
-                !isOn && 'opacity-80 grayscale',
+                !isOn && 'opacity-50 grayscale',
               )}
               style={{
                 borderColor: `var(--server-${key})`,
