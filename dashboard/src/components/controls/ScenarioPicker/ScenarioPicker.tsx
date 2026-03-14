@@ -16,7 +16,7 @@ export function ScenarioPicker({ scenarios, active, onChange }: ScenarioPickerPr
           <button
             key={s.id}
             onClick={() => onChange(i)}
-            className="shrink-0 snap-start whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-semibold cursor-pointer"
+            className="shrink-0 sm:shrink snap-start sm:snap-align-none flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-semibold cursor-pointer"
             style={{
               borderColor: isActive ? color : 'var(--border)',
               backgroundColor: isActive
