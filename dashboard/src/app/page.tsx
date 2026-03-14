@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { ThroughputChart } from '@/components/charts/ThroughputChart/ThroughputChart';
 import { ScenarioCards } from '@/components/charts/ScenarioCards/ScenarioCards';
 import { LatencyChart } from '@/components/charts/LatencyChart/LatencyChart';
-import {P99AreaChart} from "@/components/charts/P99AreaChart/P99AreaChart";
+import { P99AreaChart } from '@/components/charts/P99AreaChart/P99AreaChart';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -45,6 +45,9 @@ export default function Page() {
         </FadeIn>
         <FadeIn delay={600}>
           <LatencyChart scenario={BENCHMARK_DATA.scenarios[activeScenario]} visible={visible} />
+        </FadeIn>
+        <FadeIn delay={700}>
+          <P99AreaChart scenarios={BENCHMARK_DATA.scenarios} visible={visible} />
         </FadeIn>
       </div>
     </div>
