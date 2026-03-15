@@ -117,7 +117,8 @@ gql-bench/
 │   │
 │   ├── go/                                  ← add later 🔜
 │   ├── dotnet/                              ← add later 🔜
-│   └── java/                                ← add later 🔜
+│   ├── java/                                ← add later 🔜
+│   └── python/                              ← add later 🔜
 │
 ├── k6/                                      ← Benchmark scripts (language-agnostic)
 │   ├── bench.js                             ← per-scenario benchmark

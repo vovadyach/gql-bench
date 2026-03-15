@@ -2,7 +2,6 @@
 
 import { FadeInProps } from '@/components/shared/FadeIn/FadeIn.types';
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
 
 export function FadeIn({ children, delay = 0, onScroll = false }: FadeInProps) {
   const ref = useRef<HTMLDivElement>(null);

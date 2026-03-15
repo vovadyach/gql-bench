@@ -1,5 +1,6 @@
 // Server configuration (colors, labels)
-import { JSX } from 'react';
+import { ComponentType } from 'react';
+import { LucideProps } from 'lucide-react';
 
 export interface ServerConfig {
   key: string;
@@ -98,7 +99,7 @@ export interface Theme {
 
 // Key finding card
 export interface Finding {
-  icon: string | any;
+  icon: ComponentType<LucideProps>;
   title: string;
   desc: string;
   color: string;

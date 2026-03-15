@@ -1,4 +1,4 @@
-import type { ServerConfig, Finding } from './types';
+import type { ServerConfig } from './types';
 
 // Server configurations
 export const SERVERS: Record<string, ServerConfig> = {

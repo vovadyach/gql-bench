@@ -20,6 +20,7 @@ import { ComingSoon } from '@/components/sections/ComingSoon/ComingSoon';
 import { RawDataTable } from '@/components/sections/RawDataTable/RawDataTable';
 import { ProfileSelector } from '@/components/controls/ProfileSelector/ProfileSelector';
 import { MixedTraffic } from '@/components/charts/MixedTraffic/MixedTraffic';
+import { Degradation } from '@/components/charts/Degradation/Degradation';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -78,16 +79,19 @@ export default function Page() {
         <FadeIn delay={450}>
           <MixedTraffic data={data.mixed_traffic} visible={visible} />
         </FadeIn>
-        <FadeIn delay={450}>
-          <KeyFindings findings={findings} />
-        </FadeIn>
         <FadeIn delay={500}>
-          <RawDataTable scenario={data.scenarios[0]} visible={visible} />
+          <Degradation data={data.degradation} visible={visible} />
         </FadeIn>
         <FadeIn delay={550}>
-          <ComingSoon />
+          <KeyFindings findings={findings} />
         </FadeIn>
         <FadeIn delay={600}>
+          <RawDataTable scenario={data.scenarios[0]} visible={visible} />
+        </FadeIn>
+        <FadeIn delay={650}>
+          <ComingSoon />
+        </FadeIn>
+        <FadeIn delay={700}>
           <Footer meta={data.meta} />
         </FadeIn>
       </div>

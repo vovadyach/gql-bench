@@ -1,27 +1,12 @@
 import { MixedTrafficProps } from '@/components/charts/MixedTraffic/MixedTraffic.types';
-import { useMemo } from 'react';
 import { SERVERS } from '@/lib/constants';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { calcPercentage, cn, formatReqPerSec } from '@/lib/utils';
+import { calcPercentage, cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 
 export function MixedTraffic({ data, visible }: MixedTrafficProps) {
   if (!data) return null;
 
-  const chartData = useMemo(() => {
-    const row: Record<string, string | number> = { name: 'Mixed Traffic' };
-    visible.forEach((k) => {
-      row[SERVERS[k].label] = data[k]?.requests?.rate || 0;
-    });
-    return [row];
-  }, [data, visible]);
-  const scenario = {
-    servers: data,
-    id: 'mixed',
-    name: 'Mixed Traffic',
-    complexity: 'medium' as const,
-  };
   const winner = visible.reduce(
     (best, k) => ((data[k]?.requests?.rate || 0) > (data[best]?.requests?.rate || 0) ? k : best),
     visible[0],
@@ -81,22 +66,19 @@ export function MixedTraffic({ data, visible }: MixedTrafficProps) {
                 <span className="text-xs text-muted-foreground ml-1">req/s</span>
               </div>
               <p
-                className={`text-xs font-bold mt-1 ${
-                  isOn && visible.length > 1 && key !== slowest ? '' : 'invisible'
-                }`}
-                style={{ color: `var(--server-${key})` }}
+                className={cn(
+                  'text-xs mt-1 min-h-[16px]',
+                  !(isOn && visible.length > 1) && 'invisible',
+                  key === slowest ? 'text-muted-foreground font-normal' : 'font-bold',
+                )}
+                style={
+                  isOn && visible.length > 1 && key !== slowest
+                    ? { color: `var(--server-${key})` }
+                    : undefined
+                }
               >
-                +{pct}% vs slowest
+                {key === slowest ? 'baseline' : `+${pct}% vs slowest`}
               </p>
-              {key === slowest && (
-                <p
-                  className={`text-xs text-muted-foreground mt-1 ${
-                    isOn && visible.length > 1 ? '' : 'invisible'
-                  }`}
-                >
-                  baseline
-                </p>
-              )}
               <div className="flex gap-3 mt-2 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>p99 {d.latency_ms.p99}ms</span>

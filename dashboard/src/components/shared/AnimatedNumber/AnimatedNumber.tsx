@@ -10,10 +10,7 @@ export function AnimatedNumber({
   const ref = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!shouldAnimate) {
-      setDisplay(value);
-      return;
-    }
+    if (!shouldAnimate) return;
 
     const start = performance.now();
     const animate = (now: number) => {

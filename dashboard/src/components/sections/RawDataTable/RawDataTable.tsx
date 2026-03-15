@@ -4,6 +4,7 @@ import { SERVERS } from '@/lib/constants';
 import { getWinner, calcPercentage, getSlowest } from '@/lib/utils';
 import type { RawDataTableProps } from './RawDataTable.types';
 import { HEADERS } from '@/components/sections/RawDataTable/RawDataTable.constants';
+import { Crown } from 'lucide-react';
 
 export function RawDataTable({ scenario, visible }: RawDataTableProps) {
   const winner = getWinner(scenario, visible);
@@ -56,7 +57,15 @@ export function RawDataTable({ scenario, visible }: RawDataTableProps) {
                     }}
                   >
                     <td className="px-3 py-3 font-bold" style={{ color: `var(--server-${key})` }}>
-                      {server.label} {isWinner && '👑'}
+                      <div className="inline-flex items-center gap-1">
+                        {server.label}{' '}
+                        {isWinner && (
+                          <Crown
+                            className="h-3 w-3 text-foreground/80 dark:text-amber-400"
+                            strokeWidth={2.2}
+                          />
+                        )}
+                      </div>
                     </td>
                     <td
                       className="px-3 py-3 text-right font-extrabold font-mono tabular-nums"

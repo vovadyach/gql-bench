@@ -66,22 +66,22 @@ export function Degradation({ data, visible }: DegradationProps) {
                 <span className="text-xs text-muted-foreground ml-1">req/s</span>
               </div>
               <p
-                className={`text-xs font-bold mt-1 ${
-                  isOn && visible.length > 1 && key !== slowest ? '' : 'invisible'
-                }`}
-                style={{ color: `var(--server-${key})` }}
+                className={cn(
+                  'text-xs mt-1 min-h-[16px]',
+                  key === slowest ? 'text-muted-foreground' : 'font-bold',
+                )}
+                style={
+                  isOn && visible.length > 1 && key !== slowest
+                    ? { color: `var(--server-${key})` }
+                    : undefined
+                }
               >
-                +{pct}% vs slowest
+                {isOn && visible.length > 1
+                  ? key === slowest
+                    ? 'baseline'
+                    : `+${pct}% vs slowest`
+                  : null}
               </p>
-              {key === slowest && (
-                <p
-                  className={`text-xs text-muted-foreground mt-1 ${
-                    isOn && visible.length > 1 ? '' : 'invisible'
-                  }`}
-                >
-                  baseline
-                </p>
-              )}
               <div className="grid grid-cols-2 gap-1 mt-3 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>med {d.latency_ms.med}ms</span>

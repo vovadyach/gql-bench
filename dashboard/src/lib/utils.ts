@@ -2,16 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Finding, Scenario } from '@/lib/types';
 import { SERVERS } from '@/lib/constants';
-import {
-  Gauge,
-  Database,
-  PencilLine,
-  TrendingDown,
-  Layers3,
-  PenTool,
-  ArrowLeftRight,
-  SquarePen,
-} from 'lucide-react';
+import { Gauge, Database, ArrowLeftRight, SquarePen } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
