@@ -36,6 +36,11 @@ export default function Page() {
             onChange={setProfile}
             profiles={Object.keys(PROFILES)}
           />
+          <span className="text-xs text-muted-foreground">
+            {profile === 'quick'
+              ? '5 scenarios · 10 VUs · ~3 min'
+              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~30 min'}
+          </span>
         </div>
 
         <FadeIn delay={0}>
