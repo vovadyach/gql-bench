@@ -89,7 +89,7 @@ export const options = {
       startVUs: 0,
       gracefulRampDown: '5s',
       stages: profile.stages,
-      tags: { query: QUERY.slice(0, 50) }
+      tags: { query: QUERY.slice(0, 50) },
     },
   },
   thresholds: {

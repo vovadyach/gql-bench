@@ -1,9 +1,8 @@
-import rawData from './data.json';
+import quickData from './quick-data.json';
+import standardData from './data-standard.json';
 import type { BenchmarkData } from './types';
 
-export const BENCHMARK_DATA = rawData as BenchmarkData;
-
 export const PROFILES: Record<string, BenchmarkData> = {
-  quick: rawData as unknown as BenchmarkData,
-  standard: rawData as unknown as BenchmarkData,
+  quick: quickData as unknown as BenchmarkData,
+  standard: standardData as unknown as BenchmarkData,
 };
