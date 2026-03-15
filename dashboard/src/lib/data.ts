@@ -1,5 +1,5 @@
 import quickData from './quick-data.json';
-import standardData from './data-standard.json';
+import standardData from './standard-data.json';
 import type { BenchmarkData } from './types';
 
 export const PROFILES: Record<string, BenchmarkData> = {

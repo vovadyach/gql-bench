@@ -32,20 +32,20 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-background text-foreground py-8 overflow-x-hidden">
       <div className="mx-auto w-full max-w-[1240px] px-3 sm:px-5 lg:px-6">
-        <div className="flex items-center gap-3 mb-6">
-          <ProfileSelector
-            active={profile}
-            onChange={setProfile}
-            profiles={Object.keys(PROFILES)}
-          />
-          <span className="text-xs text-muted-foreground">
-            {profile === 'quick'
-              ? '5 scenarios · 10 VUs · ~3 min'
-              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~30 min'}
-          </span>
-        </div>
-
         <FadeIn delay={0}>
+          <div className="flex items-center gap-3 mb-6">
+            <ProfileSelector
+              active={profile}
+              onChange={setProfile}
+              profiles={Object.keys(PROFILES)}
+            />
+            <span className="text-xs text-muted-foreground">
+              {profile === 'quick'
+                ? '5 scenarios · 10 VUs · ~3 min'
+                : '5 scenarios + mixed traffic + degradation · 50 VUs · ~30 min'}
+            </span>
+          </div>
+
           <Header meta={data.meta} />
         </FadeIn>
         <FadeIn delay={50}>
