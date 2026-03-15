@@ -1,27 +1,12 @@
-import { MixedTrafficProps } from '@/components/charts/MixedTraffic/MixedTraffic.types';
-import { useMemo } from 'react';
+import { DegradationProps } from '@/components/charts/Degradation/Degradation.types';
 import { SERVERS } from '@/lib/constants';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { calcPercentage, cn, formatReqPerSec } from '@/lib/utils';
+import { calcPercentage, cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 
-export function MixedTraffic({ data, visible }: MixedTrafficProps) {
+export function Degradation({ data, visible }: DegradationProps) {
   if (!data) return null;
 
-  const chartData = useMemo(() => {
-    const row: Record<string, string | number> = { name: 'Mixed Traffic' };
-    visible.forEach((k) => {
-      row[SERVERS[k].label] = data[k]?.requests?.rate || 0;
-    });
-    return [row];
-  }, [data, visible]);
-  const scenario = {
-    servers: data,
-    id: 'mixed',
-    name: 'Mixed Traffic',
-    complexity: 'medium' as const,
-  };
   const winner = visible.reduce(
     (best, k) => ((data[k]?.requests?.rate || 0) > (data[best]?.requests?.rate || 0) ? k : best),
     visible[0],
@@ -34,12 +19,12 @@ export function MixedTraffic({ data, visible }: MixedTrafficProps) {
 
   return (
     <div className="mb-8">
-      <h2 className="text-sm font-bold mb-1">Mixed Traffic</h2>
+      <h2 className="text-sm font-bold mb-1">Degradation Curve</h2>
       <p className="text-xs text-muted-foreground mb-4">
-        Production-like query mix — 60% light, 25% medium, 15% heavy
+        Ramp to 500 VUs — finding the breaking point
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
@@ -97,9 +82,14 @@ export function MixedTraffic({ data, visible }: MixedTrafficProps) {
                   baseline
                 </p>
               )}
-              <div className="flex gap-3 mt-2 text-xs text-muted-foreground font-mono tabular-nums">
+              <div className="grid grid-cols-2 gap-1 mt-3 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
+                <span>med {d.latency_ms.med}ms</span>
                 <span>p99 {d.latency_ms.p99}ms</span>
+                <span>max {d.latency_ms.max}ms</span>
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground">
+                <span>Total: {d.requests.total.toLocaleString()} requests</span>
               </div>
             </div>
           );
