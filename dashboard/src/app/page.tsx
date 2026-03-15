@@ -4,7 +4,7 @@ import { Header } from '@/components/layout/Header/Header';
 import { ServerToggles } from '@/components/controls/ServerToggles/ServerToggles';
 import { useVisibleServers } from '@/hooks/useVisibleServers';
 import { HeroCards } from '@/components/charts/HeroCards/HeroCards';
-import { BENCHMARK_DATA, PROFILES } from '@/lib/data';
+import { PROFILES } from '@/lib/data';
 import { FadeIn } from '@/components/shared/FadeIn/FadeIn';
 import { ScenarioPicker } from '@/components/controls/ScenarioPicker/ScenarioPicker';
 import { useState } from 'react';
@@ -19,6 +19,7 @@ import { Footer } from '@/components/layout/Footer/Footer';
 import { ComingSoon } from '@/components/sections/ComingSoon/ComingSoon';
 import { RawDataTable } from '@/components/sections/RawDataTable/RawDataTable';
 import { ProfileSelector } from '@/components/controls/ProfileSelector/ProfileSelector';
+import { MixedTraffic } from '@/components/charts/MixedTraffic/MixedTraffic';
 
 export default function Page() {
   const { visible, toggle } = useVisibleServers();
@@ -73,6 +74,9 @@ export default function Page() {
         </FadeIn>
         <FadeIn delay={400}>
           <PerformanceRadar scenarios={data.scenarios} visible={visible} />
+        </FadeIn>
+        <FadeIn delay={450}>
+          <MixedTraffic data={data.mixed_traffic} visible={visible} />
         </FadeIn>
         <FadeIn delay={450}>
           <KeyFindings findings={findings} />
