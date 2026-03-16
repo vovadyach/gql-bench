@@ -12,8 +12,5 @@
   "private": true,
   "devDependencies": {
     "prettier": "^3.8.1"
-  },
-  "dependencies": {
-    "@vercel/speed-insights": "^2.0.0"
   }
 }
