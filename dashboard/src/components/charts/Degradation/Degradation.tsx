@@ -4,7 +4,7 @@ import { calcPercentage, cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 
-export function Degradation({ data, visible }: DegradationProps) {
+export default function Degradation({ data, visible }: DegradationProps) {
   if (!data) return null;
 
   const winner = visible.reduce(

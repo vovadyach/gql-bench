@@ -13,7 +13,7 @@ import {
 import { SERVERS } from '@/lib/constants';
 import { PerformanceRadarProps } from '@/components/charts/PerformanceRadar/PerformanceRadarProps.types';
 
-export function PerformanceRadar({ scenarios, visible }: PerformanceRadarProps) {
+export default function PerformanceRadar({ scenarios, visible }: PerformanceRadarProps) {
   const data = useMemo(
     () =>
       scenarios.map((s) => {

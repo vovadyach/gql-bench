@@ -4,7 +4,7 @@ import { calcPercentage, cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 
-export function MixedTraffic({ data, visible }: MixedTrafficProps) {
+export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
   if (!data) return null;
 
   const winner = visible.reduce(

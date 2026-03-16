@@ -6,7 +6,7 @@ import type { RawDataTableProps } from './RawDataTable.types';
 import { HEADERS } from '@/components/sections/RawDataTable/RawDataTable.constants';
 import { Crown } from 'lucide-react';
 
-export function RawDataTable({ scenario, visible }: RawDataTableProps) {
+export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
   const winner = getWinner(scenario, visible);
   const slowest = getSlowest(scenario, visible);
   const slowestRate = scenario.servers[slowest]?.requests?.rate || 0;

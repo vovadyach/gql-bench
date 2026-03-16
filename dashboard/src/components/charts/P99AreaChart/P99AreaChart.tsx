@@ -13,7 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 
-export function P99AreaChart({ scenarios, visible }: P99AreaChartProps) {
+export default function P99AreaChart({ scenarios, visible }: P99AreaChartProps) {
   const data = useMemo(
     () =>
       scenarios.map((s) => {
