@@ -16,7 +16,7 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
           ◎ Methodology
         </button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[360px] p-8">
+      <SheetContent side="right" className="w-full sm:w-[360px] h-dvh overflow-y-auto p-8">
         <SheetHeader>
           <SheetTitle className="text-lg font-bold">Benchmark Methodology</SheetTitle>
           <SheetDescription>Benchmark setup, environment, and machine details.</SheetDescription>

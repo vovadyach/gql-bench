@@ -22,6 +22,7 @@ export function AnimatedNumber({
       }
     };
     ref.current = requestAnimationFrame(animate);
+
     return () => {
       if (ref.current !== null) {
         cancelAnimationFrame(ref.current);
