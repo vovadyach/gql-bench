@@ -43,7 +43,7 @@ export function HeroCards({ scenario, visible }: HeroCardsProps) {
               className="text-3xl sm:text-4xl font-extrabold font-mono tabular-nums leading-none"
               style={{ color: `var(--server-${key})` }}
             >
-              <AnimatedNumber value={data.requests.rate} delay={400} />
+              <AnimatedNumber value={data.requests.rate} />
             </div>
 
             <p className="text-xs text-muted-foreground mt-2">req/s on health check</p>
