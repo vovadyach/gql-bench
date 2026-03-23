@@ -24,7 +24,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
         Ramp to 500 VUs — finding the breaking point
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
@@ -35,12 +35,13 @@ export default function Degradation({ data, visible }: DegradationProps) {
           return (
             <div
               key={key}
-              className={`rounded-xl border p-4 bg-card relative ${!isOn ? 'opacity-40' : ''}`}
+              className={cn(
+                'rounded-xl border p-4 bg-card relative',
+                !isOn && 'opacity-40 grayscale scale-95',
+              )}
               style={{
-                borderColor: isOn ? `var(--server-${key})` : 'var(--border)',
-                backgroundColor: isOn
-                  ? `color-mix(in srgb, var(--server-${key}) 5%, var(--card))`
-                  : undefined,
+                borderColor: `var(--server-${key})`,
+                backgroundColor: `color-mix(in srgb, var(--server-${key}) 5%, var(--card))`,
               }}
             >
               <div
@@ -82,7 +83,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
                     : `+${pct}% vs slowest`
                   : null}
               </p>
-              <div className="grid grid-cols-2 gap-1 mt-3 text-xs text-muted-foreground font-mono tabular-nums">
+              <div className="grid grid-cols-2 gap-1 mt-3 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>med {d.latency_ms.med}ms</span>
                 <span>p99 {d.latency_ms.p99}ms</span>

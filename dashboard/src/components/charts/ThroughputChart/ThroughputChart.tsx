@@ -27,7 +27,12 @@ export function ThroughputChart({ scenarios, visible }: ThroughputChartProps) {
       </p>
       <div className="border rounded-xl p-4 bg-card">
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={data} barGap={2} barCategoryGap="14%">
+          <BarChart
+            margin={{ left: -20, right: 15, top: 10, bottom: 5 }}
+            data={data}
+            barGap={2}
+            barCategoryGap="14%"
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="name"

@@ -13,7 +13,7 @@ export function Header({ meta }: HeaderProps) {
             GraphQL <span className="text-[#ff4757]">Bench</span>
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            NestJS — Express vs Fastify vs Mercurius
+            Same schema, same queries, fair fight.
           </p>
         </div>
       </div>
@@ -23,7 +23,9 @@ export function Header({ meta }: HeaderProps) {
           {meta.cpu_model} · {meta.cpus} cores
         </span>
         <MethodologyDrawer meta={meta} />
-        <ThemeToggle />
+        <div className="shrink-0">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

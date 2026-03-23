@@ -24,7 +24,7 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
         Production-like query mix — 60% light, 25% medium, 15% heavy
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
@@ -35,12 +35,13 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
           return (
             <div
               key={key}
-              className={`rounded-xl border p-4 bg-card relative ${!isOn ? 'opacity-40' : ''}`}
+              className={cn(
+                'rounded-xl border p-4 bg-card relative',
+                !isOn && 'opacity-40 grayscale scale-95',
+              )}
               style={{
-                borderColor: isOn ? `var(--server-${key})` : 'var(--border)',
-                backgroundColor: isOn
-                  ? `color-mix(in srgb, var(--server-${key}) 5%, var(--card))`
-                  : undefined,
+                borderColor: `var(--server-${key})`,
+                backgroundColor: `color-mix(in srgb, var(--server-${key}) 5%, var(--card))`,
               }}
             >
               <div

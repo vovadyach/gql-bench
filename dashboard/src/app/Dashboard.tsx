@@ -85,7 +85,7 @@ export function Dashboard() {
         <ServerToggles visible={visible} onToggle={handleServerToggle} />
       </FadeIn>
       <FadeIn delay={250}>
-        <HeroCards scenario={data.scenarios[0]} visible={visible} />
+        <HeroCards scenario={data.scenarios[0]} visible={visible} title="NestJS" />
       </FadeIn>
       <FadeIn delay={300}>
         <ThroughputChart scenarios={data.scenarios} visible={visible} />

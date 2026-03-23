@@ -23,6 +23,13 @@ export const SERVERS: Record<string, ServerConfig> = {
     color: '#00b0ff',
     glow: 'rgba(0,176,255,.10)',
   },
+  yoga: {
+    key: 'yoga',
+    label: 'Fastify + Yoga',
+    short: 'Yoga',
+    color: '#a855f7',
+    glow: 'rgba(168,85,247,.10)',
+  },
 };
 
 export const SERVER_KEYS = Object.keys(SERVERS);

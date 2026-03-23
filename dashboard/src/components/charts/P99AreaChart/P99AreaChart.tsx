@@ -35,7 +35,7 @@ export default function P99AreaChart({ scenarios, visible }: P99AreaChartProps) 
 
       <div className="border rounded-xl p-4 bg-card">
         <ResponsiveContainer width="100%" height={220}>
-          <AreaChart data={data}>
+          <AreaChart margin={{ left: -20, right: 15, top: 10, bottom: 5 }} data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="name"

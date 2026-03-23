@@ -13,7 +13,7 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
     <div className="mb-7">
       <h2 className="text-sm font-bold mb-2">Scenario Deep Dive</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 ">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {Object.entries(SERVERS).map(([key, server]) => {
           const data = scenario.servers[key];
           const isOn = visible.includes(key);
@@ -27,8 +27,8 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
             <div
               key={key}
               className={cn(
-                'rounded-xl border p-5 bg-card relative',
-                !isOn && 'opacity-40 grayscale',
+                'rounded-xl border p-4 bg-card relative transition-transform duration-300 ease-in-out',
+                !isOn && 'opacity-40 grayscale scale-95',
               )}
               style={{
                 borderColor: isOn ? `var(--server-${key})` : 'var(--border)',
@@ -54,7 +54,7 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
               </span>
 
               <div
-                className="text-2xl sm:text-3xl font-extrabold font-mono tabular-nums leading-none mt-2"
+                className="text-xl sm:text-2xl font-extrabold font-mono tabular-nums leading-none mt-2"
                 style={{ color: `var(--server-${key})` }}
               >
                 <AnimatedNumber value={data.requests.rate} shouldAnimate={isOn} />
@@ -83,7 +83,7 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-1 mt-4 text-xs text-muted-foreground font-mono tabular-nums">
+              <div className="grid grid-cols-2 gap-1 mt-4 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {data.latency_ms.avg}ms</span>
                 <span>med {data.latency_ms.med}ms</span>
                 <span>p95 {data.latency_ms.p95}ms</span>

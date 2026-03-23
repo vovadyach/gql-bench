@@ -32,7 +32,12 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
 
       <div className="border rounded-xl p-4 bg-card">
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={data} barGap={2} barCategoryGap="18%">
+          <BarChart
+            margin={{ left: -20, right: 15, top: 10, bottom: 5 }}
+            data={data}
+            barGap={2}
+            barCategoryGap="18%"
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
             <XAxis
               dataKey="pct"

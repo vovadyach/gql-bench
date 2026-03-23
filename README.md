@@ -12,6 +12,7 @@ Same schema, same queries, fair fight.
 ✅ NestJS — Express + Apollo
 ✅ NestJS — Fastify + Apollo
 ✅ NestJS — Fastify + Mercurius
+✅ NestJS — Fastify + Yoga
 ```
 
 ## Coming Soon
@@ -72,6 +73,7 @@ Results in `results/latest.json`.
 ```
 Express+Apollo → Fastify+Apollo:      "Does the HTTP adapter matter?"
 Fastify+Apollo → Fastify+Mercurius:   "Does the GraphQL engine matter?"
+Fastify+Mercurius → Fastify+Yoga:     "Which GraphQL engine is fastest on Fastify?"
 Express+Apollo → Fastify+Mercurius:   "What's the total gain switching both?"
 ```
 
@@ -111,7 +113,8 @@ gql-bench/
 │   │   │   ├── app.module-mercurius.ts     ← Mercurius config
 │   │   │   ├── main-express.ts             ← Express + Apollo
 │   │   │   ├── main-fastify.ts             ← Fastify + Apollo
-│   │   │   └── main-mercurius.ts           ← Fastify + Mercurius
+│   │   │   ├── main-mercurius.ts           ← Fastify + Mercurius
+│   │   │   └── main-yoga.ts                ← Fastify + Yoga
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │

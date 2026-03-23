@@ -4,7 +4,7 @@
   "description": "GraphQL Benchmark Suite: NestJS Express vs Fastify vs Mercurius",
   "type": "commonjs",
   "scripts": {
-    "setup": "cd servers/node && npm install",
+    "setup": "cd servers/nestjs && npm install",
     "bench": "node bench/run.js",
     "bench:quick": "node bench/run.js --quick",
     "format": "prettier --write \"**/*.{ts,js,tsx}\""

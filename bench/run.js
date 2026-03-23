@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env nestjs
 
 // HOW THIS WORKS:
 //
@@ -92,20 +92,26 @@ const SERVERS = [
   {
     name: 'Express',
     port: 3001,
-    entry: '../servers/node/dist/main-express.js',
+    entry: '../servers/nestjs/dist/main-express.js',
     env: { ADAPTER: 'express' },
   },
   {
     name: 'Fastify',
     port: 3002,
-    entry: '../servers/node/dist/main-fastify.js',
+    entry: '../servers/nestjs/dist/main-fastify.js',
     env: { ADAPTER: 'fastify' },
   },
   {
     name: 'Mercurius',
     port: 3003,
-    entry: '../servers/node/dist/main-mercurius.js',
-    env: { ADAPTER: 'merucrius' },
+    entry: '../servers/nestjs/dist/main-mercurius.js',
+    env: { ADAPTER: 'mercurius' },
+  },
+  {
+    name: 'Yoga',
+    port: 3004,
+    entry: '../servers/nestjs/dist/main-yoga.js',
+    env: { ADAPTER: 'yoga' },
   },
   // Future: add Go, C#, Java here
   // { name: 'Go-Chi',  port: 3004, entry: '../servers/go/bin/chi',   env: { ADAPTER: 'go-chi' } },
@@ -366,10 +372,10 @@ function extractMetrics(summary, k6ExitCode) {
 // ─── Main ──────────────────────────────────────────────
 
 async function main() {
-  console.log('  ╔═══════════════════════════════════════════════════════════╗');
-  console.log('  ║  NestJS GraphQL Benchmark (k6)                            ║');
-  console.log('  ║  Express+Apollo vs Fastify+Apollo vs Fastify+Mercurius    ║');
-  console.log('  ╚═══════════════════════════════════════════════════════════╝\n');
+  console.log('  ╔════════════════════════════════════════════════════════════════════════╗');
+  console.log('  ║  NestJS GraphQL Benchmark (k6)                                         ║');
+  console.log('  ║  Express+Apollo vs Fastify+Apollo vs Fastify+Mercurius vs Fastify+Yoga ║');
+  console.log('  ╚════════════════════════════════════════════════════════════════════════╝\n');
 
   // Cleanup leftover servers from previous runs
   for (const server of SERVERS) {
@@ -382,11 +388,11 @@ async function main() {
   console.log('  📦 Building Node.js servers...');
   try {
     execSync('npx nest build', {
-      cwd: path.resolve(__dirname, '../servers/node'),
+      cwd: path.resolve(__dirname, '../servers/nestjs'),
       stdio: 'inherit',
     });
   } catch {
-    console.error('  ❌ Build failed. Run "cd servers/node && npm install" first.');
+    console.error('  ❌ Build failed. Run "cd servers/nestjs && npm install" first.');
     process.exit(1);
   }
   console.log('  ✅ Build complete\n');
@@ -661,31 +667,32 @@ async function main() {
   for (const sc of results.scenarios) {
     console.log(`  ${sc.name} [${sc.complexity}]:`);
 
-    const e = sc.servers.express;
-    const f = sc.servers.fastify;
-    const m = sc.servers.mercurius;
+    const serverNames = SERVERS.map((s) => s.name.toLowerCase());
+    const serverData = serverNames.map((name) => sc.servers[name]);
 
-    if (e?.error || f?.error || m?.error) {
+    if (serverData.some((s) => s?.error)) {
       console.log('    (some servers errored, see results JSON)\n');
       continue;
     }
 
-    const eRate = e.requests.rate;
-    const fRate = f.requests.rate;
-    const mRate = m.requests.rate;
-    const fDelta = (((fRate - eRate) / eRate) * 100).toFixed(0);
-    const mDelta = (((mRate - eRate) / eRate) * 100).toFixed(0);
+    const baseRate = serverData[0]?.requests?.rate || 0;
+    const maxLenName = Math.max(...SERVERS.map((s) => s.name.length));
 
-    console.log(
-      `    Express:   ${eRate} req/s  avg ${e.latency_ms.avg}ms  p99 ${e.latency_ms.p99}ms  ${e.thresholds_passed ? 'PASS' : 'FAIL'}`,
-    );
-    console.log(
-      `    Fastify:   ${fRate} req/s  avg ${f.latency_ms.avg}ms  p99 ${f.latency_ms.p99}ms  ${f.thresholds_passed ? 'PASS' : 'FAIL'}  (${fDelta > 0 ? '+' : ''}${fDelta}%)`,
-    );
-    console.log(
-      `    Mercurius: ${mRate} req/s  avg ${m.latency_ms.avg}ms  p99 ${m.latency_ms.p99}ms  ${m.thresholds_passed ? 'PASS' : 'FAIL'}  (${mDelta > 0 ? '+' : ''}${mDelta}%)`,
-    );
-    console.log('');
+    for (let i = 0; i < SERVERS.length; i++) {
+      const s = serverData[i];
+      if (!s) continue;
+
+      const name = SERVERS[i].name.padEnd(maxLenName);
+      const rate = s.requests.rate;
+      const pass = s.thresholds_passed ? 'PASS' : 'FAIL';
+      const delta =
+        i === 0
+          ? ''
+          : `  (${(((rate - baseRate) / baseRate) * 100).toFixed(0) > 0 ? '+' : ''}${(((rate - baseRate) / baseRate) * 100).toFixed(0)}%)`;
+      console.log(
+        `    ${name}:   ${rate} req/s  avg ${s.latency_ms.avg}ms  p99 ${s.latency_ms.p99}ms  ${pass}${delta}`,
+      );
+    }
   }
 
   console.log(`  📁 Results: results/latest.json`);
