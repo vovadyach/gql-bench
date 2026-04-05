@@ -31,7 +31,7 @@ const RawDataTable = dynamic(() => import('@/components/sections/RawDataTable/Ra
 export function Dashboard() {
   const { visible, toggle } = useVisibleServers();
   const [activeScenario, setActiveScenario] = useState(0);
-  const [profile, setProfile] = useState('quick');
+  const [profile, setProfile] = useState('standard');
   const data = PROFILES[profile];
   const [, startTransition] = useTransition();
 
@@ -74,8 +74,8 @@ export function Dashboard() {
           />
           <span className="text-xs text-muted-foreground">
             {profile === 'quick'
-              ? '5 scenarios · 10 VUs · ~3 min'
-              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~20 min'}
+              ? '5 scenarios · 10 VUs · ~5 min'
+              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~30 min'}
           </span>
         </div>
 
