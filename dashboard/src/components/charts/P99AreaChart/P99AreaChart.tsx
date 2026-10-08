@@ -3,6 +3,7 @@
 import { P99AreaChartProps } from '@/components/charts/P99AreaChart/P99AreaChart.types';
 import { useMemo } from 'react';
 import { SERVERS } from '@/lib/constants';
+import { serverName } from '@/lib/utils';
 import {
   Area,
   AreaChart,
@@ -19,7 +20,7 @@ export default function P99AreaChart({ scenarios, visible }: P99AreaChartProps) 
       scenarios.map((s) => {
         const row: Record<string, string | number> = { name: s.name };
         visible.forEach((k) => {
-          row[SERVERS[k].label] = s.servers[k]?.latency_ms?.p99 || 0;
+          row[k] = s.servers[k]?.latency_ms?.p99 || 0;
         });
         return row;
       }),
@@ -64,8 +65,10 @@ export default function P99AreaChart({ scenarios, visible }: P99AreaChartProps) 
               <Area
                 key={k}
                 type="monotone"
-                dataKey={SERVERS[k].label}
+                dataKey={k}
+                name={serverName(k)}
                 stroke={SERVERS[k].color}
+                strokeDasharray={SERVERS[k].tier === 'nestjs' ? undefined : '5 3'}
                 fill={SERVERS[k].color}
                 fillOpacity={0.08}
                 strokeWidth={2}

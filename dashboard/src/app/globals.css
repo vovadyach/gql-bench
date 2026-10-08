@@ -84,6 +84,12 @@
   --server-fastify: #00994d;
   --server-mercurius: #0077b3;
   --server-yoga: #a855f7;
+  --server-raw-express-apollo: #d63444;
+  --server-raw-express-yoga: #a855f7;
+  --server-raw-fastify-apollo: #00994d;
+  --server-raw-fastify-mercurius: #0077b3;
+  --server-raw-fastify-yoga: #a855f7;
+  --server-yoga-standalone: #a855f7;
   --complexity-light: #00663d;
   --complexity-medium: #005c8a;
   --complexity-heavy: #a35e00;
@@ -125,6 +131,13 @@
   --server-express: #ff4757;
   --server-fastify: #00e676;
   --server-mercurius: #00b0ff;
+  --server-yoga: #c084fc;
+  --server-raw-express-apollo: #ff4757;
+  --server-raw-express-yoga: #c084fc;
+  --server-raw-fastify-apollo: #00e676;
+  --server-raw-fastify-mercurius: #00b0ff;
+  --server-raw-fastify-yoga: #c084fc;
+  --server-yoga-standalone: #c084fc;
   --complexity-light: #00e676;
   --complexity-medium: #00b0ff;
   --complexity-heavy: #ffa726;
@@ -158,5 +171,13 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

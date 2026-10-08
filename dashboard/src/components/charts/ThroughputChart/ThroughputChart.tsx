@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { SERVERS } from '@/lib/constants';
-import { formatReqPerSec } from '@/lib/utils';
+import { formatReqPerSec, serverName } from '@/lib/utils';
 import type { ThroughputChartProps } from './ThroughputChart.types';
 
 export function ThroughputChart({ scenarios, visible }: ThroughputChartProps) {
@@ -12,7 +12,7 @@ export function ThroughputChart({ scenarios, visible }: ThroughputChartProps) {
       scenarios.map((s) => {
         const row: Record<string, string | number> = { name: s.name };
         visible.forEach((k) => {
-          row[SERVERS[k].label] = s.servers[k]?.requests?.rate || 0;
+          row[k] = s.servers[k]?.requests?.rate || 0;
         });
         return row;
       }),
@@ -57,15 +57,20 @@ export function ThroughputChart({ scenarios, visible }: ThroughputChartProps) {
                 fontSize: 11,
               }}
             />
-            {visible.map((k) => (
-              <Bar
-                key={k}
-                dataKey={SERVERS[k].label}
-                fill={SERVERS[k].color}
-                radius={[4, 4, 0, 0]}
-                opacity={0.85}
-              />
-            ))}
+            {visible.map((k) => {
+              const server = SERVERS[k];
+              return (
+                <Bar
+                  key={k}
+                  dataKey={k}
+                  fill={server.color}
+                  name={serverName(k)}
+                  fillOpacity={server.opacity}
+                  radius={[4, 4, 0, 0]}
+                  opacity={0.85}
+                />
+              );
+            })}
           </BarChart>
         </ResponsiveContainer>
       </div>

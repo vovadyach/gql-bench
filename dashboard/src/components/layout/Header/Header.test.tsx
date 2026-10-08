@@ -12,7 +12,7 @@ describe('Header', () => {
 
   it('renders subtitle', () => {
     render(<Header meta={mockMeta} />);
-    expect(screen.getByText('NestJS — Express vs Fastify vs Mercurius')).toBeInTheDocument();
+    expect(screen.getByText('Same GraphQL schema and queries across server stacks.')).toBeInTheDocument();
   });
 
   it('renders machine info', () => {

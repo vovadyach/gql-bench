@@ -1,6 +1,6 @@
 import { DegradationProps } from '@/components/charts/Degradation/Degradation.types';
-import { SERVERS } from '@/lib/constants';
-import { calcPercentage, cn } from '@/lib/utils';
+import { SERVERS, TIER_LABELS } from '@/lib/constants';
+import { calcPercentage, cn, formatNumber } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
         Ramp to 500 VUs — finding the breaking point
       </p>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
@@ -36,11 +36,12 @@ export default function Degradation({ data, visible }: DegradationProps) {
             <div
               key={key}
               className={cn(
-                'rounded-xl border p-4 bg-card relative',
+                'min-h-[220px] min-w-0 rounded-xl border p-4 bg-card relative',
                 !isOn && 'opacity-40 grayscale scale-95',
               )}
               style={{
                 borderColor: `var(--server-${key})`,
+                borderStyle: server.tier === 'nestjs' ? 'solid' : 'dashed',
                 backgroundColor: `color-mix(in srgb, var(--server-${key}) 5%, var(--card))`,
               }}
             >
@@ -56,9 +57,15 @@ export default function Degradation({ data, visible }: DegradationProps) {
                 />
               </div>
 
-              <span className="text-xs font-bold" style={{ color: `var(--server-${key})` }}>
-                {server.label}
-              </span>
+              <div className="flex flex-wrap items-center gap-2 pr-9">
+                <span className="text-xs font-bold" style={{ color: `var(--server-${key})` }}>
+                  {server.label}
+                </span>
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 border border-border rounded">
+                  {TIER_LABELS[server.tier]}
+                </span>
+              </div>
+
               <div
                 className="text-xl font-extrabold font-mono tabular-nums mt-1"
                 style={{ color: `var(--server-${key})` }}
@@ -90,7 +97,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
                 <span>max {d.latency_ms.max}ms</span>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
-                <span>Total: {d.requests.total.toLocaleString()} requests</span>
+                <span>Total: {formatNumber(d.requests.total)} requests</span>
               </div>
             </div>
           );

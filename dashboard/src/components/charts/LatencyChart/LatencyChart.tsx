@@ -3,6 +3,7 @@
 import { LatencyChartProps } from '@/components/charts/LatencyChart/LatencyChart.types';
 import { useMemo } from 'react';
 import { SERVERS } from '@/lib/constants';
+import { serverName } from '@/lib/utils';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 export function LatencyChart({ scenario, visible }: LatencyChartProps) {
@@ -13,7 +14,7 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
           pct: p === 'med' ? 'P50' : p.toUpperCase(),
         };
         visible.forEach((k) => {
-          row[SERVERS[k].label] =
+          row[k] =
             scenario.servers[k]?.latency_ms?.[
               p as keyof (typeof scenario.servers)[typeof k]['latency_ms']
             ] || 0;
@@ -62,15 +63,19 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
                 fontSize: 11,
               }}
             />
-            {visible.map((k) => (
-              <Bar
-                key={k}
-                dataKey={SERVERS[k].label}
-                fill={SERVERS[k].color}
-                radius={[4, 4, 0, 0]}
-                opacity={0.85}
-              />
-            ))}
+            {visible.map((k) => {
+              const server = SERVERS[k];
+              return (
+                <Bar
+                  key={k}
+                  dataKey={k}
+                  name={serverName(k)}
+                  fill={server.color}
+                  fillOpacity={server.opacity}
+                  radius={[4, 4, 0, 0]}
+                />
+              );
+            })}
           </BarChart>
         </ResponsiveContainer>
       </div>

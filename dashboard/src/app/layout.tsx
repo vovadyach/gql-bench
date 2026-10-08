@@ -17,8 +17,9 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'GraphQL Bench — NestJS Express vs Fastify vs Mercurius',
-  description: 'Interactive benchmark dashboard comparing NestJS GraphQL frameworks with real data',
+  title: 'GraphQL Bench — NestJS vs direct GraphQL servers',
+  description:
+    'Interactive k6 benchmark dashboard comparing NestJS with direct Express, Fastify and Node.js HTTP setups running Apollo, Mercurius and Yoga',
 };
 
 export default function RootLayout({
@@ -29,6 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${jetbrains.variable} antialiased`}>
+        {/* Fades wait for hydration; without JS, run them anyway */}
+        <noscript>
+          <style>{`.fade-in { animation-play-state: running !important; }`}</style>
+        </noscript>
         <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />

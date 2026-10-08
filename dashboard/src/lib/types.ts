@@ -8,6 +8,8 @@ export interface ServerConfig {
   short: string; // "Express"
   color: string; // "#ff4757"
   glow: string; // "rgba(255,71,87,.10)"
+  tier: 'nestjs' | 'raw' | 'standalone'; // "nestjs"
+  opacity: number;
 }
 
 // Result from one server on one scenario

@@ -1,10 +1,10 @@
 {
   "name": "gql-bench",
   "version": "1.0.0",
-  "description": "GraphQL Benchmark Suite: NestJS Express vs Fastify vs Mercurius",
+  "description": "GraphQL Benchmark Suite: NestJS vs raw Node.js (Express/Fastify + Apollo/Mercurius/Yoga)",
   "type": "commonjs",
   "scripts": {
-    "setup": "cd servers/nestjs && npm install",
+    "setup": "cd servers/nestjs && npm install && cd ../node && npm install",
     "bench": "node bench/run.js",
     "bench:quick": "node bench/run.js --quick",
     "format": "prettier --write \"**/*.{ts,js,tsx}\""

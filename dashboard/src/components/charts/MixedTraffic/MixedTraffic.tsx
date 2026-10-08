@@ -1,5 +1,5 @@
 import { MixedTrafficProps } from '@/components/charts/MixedTraffic/MixedTraffic.types';
-import { SERVERS } from '@/lib/constants';
+import { SERVERS, TIER_LABELS } from '@/lib/constants';
 import { calcPercentage, cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
@@ -24,7 +24,7 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
         Production-like query mix — 60% light, 25% medium, 15% heavy
       </p>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
@@ -36,11 +36,12 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
             <div
               key={key}
               className={cn(
-                'rounded-xl border p-4 bg-card relative',
+                'min-h-[180px] min-w-0 rounded-xl border p-4 bg-card relative',
                 !isOn && 'opacity-40 grayscale scale-95',
               )}
               style={{
                 borderColor: `var(--server-${key})`,
+                borderStyle: server.tier === 'nestjs' ? 'solid' : 'dashed',
                 backgroundColor: `color-mix(in srgb, var(--server-${key}) 5%, var(--card))`,
               }}
             >
@@ -56,9 +57,15 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
                 />
               </div>
 
-              <span className="text-xs font-bold" style={{ color: `var(--server-${key})` }}>
-                {server.label}
-              </span>
+              <div className="flex flex-wrap items-center gap-2 pr-9">
+                <span className="text-xs font-bold" style={{ color: `var(--server-${key})` }}>
+                  {server.label}
+                </span>
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 border border-border rounded">
+                  {TIER_LABELS[server.tier]}
+                </span>
+              </div>
+
               <div
                 className="text-xl font-extrabold font-mono tabular-nums mt-1"
                 style={{ color: `var(--server-${key})` }}
@@ -80,7 +87,7 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
               >
                 {key === slowest ? 'baseline' : `+${pct}% vs slowest`}
               </p>
-              <div className="flex gap-3 mt-2 text-xs text-muted-foreground font-mono tabular-nums">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>p99 {d.latency_ms.p99}ms</span>
               </div>

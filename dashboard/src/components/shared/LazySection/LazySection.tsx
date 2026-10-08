@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { LazySectionProps } from '@/components/shared/LazySection/LazySection.types';
+import { FadeIn } from '@/components/shared/FadeIn/FadeIn';
 import { SectionSkeleton } from '@/components/shared/SectionSkeleton/SectionSkeleton';
 
-export function LazySection({ children, height = 'min-h-[320px]', skeleton }: LazySectionProps) {
+export function LazySection({ children, height = 'min-h-[310px]', skeleton }: LazySectionProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -11,7 +12,7 @@ export function LazySection({ children, height = 'min-h-[320px]', skeleton }: La
     if (!el) return;
     let rafId: number;
 
-    // Already in viewport? Show immediately (with fade, no skeleton)
+    // Near the viewport? Begin loading on the next frame.
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight + 200) {
       rafId = requestAnimationFrame(() => setIsVisible(true));
@@ -33,12 +34,16 @@ export function LazySection({ children, height = 'min-h-[320px]', skeleton }: La
     return () => observer.disconnect();
   }, []);
 
+  const fallback = skeleton ?? <SectionSkeleton height={height} />;
+
   return (
     <div ref={ref} className="mb-6">
       {isVisible ? (
-        <div className="fade-in">{children}</div>
+        <Suspense fallback={fallback}>
+          <FadeIn>{children}</FadeIn>
+        </Suspense>
       ) : (
-        (skeleton ?? <SectionSkeleton height={height} />)
+        fallback
       )}
     </div>
   );

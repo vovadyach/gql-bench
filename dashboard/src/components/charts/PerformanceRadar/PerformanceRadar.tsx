@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { SERVERS } from '@/lib/constants';
+import { serverName } from '@/lib/utils';
 import { PerformanceRadarProps } from '@/components/charts/PerformanceRadar/PerformanceRadarProps.types';
 
 export default function PerformanceRadar({ scenarios, visible }: PerformanceRadarProps) {
@@ -20,7 +21,7 @@ export default function PerformanceRadar({ scenarios, visible }: PerformanceRada
         const maxRate = Math.max(...visible.map((k) => s.servers[k]?.requests?.rate || 0));
         const row: Record<string, string | number> = { name: s.id };
         visible.forEach((k) => {
-          row[SERVERS[k].label] =
+          row[k] =
             maxRate > 0 ? +(((s.servers[k]?.requests?.rate || 0) / maxRate) * 100).toFixed(0) : 0;
         });
         return row;
@@ -49,9 +50,10 @@ export default function PerformanceRadar({ scenarios, visible }: PerformanceRada
             {visible.map((k) => (
               <Radar
                 key={k}
-                name={SERVERS[k].label}
-                dataKey={SERVERS[k].label}
+                name={serverName(k)}
+                dataKey={k}
                 stroke={SERVERS[k].color}
+                strokeDasharray={SERVERS[k].tier === 'nestjs' ? undefined : '5 3'}
                 fill={SERVERS[k].color}
                 fillOpacity={0.06}
                 strokeWidth={2}

@@ -1,11 +1,18 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Finding, Scenario } from '@/lib/types';
-import { SERVERS } from '@/lib/constants';
+import { SERVERS, TIER_LABELS } from '@/lib/constants';
 import { Gauge, Database, ArrowLeftRight, SquarePen } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+// Tier-qualified name: "NestJS Express + Apollo" / "Direct Mercurius"
+export function serverName(key: string, field: 'label' | 'short' = 'label'): string {
+  const server = SERVERS[key];
+  if (!server) return key;
+  return `${TIER_LABELS[server.tier]} ${server[field]}`;
 }
 
 // Calculate percentage difference
@@ -15,8 +22,9 @@ export function calcPercentage(rate: number, baseline: number): number {
 }
 
 // Format number: 14108 → "14,108"
+// Fixed locale: the page is prerendered, so the visitor's locale would mismatch on hydration
 export function formatNumber(n: number): string {
-  return Math.round(n).toLocaleString();
+  return Math.round(n).toLocaleString('en-US');
 }
 
 // Format for chart axis: 14108 → "14k"
@@ -87,7 +95,7 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
 
   const topWinner = Object.entries(wins).sort((a, b) => b[1] - a[1])[0];
   const winnerKey = topWinner[0];
-  const winnerLabel = SERVERS[winnerKey]?.short || winnerKey;
+  const winnerLabel = serverName(winnerKey, 'short');
 
   // 1. Overall winner
   const healthScenario = scenarios.find((s) => s.id === 'health');
@@ -125,7 +133,7 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
       ...visible.map((k) => heavyScenario.servers[k]?.requests?.rate || 0),
     );
     const heavyPct = Math.round(((bestHeavyRate - worstRate) / worstRate) * 100);
-    const worstLabel = SERVERS[worstKey]?.short || worstKey;
+    const worstLabel = serverName(worstKey, 'short');
 
     findings.push({
       icon: Database,
@@ -157,8 +165,8 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
 
     findings.push({
       icon: SquarePen,
-      title: `Mutations: ${SERVERS[mutWinner]?.short} wins`,
-      desc: `${SERVERS[mutLoser]?.short} is ${mutPct}% slower on writes`,
+      title: `Mutations: ${serverName(mutWinner, 'short')} wins`,
+      desc: `${serverName(mutLoser, 'short')} is ${mutPct}% slower on writes`,
       color: SERVERS[mutWinner]?.color || '#00e676',
     });
   }
