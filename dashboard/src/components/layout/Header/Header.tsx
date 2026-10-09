@@ -27,10 +27,13 @@ export function Header({ meta }: HeaderProps) {
           <ThemeToggle />
         </div>
       </div>
-      <p className="w-full text-xs text-muted-foreground leading-relaxed max-w-3xl">
-        Compare NestJS with direct integrations (without NestJS). Express and Fastify host the
-        GraphQL endpoint; standalone Yoga runs directly on Node.js HTTP.
-      </p>
+      {/* basis-full keeps the description on its own row, so it never sits beside the buttons */}
+      <div className="basis-full">
+        <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
+          Compare NestJS with direct integrations (without NestJS). Express and Fastify host the
+          GraphQL endpoint; standalone Yoga runs directly on Node.js HTTP.
+        </p>
+      </div>
     </header>
   );
 }
