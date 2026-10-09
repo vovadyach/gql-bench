@@ -2,18 +2,20 @@
 
 import { LatencyChartProps } from '@/components/charts/LatencyChart/LatencyChart.types';
 import { useMemo } from 'react';
-import { SERVERS } from '@/lib/constants';
-import { serverName } from '@/lib/utils';
+import { SERVERS, TIER_FILL_OPACITY } from '@/lib/constants';
+import { chartOrder, serverColor, serverName } from '@/lib/utils';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { ChartLegend } from '@/components/charts/ChartLegend/ChartLegend';
 
 export function LatencyChart({ scenario, visible }: LatencyChartProps) {
+  const keys = useMemo(() => chartOrder(visible), [visible]);
   const data = useMemo(
     () =>
       ['med', 'p90', 'p95', 'p99'].map((p) => {
         const row: Record<string, string | number> = {
           pct: p === 'med' ? 'P50' : p.toUpperCase(),
         };
-        visible.forEach((k) => {
+        keys.forEach((k) => {
           row[k] =
             scenario.servers[k]?.latency_ms?.[
               p as keyof (typeof scenario.servers)[typeof k]['latency_ms']
@@ -21,7 +23,7 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
         });
         return row;
       }),
-    [scenario, visible],
+    [scenario, keys],
   );
 
   return (
@@ -30,6 +32,7 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
       <p className="text-xs text-muted-foreground mb-4">
         Response time distribution — lower is better
       </p>
+      <ChartLegend visible={visible} />
 
       <div className="border rounded-xl p-4 bg-card">
         <ResponsiveContainer width="100%" height={220}>
@@ -39,7 +42,7 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
             barGap={2}
             barCategoryGap="18%"
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <CartesianGrid vertical={false} stroke="var(--border)" />
             <XAxis
               dataKey="pct"
               tick={{ fill: 'var(--muted-foreground)', fontSize: 10 }}
@@ -61,21 +64,20 @@ export function LatencyChart({ scenario, visible }: LatencyChartProps) {
               itemStyle={{
                 lineHeight: '14px',
                 fontSize: 11,
+                color: 'var(--foreground)',
               }}
             />
-            {visible.map((k) => {
-              const server = SERVERS[k];
-              return (
-                <Bar
-                  key={k}
-                  dataKey={k}
-                  name={serverName(k)}
-                  fill={server.color}
-                  fillOpacity={server.opacity}
-                  radius={[4, 4, 0, 0]}
-                />
-              );
-            })}
+            {keys.map((k) => (
+              <Bar
+                key={k}
+                dataKey={k}
+                name={serverName(k)}
+                fill={serverColor(k)}
+                fillOpacity={TIER_FILL_OPACITY[SERVERS[k].tier]}
+                radius={[4, 4, 0, 0]}
+                maxBarSize={24}
+              />
+            ))}
           </BarChart>
         </ResponsiveContainer>
       </div>

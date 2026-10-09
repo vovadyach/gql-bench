@@ -1,4 +1,4 @@
 export const PROFILE_LABELS: Record<string, string> = {
-  quick: 'Quick (~5 min)',
-  standard: 'Standard (~30 min)',
+  quick: 'Quick (~16 min)',
+  standard: 'Standard (~70 min)',
 };

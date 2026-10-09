@@ -3,6 +3,7 @@ import { SERVERS, TIER_LABELS } from '@/lib/constants';
 import { calcPercentage, cn, formatNumber } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
+import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
 
 export default function Degradation({ data, visible }: DegradationProps) {
   if (!data) return null;
@@ -36,7 +37,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
             <div
               key={key}
               className={cn(
-                'min-h-[220px] min-w-0 rounded-xl border p-4 bg-card relative',
+                'min-w-0 rounded-xl border p-4 bg-card relative',
                 !isOn && 'opacity-40 grayscale scale-95',
               )}
               style={{
@@ -90,6 +91,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
                     : `+${pct}% vs slowest`
                   : null}
               </p>
+              <NestjsDelta results={data} serverKey={key} className="mt-1" />
               <div className="grid grid-cols-2 gap-1 mt-3 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>med {d.latency_ms.med}ms</span>

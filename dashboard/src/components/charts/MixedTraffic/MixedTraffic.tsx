@@ -3,6 +3,7 @@ import { SERVERS, TIER_LABELS } from '@/lib/constants';
 import { calcPercentage, cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
+import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
 
 export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
   if (!data) return null;
@@ -21,7 +22,8 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
     <div className="mb-8">
       <h2 className="text-sm font-bold mb-1">Mixed Traffic</h2>
       <p className="text-xs text-muted-foreground mb-4">
-        Production-like query mix — 60% light, 25% medium, 15% heavy
+        Production-like query mix — 30% health · 25% single user · 20% mutation · 15% user list ·
+        10% deep nested
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
@@ -36,7 +38,7 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
             <div
               key={key}
               className={cn(
-                'min-h-[180px] min-w-0 rounded-xl border p-4 bg-card relative',
+                'min-w-0 rounded-xl border p-4 bg-card relative',
                 !isOn && 'opacity-40 grayscale scale-95',
               )}
               style={{
@@ -87,6 +89,7 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
               >
                 {key === slowest ? 'baseline' : `+${pct}% vs slowest`}
               </p>
+              <NestjsDelta results={data} serverKey={key} className="mt-1" />
               <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>p99 {d.latency_ms.p99}ms</span>

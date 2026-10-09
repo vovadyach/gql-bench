@@ -80,16 +80,20 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --server-express: #d63444;
-  --server-fastify: #00994d;
+  /* Validated (dataviz validate_palette.js) for color-vision deficiency on the light card */
+  --server-express: #b91c1c;
+  --server-fastify: #16a34a;
   --server-mercurius: #0077b3;
-  --server-yoga: #a855f7;
-  --server-raw-express-apollo: #d63444;
-  --server-raw-express-yoga: #a855f7;
-  --server-raw-fastify-apollo: #00994d;
+  --server-yoga: #7c3aed;
+  --server-raw-express-apollo: #b91c1c;
+  --server-raw-express-yoga: #ea580c;
+  --server-raw-fastify-apollo: #16a34a;
   --server-raw-fastify-mercurius: #0077b3;
-  --server-raw-fastify-yoga: #a855f7;
-  --server-yoga-standalone: #a855f7;
+  --server-raw-fastify-yoga: #7c3aed;
+  --server-yoga-standalone: #0d9488;
+  /* Sequential (one-hue) scale for the relative-throughput heatmap */
+  --heat: #2a78d6;
+  --heat-max: 45%;
   --complexity-light: #00663d;
   --complexity-medium: #005c8a;
   --complexity-heavy: #a35e00;
@@ -128,16 +132,19 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  /* Validated (dataviz validate_palette.js) for color-vision deficiency on the dark card */
   --server-express: #ff4757;
   --server-fastify: #00e676;
   --server-mercurius: #00b0ff;
-  --server-yoga: #c084fc;
+  --server-yoga: #8b5cf6;
   --server-raw-express-apollo: #ff4757;
-  --server-raw-express-yoga: #c084fc;
+  --server-raw-express-yoga: #fb923c;
   --server-raw-fastify-apollo: #00e676;
   --server-raw-fastify-mercurius: #00b0ff;
-  --server-raw-fastify-yoga: #c084fc;
-  --server-yoga-standalone: #c084fc;
+  --server-raw-fastify-yoga: #8b5cf6;
+  --server-yoga-standalone: #2dd4bf;
+  --heat: #5598e7;
+  --heat-max: 60%;
   --complexity-light: #00e676;
   --complexity-medium: #00b0ff;
   --complexity-heavy: #ffa726;

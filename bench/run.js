@@ -85,6 +85,8 @@ const SCENARIOS = [
 
 // ─── Servers ───────────────────────────────────────────
 
+// Each NestJS server runs right before its direct twin, so every NestJS-vs-direct
+// comparison is measured minutes apart under the same machine conditions
 const SERVERS = [
   {
     name: 'Express',
@@ -93,34 +95,16 @@ const SERVERS = [
     env: { ADAPTER: 'express' },
   },
   {
-    name: 'Fastify',
-    port: 3002,
-    entry: '../servers/nestjs/dist/main-fastify.js',
-    env: { ADAPTER: 'fastify' },
-  },
-  {
-    name: 'Mercurius',
-    port: 3003,
-    entry: '../servers/nestjs/dist/main-mercurius.js',
-    env: { ADAPTER: 'mercurius' },
-  },
-  {
-    name: 'Yoga',
-    port: 3004,
-    entry: '../servers/nestjs/dist/main-yoga.js',
-    env: { ADAPTER: 'yoga' },
-  },
-  {
     name: 'Raw-Express-Apollo',
     port: 3005,
     entry: '../servers/node/dist/express-apollo.js',
     env: { ADAPTER: 'raw-express-apollo' },
   },
   {
-    name: 'Raw-Express-Yoga',
-    port: 3006,
-    entry: '../servers/node/dist/express-yoga.js',
-    env: { ADAPTER: 'raw-express-yoga' },
+    name: 'Fastify',
+    port: 3002,
+    entry: '../servers/nestjs/dist/main-fastify.js',
+    env: { ADAPTER: 'fastify' },
   },
   {
     name: 'Raw-Fastify-Apollo',
@@ -129,16 +113,35 @@ const SERVERS = [
     env: { ADAPTER: 'raw-fastify-apollo' },
   },
   {
+    name: 'Mercurius',
+    port: 3003,
+    entry: '../servers/nestjs/dist/main-mercurius.js',
+    env: { ADAPTER: 'mercurius' },
+  },
+  {
     name: 'Raw-Fastify-Mercurius',
     port: 3008,
     entry: '../servers/node/dist/fastify-mercurius.js',
     env: { ADAPTER: 'raw-fastify-mercurius' },
   },
   {
+    name: 'Yoga',
+    port: 3004,
+    entry: '../servers/nestjs/dist/main-yoga.js',
+    env: { ADAPTER: 'yoga' },
+  },
+  {
     name: 'Raw-Fastify-Yoga',
     port: 3009,
     entry: '../servers/node/dist/fastify-yoga.js',
     env: { ADAPTER: 'raw-fastify-yoga' },
+  },
+  // Direct-only (no NestJS version)
+  {
+    name: 'Raw-Express-Yoga',
+    port: 3006,
+    entry: '../servers/node/dist/express-yoga.js',
+    env: { ADAPTER: 'raw-express-yoga' },
   },
   {
     name: 'Yoga-Standalone',

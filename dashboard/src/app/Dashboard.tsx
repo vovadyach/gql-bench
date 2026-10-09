@@ -15,22 +15,21 @@ import { ComingSoon } from '@/components/sections/ComingSoon/ComingSoon';
 import { Footer } from '@/components/layout/Footer/Footer';
 import { CardGridSkeleton } from '@/components/shared/CardGridSkeleton/CardGridSkeleton';
 import { TableSkeleton } from '@/components/shared/TableSkeleton/TableSkeleton';
+import { SmallMultiplesSkeleton } from '@/components/shared/SmallMultiplesSkeleton/SmallMultiplesSkeleton';
 import { useVisibleServers } from '@/hooks/useVisibleServers';
 import { lazy, SetStateAction, useMemo, useState, useTransition } from 'react';
 import { generateFindings } from '@/lib/utils';
 import { LazySection } from '@/components/shared/LazySection/LazySection';
 import { SERVERS } from '@/lib/constants';
 
-const P99AreaChart = lazy(() => import('@/components/charts/P99AreaChart/P99AreaChart'));
-const PerformanceRadar = lazy(
-  () => import('@/components/charts/PerformanceRadar/PerformanceRadar'),
-);
+const P99Chart = lazy(() => import('@/components/charts/P99Chart/P99Chart'));
+const RelativeHeatmap = lazy(() => import('@/components/charts/RelativeHeatmap/RelativeHeatmap'));
 const MixedTraffic = lazy(() => import('@/components/charts/MixedTraffic/MixedTraffic'));
 const Degradation = lazy(() => import('@/components/charts/Degradation/Degradation'));
 const RawDataTable = lazy(() => import('@/components/sections/RawDataTable/RawDataTable'));
 
 export function Dashboard() {
-  const { visible, toggle } = useVisibleServers();
+  const { visible, toggle, toggleTier } = useVisibleServers();
   const [activeScenario, setActiveScenario] = useState(0);
   const [profile, setProfile] = useState('standard');
   const data = PROFILES[profile];
@@ -49,6 +48,12 @@ export function Dashboard() {
   function handleServerToggle(server: string) {
     startTransition(() => {
       toggle(server);
+    });
+  }
+
+  function handleTierToggle(keys: string[]) {
+    startTransition(() => {
+      toggleTier(keys);
     });
   }
 
@@ -87,7 +92,11 @@ export function Dashboard() {
         <Header meta={data.meta} />
       </FadeIn>
       <FadeIn delay={50}>
-        <ServerToggles visible={visible} onToggle={handleServerToggle} />
+        <ServerToggles
+          visible={visible}
+          onToggle={handleServerToggle}
+          onToggleTier={handleTierToggle}
+        />
       </FadeIn>
       <FadeIn delay={250}>
         <HeroCards
@@ -121,11 +130,19 @@ export function Dashboard() {
       <FadeIn delay={450}>
         <LatencyChart scenario={activeScenarioData} visible={visible} />
       </FadeIn>
-      <LazySection>
-        <P99AreaChart scenarios={data.scenarios} visible={visible} />
+      <LazySection skeleton={<SmallMultiplesSkeleton panels={data.scenarios.length} />}>
+        <P99Chart scenarios={data.scenarios} visible={visible} />
       </LazySection>
-      <LazySection height="min-h-[410px]">
-        <PerformanceRadar scenarios={data.scenarios} visible={visible} />
+      <LazySection
+        skeleton={
+          <TableSkeleton
+            rows={visible.filter((key) => data.scenarios.some((s) => s.servers[key])).length}
+            groups={0}
+            rowHeight={35}
+          />
+        }
+      >
+        <RelativeHeatmap scenarios={data.scenarios} visible={visible} />
       </LazySection>
       {data.mixed_traffic && (
         <LazySection
@@ -150,7 +167,7 @@ export function Dashboard() {
           <Degradation data={data.degradation} visible={visible} />
         </LazySection>
       )}
-      <LazySection>
+      <LazySection height="min-h-[670px] sm:min-h-[396px]">
         <KeyFindings findings={findings} />
       </LazySection>
       <LazySection

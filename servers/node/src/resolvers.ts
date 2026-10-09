@@ -1,6 +1,13 @@
 import { makeUser, cpuWork, getUptime } from './data';
 
+const isoCreatedAt = ({ createdAt }: { createdAt: Date }) => createdAt.toISOString();
+
 export const resolvers = {
+  // Same cost model as the NestJS DateTime scalar: format a date only if the query selects it
+  Comment: { createdAt: isoCreatedAt },
+  Post: { createdAt: isoCreatedAt },
+  User: { createdAt: isoCreatedAt },
+
   Query: {
     health: () => ({
       status: 'ok',
@@ -62,7 +69,7 @@ export const resolvers = {
         tags: input.tags || [],
         viewCount: 0,
         rating: 0,
-        createdAt: new Date().toISOString(),
+        createdAt: new Date(),
         comments: [],
       };
     },

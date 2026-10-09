@@ -3,6 +3,7 @@ import { calcPercentage, cn, getSlowest, getWinner } from '@/lib/utils';
 import { SERVERS, TIER_LABELS } from '@/lib/constants';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
+import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
 
 export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
   const winner = getWinner(scenario, visible);
@@ -88,6 +89,7 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
                       : `+${pct}% vs slowest`}
                 </p>
               </div>
+              <NestjsDelta results={scenario.servers} serverKey={key} className="mt-1" />
 
               <div className="grid grid-cols-2 gap-1 mt-4 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {data.latency_ms.avg}ms</span>

@@ -28,8 +28,8 @@ export function Header({ meta }: HeaderProps) {
         </div>
       </div>
       <p className="w-full text-xs text-muted-foreground leading-relaxed max-w-3xl">
-        Compare NestJS with direct integrations (without NestJS). Express and Fastify host
-        the GraphQL endpoint; standalone Yoga runs directly on Node.js HTTP.
+        Compare NestJS with direct integrations (without NestJS). Express and Fastify host the
+        GraphQL endpoint; standalone Yoga runs directly on Node.js HTTP.
       </p>
     </header>
   );

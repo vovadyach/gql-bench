@@ -1,98 +1,63 @@
 import type { ServerConfig } from './types';
 
-// Server configurations
+// Server registry. Colors live in globals.css as --server-<key>: a NestJS server and its
+// direct twin share a color, and the tier (solid vs faded) tells them apart.
 export const SERVERS: Record<string, ServerConfig> = {
   express: {
     key: 'express',
     label: 'Express + Apollo',
-    short: 'Express',
-    color: '#ff4757',
-    glow: 'rgba(255,71,87,.10)',
     tier: 'nestjs',
-    opacity: 1,
   },
   fastify: {
     key: 'fastify',
     label: 'Fastify + Apollo',
-    short: 'Fastify',
-    color: '#00e676',
-    glow: 'rgba(0,230,118,.10)',
     tier: 'nestjs',
-    opacity: 1,
   },
   mercurius: {
     key: 'mercurius',
     label: 'Fastify + Mercurius',
-    short: 'Mercurius',
-    color: '#00b0ff',
-    glow: 'rgba(0,176,255,.10)',
     tier: 'nestjs',
-    opacity: 1,
   },
   yoga: {
     key: 'yoga',
     label: 'Fastify + Yoga',
-    short: 'Yoga',
-    color: '#a855f7',
-    glow: 'rgba(168,85,247,.10)',
     tier: 'nestjs',
-    opacity: 1,
   },
-  // Raw
+  // Direct (without NestJS)
   'raw-express-apollo': {
     key: 'raw-express-apollo',
     label: 'Express + Apollo',
-    short: 'Express+Apollo',
-    color: '#ff4757',
-    glow: 'rgba(255,71,87,.10)',
     tier: 'raw',
-    opacity: 0.65,
+    nestjsTwin: 'express',
   },
   'raw-express-yoga': {
     key: 'raw-express-yoga',
     label: 'Express + Yoga',
-    short: 'Express+Yoga',
-    color: '#a855f7',
-    glow: 'rgba(168,85,247,.10)',
     tier: 'raw',
-    opacity: 0.65,
   },
   'raw-fastify-apollo': {
     key: 'raw-fastify-apollo',
     label: 'Fastify + Apollo',
-    short: 'Fastify+Apollo',
-    color: '#00e676',
-    glow: 'rgba(0,230,118,.10)',
     tier: 'raw',
-    opacity: 0.65,
+    nestjsTwin: 'fastify',
   },
   'raw-fastify-mercurius': {
     key: 'raw-fastify-mercurius',
     label: 'Fastify + Mercurius',
-    short: 'Mercurius',
-    color: '#00b0ff',
-    glow: 'rgba(0,176,255,.10)',
     tier: 'raw',
-    opacity: 0.65,
+    nestjsTwin: 'mercurius',
   },
   'raw-fastify-yoga': {
     key: 'raw-fastify-yoga',
     label: 'Fastify + Yoga',
-    short: 'Fastify+Yoga',
-    color: '#a855f7',
-    glow: 'rgba(168,85,247,.10)',
     tier: 'raw',
-    opacity: 0.65,
+    nestjsTwin: 'yoga',
   },
   // Standalone
   'yoga-standalone': {
     key: 'yoga-standalone',
     label: 'Yoga Standalone',
-    short: 'Yoga Standalone',
-    color: '#a855f7',
-    glow: 'rgba(168,85,247,.10)',
     tier: 'raw',
-    opacity: 0.45,
   },
 };
 
@@ -103,6 +68,13 @@ export const TIER_LABELS: Record<ServerConfig['tier'], string> = {
   nestjs: 'NestJS',
   raw: 'Direct',
   standalone: 'Standalone',
+};
+
+// Chart fills: solid for NestJS, faded for direct, so twins sharing a color stay distinct
+export const TIER_FILL_OPACITY: Record<ServerConfig['tier'], number> = {
+  nestjs: 1,
+  raw: 0.5,
+  standalone: 0.5,
 };
 
 // Complexity colors for scenario badges

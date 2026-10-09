@@ -10,5 +10,14 @@ export function useVisibleServers() {
     );
   };
 
-  return { visible, toggle };
+  // Show a whole tier, or hide it when it's fully shown (never hides everything)
+  const toggleTier = (keys: string[]) => {
+    setVisible((v) => {
+      if (!keys.every((k) => v.includes(k))) return [...v, ...keys.filter((k) => !v.includes(k))];
+      const rest = v.filter((k) => !keys.includes(k));
+      return rest.length ? rest : v;
+    });
+  };
+
+  return { visible, toggle, toggleTier };
 }

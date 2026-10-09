@@ -79,7 +79,7 @@ export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
                         }}
                       >
                         <td
-                          className="px-3 py-3 font-bold"
+                          className="px-3 py-3 font-bold whitespace-nowrap"
                           style={{ color: `var(--server-${key})` }}
                         >
                           <div className="inline-flex items-center gap-1">

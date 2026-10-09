@@ -8,7 +8,7 @@ export function CardGridSkeleton({ count, tall = false }: { count: number; tall?
           {Array.from({ length: count }, (_, i) => (
             <div
               key={i}
-              className={`rounded-xl border p-4 bg-card space-y-3 ${tall ? 'min-h-[220px]' : 'min-h-[180px]'}`}
+              className={`rounded-xl border p-4 bg-card space-y-3 ${tall ? 'h-[191px]' : 'h-[143px]'}`}
             >
               <div className="h-4 w-3/4 rounded bg-muted" />
               <div className="h-7 w-1/2 rounded bg-muted" />
