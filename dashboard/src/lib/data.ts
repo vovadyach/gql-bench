@@ -1,5 +1,5 @@
-import quickData from './quick-data_m1.json';
-import standardData from './standard-data_m1.json';
+import quickData from './quick-data_m1_median.json';
+import standardData from './standard-data_m1_median.json';
 import type { BenchmarkData } from './types';
 
 export const PROFILES: Record<string, BenchmarkData> = {

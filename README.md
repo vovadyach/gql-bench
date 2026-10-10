@@ -108,7 +108,8 @@ Not autocannon. Not wrk. k6 because:
 ## How It Works
 
 1. Pre-flight: measures cold start times, verifies response sizes match
-2. For each server (one at a time, full CPU):
+2. For each server (one at a time, full CPU), in NestJS/Direct pairs
+   (NestJS X, then Direct X) so both sides of a pair see the same machine conditions:
     - Start server
     - Warmup (3000 requests, thrown away)
     - k6 ramps 0→50 users gradually, holds 30s, ramps down
@@ -117,6 +118,13 @@ Not autocannon. Not wrk. k6 because:
 3. Mixed traffic: random mix of all query types (production-like)
 4. Degradation: ramp to 500 users, find where each server breaks
 5. Save everything to JSON
+
+For published numbers, run the full benchmark several times and combine the runs
+(median is robust to one noisy run):
+
+```bash
+node bench/merge-runs.js --median out.json run1.json run2.json run3.json
+```
 
 ## Project Structure
 
@@ -165,6 +173,7 @@ gql-bench/
 │
 ├── bench/                                   ← Runner (language-agnostic)
 │   ├── run.js                               ← orchestrates everything
+│   ├── merge-runs.js                        ← combines several runs (mean or --median)
 │   └── preflight.js                         ← cold start + response size checks
 │
 ├── results/                                 ← Output

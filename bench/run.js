@@ -401,9 +401,9 @@ function extractMetrics(summary, k6ExitCode) {
       sent_mb: +((sent.count || 0) / 1024 / 1024).toFixed(2),
     },
     errors: {
-      http_failure_rate: +(failed.rate || 0).toFixed(4),
-      graphql_error_rate: +(gqlErr.rate || 0).toFixed(4),
-      valid_response_rate: +(gqlOk.rate || 0).toFixed(4),
+      http_failure_rate: +(failed.value ?? 0).toFixed(4),
+      graphql_error_rate: +(gqlErr.value ?? 0).toFixed(4),
+      valid_response_rate: +(gqlOk.value ?? 0).toFixed(4),
     },
     response_size_bytes: {
       avg: +(size.avg || 0).toFixed(0),
