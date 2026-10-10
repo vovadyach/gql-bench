@@ -87,7 +87,8 @@ export const COMPLEXITY_COLORS: Record<string, string> = {
 
 // Coming soon languages
 export const COMING_SOON = [
-  { lang: 'Go', frameworks: 'chi · Gin · Fiber', color: '#00d4ff' },
+  { lang: 'Python', frameworks: 'FastAPI + Strawberry', color: '#eab308' },
+  { lang: 'Go', frameworks: 'chi + gqlgen', color: '#00d4ff' },
   { lang: 'C#', frameworks: '.NET + Hot Chocolate', color: '#bf5af2' },
   { lang: 'Java', frameworks: 'Spring + Netflix DGS', color: '#ff8a2b' },
 ];

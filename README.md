@@ -36,12 +36,10 @@ show up as "raw is slower than NestJS".
 ## Coming Soon
 
 ```
+🔜 Python — FastAPI + Strawberry
 🔜 Go — chi + gqlgen
-🔜 Go — Fiber + gqlgen
-🔜 Go — Gin + gqlgen
 🔜 C# — ASP.NET + Hot Chocolate
 🔜 Java — Spring Boot + Netflix DGS
-🔜 Python — FastAPI + Strawberry   
 ```
 
 ## Prerequisites
