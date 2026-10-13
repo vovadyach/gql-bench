@@ -22,6 +22,18 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
           <SheetDescription>Benchmark setup, environment, and machine details.</SheetDescription>
         </SheetHeader>
         <div className=" space-y-6">
+          <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+            <p className="font-semibold text-foreground">What is being compared?</p>
+            <p>
+              Every setup serves the same GraphQL schema and queries. NestJS setups use framework
+              integrations; direct setups use the GraphQL server without NestJS.
+            </p>
+            <p>
+              Express and Fastify provide HTTP routing. Apollo Server, Yoga, and Mercurius handle
+              GraphQL. Standalone Yoga connects directly to Node.js HTTP, without Express, Fastify,
+              or Apollo Server.
+            </p>
+          </div>
           {meta.methodology.map((m, i) => (
             <div key={i} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
               <span className="text-blue-400 shrink-0">→</span>

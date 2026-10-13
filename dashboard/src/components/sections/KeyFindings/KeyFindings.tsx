@@ -1,4 +1,5 @@
 import { KeyFindingsProps } from '@/components/sections/KeyFindings/KeyFindings.types';
+import { cn } from '@/lib/utils';
 
 export function KeyFindings({ findings }: KeyFindingsProps) {
   return (
@@ -8,7 +9,7 @@ export function KeyFindings({ findings }: KeyFindingsProps) {
         {findings.map((f, i) => (
           <div
             key={i}
-            className="rounded-xl border p-4 bg-card"
+            className={cn('rounded-xl border p-4 bg-card', f.wide && 'sm:col-span-2')}
             style={{ borderLeftWidth: 2, borderLeftColor: f.color }}
           >
             <f.icon className="h-5 w-5" />

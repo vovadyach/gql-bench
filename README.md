@@ -4,7 +4,12 @@
 ![GraphQL](https://img.shields.io/badge/GraphQL-16-e535ab?logo=graphql)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-Same schema, same queries, fair fight.
+Same GraphQL schema and queries across server stacks.
+
+Every configuration benchmarks GraphQL requests. Express and Fastify host the GraphQL
+endpoint; Apollo Server, Yoga, and Mercurius handle GraphQL. The dashboard compares
+**NestJS** integrations with **Direct** setups (without NestJS), including **Yoga Standalone**,
+which runs directly on Node.js HTTP without Express, Fastify, or Apollo Server.
 
 ## Currently Testing
 
@@ -13,17 +18,28 @@ Same schema, same queries, fair fight.
 ✅ NestJS — Fastify + Apollo
 ✅ NestJS — Fastify + Mercurius
 ✅ NestJS — Fastify + Yoga
+
+✅ Raw Node.js — Express + Apollo
+✅ Raw Node.js — Fastify + Apollo
+✅ Raw Node.js — Fastify + Mercurius
+✅ Raw Node.js — Fastify + Yoga
+✅ Raw Node.js — Express + Yoga
+✅ Raw Node.js — Yoga standalone (node:http, no HTTP framework)
 ```
+
+Raw servers pin the exact library versions NestJS 10 resolves (Express 4.22, Fastify 4.28,
+Apollo Server 4.13, Mercurius 14.1, Yoga 5.10), so NestJS vs raw measures NestJS itself —
+not library upgrades. On newer majors (Fastify 5, Apollo Server 5, Mercurius 16) the same raw
+Fastify servers ran 10–17% slower than NestJS on `health` in an A/B test, which would otherwise
+show up as "raw is slower than NestJS".
 
 ## Coming Soon
 
 ```
+🔜 Python — FastAPI + Strawberry
 🔜 Go — chi + gqlgen
-🔜 Go — Fiber + gqlgen
-🔜 Go — Gin + gqlgen
 🔜 C# — ASP.NET + Hot Chocolate
 🔜 Java — Spring Boot + Netflix DGS
-🔜 Python — FastAPI + Strawberry   
 ```
 
 ## Prerequisites
@@ -38,13 +54,13 @@ brew install k6          # Mac
 ## Run It
 
 ```bash
-# Step 1: Install Node dependencies
+# Step 1: Install dependencies (NestJS + raw Node.js servers)
 npm run setup
 
-# Step 2: Quick test (3 minutes)
+# Step 2: Quick test (~16 minutes)
 npm run bench:quick
 
-# Step 3: Full benchmark (30 minutes)
+# Step 3: Full benchmark (~70 minutes)
 npm run bench
 ```
 
@@ -68,13 +84,15 @@ Results in `results/latest.json`.
 | Mixed traffic | Production-like query distribution (60/25/15 split) |
 | Degradation | Ramp 10→500 users, find the breaking point |
 
-## Three Findings
+## Key Comparisons
 
 ```
 Express+Apollo → Fastify+Apollo:      "Does the HTTP adapter matter?"
 Fastify+Apollo → Fastify+Mercurius:   "Does the GraphQL engine matter?"
 Fastify+Mercurius → Fastify+Yoga:     "Which GraphQL engine is fastest on Fastify?"
 Express+Apollo → Fastify+Mercurius:   "What's the total gain switching both?"
+NestJS X → Raw X:                     "What does NestJS itself cost?"
+Yoga standalone → Raw X+Yoga:         "What does the HTTP framework cost?"
 ```
 
 ## Benchmark Tool: k6 by Grafana Labs
@@ -88,7 +106,8 @@ Not autocannon. Not wrk. k6 because:
 ## How It Works
 
 1. Pre-flight: measures cold start times, verifies response sizes match
-2. For each server (one at a time, full CPU):
+2. For each server (one at a time, full CPU), in NestJS/Direct pairs
+   (NestJS X, then Direct X) so both sides of a pair see the same machine conditions:
     - Start server
     - Warmup (3000 requests, thrown away)
     - k6 ramps 0→50 users gradually, holds 30s, ramps down
@@ -98,6 +117,13 @@ Not autocannon. Not wrk. k6 because:
 4. Degradation: ramp to 500 users, find where each server breaks
 5. Save everything to JSON
 
+For published numbers, run the full benchmark several times and combine the runs
+(median is robust to one noisy run):
+
+```bash
+node bench/merge-runs.js --median out.json run1.json run2.json run3.json
+```
+
 ## Project Structure
 
 ```
@@ -106,16 +132,31 @@ gql-bench/
 │   └── benchmark.graphql                   ← THE contract
 │
 ├── servers/
-│   ├── node/                               ← Node.js servers
+│   ├── nestjs/                             ← NestJS 10 servers
 │   │   ├── src/
-│   │   │   ├── shared.ts                   ← types, data, resolver (shared by all 3)
+│   │   │   ├── shared.ts                   ← types, data, resolver (shared by all 4)
 │   │   │   ├── app.module.ts               ← Apollo config
 │   │   │   ├── app.module-mercurius.ts     ← Mercurius config
+│   │   │   ├── app.module-yoga.ts          ← Yoga config
 │   │   │   ├── main-express.ts             ← Express + Apollo
 │   │   │   ├── main-fastify.ts             ← Fastify + Apollo
 │   │   │   ├── main-mercurius.ts           ← Fastify + Mercurius
 │   │   │   └── main-yoga.ts                ← Fastify + Yoga
 │   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   ├── node/                               ← Raw Node.js servers (no NestJS)
+│   │   ├── src/
+│   │   │   ├── schema.ts                   ← loads schema/benchmark.graphql
+│   │   │   ├── resolvers.ts                ← resolvers (shared by all 6)
+│   │   │   ├── data.ts                     ← same fake data as the NestJS DataService
+│   │   │   ├── express-apollo.ts           ← Express + Apollo
+│   │   │   ├── express-yoga.ts             ← Express + Yoga
+│   │   │   ├── fastify-apollo.ts           ← Fastify + Apollo
+│   │   │   ├── fastify-mercurius.ts        ← Fastify + Mercurius
+│   │   │   ├── fastify-yoga.ts             ← Fastify + Yoga
+│   │   │   └── yoga-standalone.ts          ← Yoga on plain node:http
+│   │   ├── package.json                    ← versions pinned to match NestJS 10
 │   │   └── tsconfig.json
 │   │
 │   ├── go/                                  ← add later 🔜
@@ -130,6 +171,7 @@ gql-bench/
 │
 ├── bench/                                   ← Runner (language-agnostic)
 │   ├── run.js                               ← orchestrates everything
+│   ├── merge-runs.js                        ← combines several runs (mean or --median)
 │   └── preflight.js                         ← cold start + response size checks
 │
 ├── results/                                 ← Output
@@ -143,5 +185,7 @@ gql-bench/
 1. Create `servers/your-lang/` with code implementing `schema/benchmark.graphql`
 2. Add one entry to the SERVERS array in `bench/run.js`
 3. Run `npm run bench`
+4. To show it on the dashboard, add it to `SERVERS` in `dashboard/src/lib/constants.ts`
+   and give it a `--server-<key>` color in `dashboard/src/app/globals.css`
 
-Nothing else changes. k6 scripts, runner logic, and results format stay the same.
+k6 scripts, runner logic, and results format stay the same.

@@ -15,8 +15,10 @@ export function ScenarioPicker({ scenarios, active, onChange }: ScenarioPickerPr
         return (
           <button
             key={s.id}
+            type="button"
             onClick={() => onChange(i)}
-            className="shrink-0 sm:shrink snap-start sm:snap-align-none flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-semibold cursor-pointer"
+            aria-pressed={isActive}
+            className="shrink-0 sm:shrink snap-start sm:snap-align-none flex items-center gap-2 px-4 py-2 rounded-lg border text-xs font-semibold cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             style={{
               borderColor: isActive ? color : 'var(--border)',
               backgroundColor: isActive

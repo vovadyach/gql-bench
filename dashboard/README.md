@@ -11,7 +11,7 @@ Interactive benchmark dashboard for the GraphQL Bench Suite.
 - Next.js 16 (App Router)
 - Tailwind CSS v4
 - shadcn/ui
-- Recharts + D3 (hybrid)
+- Recharts
 - TypeScript
 
 ## Development
@@ -28,12 +28,11 @@ src/
 ├── app/              — pages and layout
 ├── components/
 │   ├── ui/           — shadcn components
-│   ├── layout/       — Header, Footer
-│   ├── controls/     — ServerToggles, ScenarioPicker
-│   ├── charts/       — Recharts components
-│   ├── d3/           — D3 custom visualizations
+│   ├── layout/       — Header, Footer, MethodologyDrawer
+│   ├── controls/     — ServerToggles, ScenarioPicker, ProfileSelector
+│   ├── charts/       — hero/scenario cards, small multiples, heatmap, latency, mixed traffic, degradation
 │   ├── sections/     — KeyFindings, RawDataTable, ComingSoon
-│   └── shared/       — AnimatedNumber, ChartTooltip
-├── hooks/            — useBenchmarkData, useTheme, useVisibleServers
-└── lib/              — types, constants, utils, data
+│   └── shared/       — AnimatedNumber, FadeIn, NestjsDelta, skeletons, ThemeToggle
+├── hooks/            — useVisibleServers
+└── lib/              — types, constants, utils, data (+ benchmark result JSON)
 ```

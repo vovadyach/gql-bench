@@ -2,12 +2,12 @@
 import { ComponentType } from 'react';
 import { LucideProps } from 'lucide-react';
 
+// Color comes from the --server-<key> CSS variable (globals.css), so it follows the theme
 export interface ServerConfig {
   key: string;
   label: string; // "Express + Apollo"
-  short: string; // "Express"
-  color: string; // "#ff4757"
-  glow: string; // "rgba(255,71,87,.10)"
+  tier: 'nestjs' | 'raw' | 'standalone'; // "nestjs"
+  nestjsTwin?: string; // the same stack under NestJS, e.g. "express" for raw-express-apollo
 }
 
 // Result from one server on one scenario
@@ -103,4 +103,5 @@ export interface Finding {
   title: string;
   desc: string;
   color: string;
+  wide?: boolean; // spans the full row (the headline finding)
 }

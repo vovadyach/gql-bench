@@ -13,23 +13,23 @@ import { LatencyChart } from '@/components/charts/LatencyChart/LatencyChart';
 import { KeyFindings } from '@/components/sections/KeyFindings/KeyFindings';
 import { ComingSoon } from '@/components/sections/ComingSoon/ComingSoon';
 import { Footer } from '@/components/layout/Footer/Footer';
-import dynamic from 'next/dynamic';
+import { CardGridSkeleton } from '@/components/shared/CardGridSkeleton/CardGridSkeleton';
 import { TableSkeleton } from '@/components/shared/TableSkeleton/TableSkeleton';
+import { SmallMultiplesSkeleton } from '@/components/shared/SmallMultiplesSkeleton/SmallMultiplesSkeleton';
 import { useVisibleServers } from '@/hooks/useVisibleServers';
-import { SetStateAction, useMemo, useState, useTransition } from 'react';
+import { lazy, SetStateAction, useMemo, useState, useTransition } from 'react';
 import { generateFindings } from '@/lib/utils';
 import { LazySection } from '@/components/shared/LazySection/LazySection';
+import { SERVERS } from '@/lib/constants';
 
-const P99AreaChart = dynamic(() => import('@/components/charts/P99AreaChart/P99AreaChart'));
-const PerformanceRadar = dynamic(
-  () => import('@/components/charts/PerformanceRadar/PerformanceRadar'),
-);
-const MixedTraffic = dynamic(() => import('@/components/charts/MixedTraffic/MixedTraffic'));
-const Degradation = dynamic(() => import('@/components/charts/Degradation/Degradation'));
-const RawDataTable = dynamic(() => import('@/components/sections/RawDataTable/RawDataTable'));
+const P99Chart = lazy(() => import('@/components/charts/P99Chart/P99Chart'));
+const RelativeHeatmap = lazy(() => import('@/components/charts/RelativeHeatmap/RelativeHeatmap'));
+const MixedTraffic = lazy(() => import('@/components/charts/MixedTraffic/MixedTraffic'));
+const Degradation = lazy(() => import('@/components/charts/Degradation/Degradation'));
+const RawDataTable = lazy(() => import('@/components/sections/RawDataTable/RawDataTable'));
 
 export function Dashboard() {
-  const { visible, toggle } = useVisibleServers();
+  const { visible, toggle, toggleTier } = useVisibleServers();
   const [activeScenario, setActiveScenario] = useState(0);
   const [profile, setProfile] = useState('standard');
   const data = PROFILES[profile];
@@ -51,6 +51,12 @@ export function Dashboard() {
     });
   }
 
+  function handleTierToggle(keys: string[]) {
+    startTransition(() => {
+      toggleTier(keys);
+    });
+  }
+
   function handleScenarioChange(index: number) {
     startTransition(() => {
       setActiveScenario(index);
@@ -63,10 +69,14 @@ export function Dashboard() {
     });
   }
 
+  const nestjsServers = Object.entries(SERVERS).filter(([, s]) => s.tier === 'nestjs');
+  const rawServers = Object.entries(SERVERS).filter(([, s]) => s.tier === 'raw');
+
   return (
     <>
-      <FadeIn>
-        <div className="flex items-center gap-3 mb-6">
+      {/* Header paints at first paint (fast LCP); sections below wait for their counters */}
+      <FadeIn immediate>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-6">
           <ProfileSelector
             active={profile}
             onChange={handleProfileChange}
@@ -74,18 +84,35 @@ export function Dashboard() {
           />
           <span className="text-xs text-muted-foreground">
             {profile === 'quick'
-              ? '5 scenarios · 10 VUs · ~5 min'
-              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~30 min'}
+              ? '5 scenarios · 10 VUs · ~16 min'
+              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~70 min'}
           </span>
         </div>
 
         <Header meta={data.meta} />
       </FadeIn>
       <FadeIn delay={50}>
-        <ServerToggles visible={visible} onToggle={handleServerToggle} />
+        <ServerToggles
+          visible={visible}
+          onToggle={handleServerToggle}
+          onToggleTier={handleTierToggle}
+        />
       </FadeIn>
       <FadeIn delay={250}>
-        <HeroCards scenario={data.scenarios[0]} visible={visible} title="NestJS" />
+        <HeroCards
+          scenario={data.scenarios[0]}
+          visible={visible}
+          title="NestJS"
+          servers={nestjsServers}
+        />
+      </FadeIn>
+      <FadeIn delay={275}>
+        <HeroCards
+          scenario={data.scenarios[0]}
+          visible={visible}
+          title="Direct · without NestJS"
+          servers={rawServers}
+        />
       </FadeIn>
       <FadeIn delay={300}>
         <ThroughputChart scenarios={data.scenarios} visible={visible} />
@@ -103,23 +130,61 @@ export function Dashboard() {
       <FadeIn delay={450}>
         <LatencyChart scenario={activeScenarioData} visible={visible} />
       </FadeIn>
-      <LazySection>
-        <P99AreaChart scenarios={data.scenarios} visible={visible} />
+      <LazySection skeleton={<SmallMultiplesSkeleton panels={data.scenarios.length} />}>
+        <P99Chart scenarios={data.scenarios} visible={visible} />
       </LazySection>
-      <LazySection height="min-h-[420px]">
-        <PerformanceRadar scenarios={data.scenarios} visible={visible} />
+      <LazySection
+        skeleton={
+          <TableSkeleton
+            rows={visible.filter((key) => data.scenarios.some((s) => s.servers[key])).length}
+            groups={0}
+            rowHeight={35}
+          />
+        }
+      >
+        <RelativeHeatmap scenarios={data.scenarios} visible={visible} />
       </LazySection>
-      <LazySection height="min-h-[220px]">
-        <MixedTraffic data={data.mixed_traffic} visible={visible} />
-      </LazySection>
-      <LazySection height="min-h-[240px]">
-        <Degradation data={data.degradation} visible={visible} />
-      </LazySection>
-      <LazySection>
+      {data.mixed_traffic && (
+        <LazySection
+          skeleton={
+            <CardGridSkeleton
+              count={Object.keys(SERVERS).filter((key) => data.mixed_traffic?.[key]).length}
+            />
+          }
+        >
+          <MixedTraffic data={data.mixed_traffic} visible={visible} />
+        </LazySection>
+      )}
+      {data.degradation && (
+        <LazySection
+          skeleton={
+            <CardGridSkeleton
+              count={Object.keys(SERVERS).filter((key) => data.degradation?.[key]).length}
+              tall
+            />
+          }
+        >
+          <Degradation data={data.degradation} visible={visible} />
+        </LazySection>
+      )}
+      <LazySection height="min-h-[670px] sm:min-h-[396px]">
         <KeyFindings findings={findings} />
       </LazySection>
-      <LazySection skeleton={<TableSkeleton />}>
-        <RawDataTable scenario={data.scenarios[0]} visible={visible} />
+      <LazySection
+        skeleton={
+          <TableSkeleton
+            rows={visible.filter((key) => activeScenarioData.servers[key]).length}
+            groups={
+              new Set(
+                visible
+                  .filter((key) => activeScenarioData.servers[key])
+                  .map((key) => SERVERS[key].tier),
+              ).size
+            }
+          />
+        }
+      >
+        <RawDataTable scenario={activeScenarioData} visible={visible} />
       </LazySection>
       <FadeIn>
         <ComingSoon />

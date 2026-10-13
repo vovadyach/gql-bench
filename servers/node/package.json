@@ -1,0 +1,31 @@
+{
+  "name": "gql-bench-node",
+  "version": "1.0.0",
+  "description": "Raw Node.js GraphQL servers (no NestJS): Express/Fastify + Apollo/Mercurius/Yoga",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start:express-apollo": "node dist/express-apollo.js",
+    "start:express-yoga": "node dist/express-yoga.js",
+    "start:fastify-apollo": "node dist/fastify-apollo.js",
+    "start:fastify-mercurius": "node dist/fastify-mercurius.js",
+    "start:fastify-yoga": "node dist/fastify-yoga.js",
+    "start:yoga-standalone": "node dist/yoga-standalone.js"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@apollo/server": "4.13.0",
+    "@as-integrations/fastify": "2.1.1",
+    "express": "4.22.1",
+    "fastify": "4.28.1",
+    "graphql": "16.13.1",
+    "graphql-yoga": "5.10.9",
+    "mercurius": "14.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.23",
+    "@types/node": "^25.5.0",
+    "typescript": "^5.9.3"
+  }
+}

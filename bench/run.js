@@ -1,4 +1,4 @@
-#!/usr/bin/env nestjs
+#!/usr/bin/env node
 
 // HOW THIS WORKS:
 //
@@ -41,10 +41,7 @@ const IS_QUICK = process.argv.includes('--quick');
 const PROFILE = IS_QUICK ? 'quick' : 'standard';
 const WARMUP_COUNT = IS_QUICK ? 500 : 3000;
 const COOLDOWN = IS_QUICK ? 2000 : 5000; // ms between servers
-
-console.log(`\n  Mode: ${IS_QUICK ? 'QUICK (~3 min)' : 'STANDARD (~20 min)'}`);
-console.log(`  Profile: ${PROFILE}`);
-console.log(`  Tool: k6 (${execSync('k6 version', { encoding: 'utf-8' }).trim()})\n`);
+const MINUTES_PER_SERVER = IS_QUICK ? 1.6 : 7.1; // measured on full 10-server runs
 
 // ─── Scenarios ─────────────────────────────────────────
 // Each is a real GraphQL query at different complexity levels.
@@ -88,6 +85,8 @@ const SCENARIOS = [
 
 // ─── Servers ───────────────────────────────────────────
 
+// Each NestJS server runs right before its direct twin, so every NestJS-vs-direct
+// comparison is measured minutes apart under the same machine conditions
 const SERVERS = [
   {
     name: 'Express',
@@ -96,10 +95,22 @@ const SERVERS = [
     env: { ADAPTER: 'express' },
   },
   {
+    name: 'Raw-Express-Apollo',
+    port: 3005,
+    entry: '../servers/node/dist/express-apollo.js',
+    env: { ADAPTER: 'raw-express-apollo' },
+  },
+  {
     name: 'Fastify',
     port: 3002,
     entry: '../servers/nestjs/dist/main-fastify.js',
     env: { ADAPTER: 'fastify' },
+  },
+  {
+    name: 'Raw-Fastify-Apollo',
+    port: 3007,
+    entry: '../servers/node/dist/fastify-apollo.js',
+    env: { ADAPTER: 'raw-fastify-apollo' },
   },
   {
     name: 'Mercurius',
@@ -108,14 +119,47 @@ const SERVERS = [
     env: { ADAPTER: 'mercurius' },
   },
   {
+    name: 'Raw-Fastify-Mercurius',
+    port: 3008,
+    entry: '../servers/node/dist/fastify-mercurius.js',
+    env: { ADAPTER: 'raw-fastify-mercurius' },
+  },
+  {
     name: 'Yoga',
     port: 3004,
     entry: '../servers/nestjs/dist/main-yoga.js',
     env: { ADAPTER: 'yoga' },
   },
+  {
+    name: 'Raw-Fastify-Yoga',
+    port: 3009,
+    entry: '../servers/node/dist/fastify-yoga.js',
+    env: { ADAPTER: 'raw-fastify-yoga' },
+  },
+  // Direct-only (no NestJS version)
+  {
+    name: 'Raw-Express-Yoga',
+    port: 3006,
+    entry: '../servers/node/dist/express-yoga.js',
+    env: { ADAPTER: 'raw-express-yoga' },
+  },
+  {
+    name: 'Yoga-Standalone',
+    port: 3010,
+    entry: '../servers/node/dist/yoga-standalone.js',
+    env: { ADAPTER: 'yoga-standalone' },
+  },
+
   // Future: add Go, C#, Java here
-  // { name: 'Go-Chi',  port: 3004, entry: '../servers/go/bin/chi',   env: { ADAPTER: 'go-chi' } },
+  // { name: 'Go-Chi',  port: 3011, entry: '../servers/go/bin/chi',   env: { ADAPTER: 'go-chi' } },
 ];
+
+const estMinutes = Math.round(SERVERS.length * MINUTES_PER_SERVER);
+console.log(
+  `\n  Mode: ${IS_QUICK ? 'QUICK' : 'STANDARD'} (~${estMinutes} min, ${SERVERS.length} servers)`,
+);
+console.log(`  Profile: ${PROFILE}`);
+console.log(`  Tool: k6 (${execSync('k6 version', { encoding: 'utf-8' }).trim()})\n`);
 
 // ─── Helpers ───────────────────────────────────────────
 
@@ -357,9 +401,9 @@ function extractMetrics(summary, k6ExitCode) {
       sent_mb: +((sent.count || 0) / 1024 / 1024).toFixed(2),
     },
     errors: {
-      http_failure_rate: +(failed.rate || 0).toFixed(4),
-      graphql_error_rate: +(gqlErr.rate || 0).toFixed(4),
-      valid_response_rate: +(gqlOk.rate || 0).toFixed(4),
+      http_failure_rate: +(failed.value ?? 0).toFixed(4),
+      graphql_error_rate: +(gqlErr.value ?? 0).toFixed(4),
+      valid_response_rate: +(gqlOk.value ?? 0).toFixed(4),
     },
     response_size_bytes: {
       avg: +(size.avg || 0).toFixed(0),
@@ -373,8 +417,8 @@ function extractMetrics(summary, k6ExitCode) {
 
 async function main() {
   console.log('  ╔════════════════════════════════════════════════════════════════════════╗');
-  console.log('  ║  NestJS GraphQL Benchmark (k6)                                         ║');
-  console.log('  ║  Express+Apollo vs Fastify+Apollo vs Fastify+Mercurius vs Fastify+Yoga ║');
+  console.log('  ║  GraphQL Benchmark Suite (k6)                                          ║');
+  console.log('  ║  Same schema, same queries, fair fight.                                ║');
   console.log('  ╚════════════════════════════════════════════════════════════════════════╝\n');
 
   // Cleanup leftover servers from previous runs
@@ -385,17 +429,29 @@ async function main() {
   }
 
   // Step 1: Build TypeScript (Node servers)
-  console.log('  📦 Building Node.js servers...');
+  console.log('  📦 Building NestJS servers...');
   try {
     execSync('npx nest build', {
       cwd: path.resolve(__dirname, '../servers/nestjs'),
       stdio: 'inherit',
     });
   } catch {
-    console.error('  ❌ Build failed. Run "cd servers/nestjs && npm install" first.');
+    console.error('  ❌ NestJS Build failed. Run "cd servers/nestjs && npm install" first.');
     process.exit(1);
   }
-  console.log('  ✅ Build complete\n');
+  console.log('  ✅ NestJS Build complete\n');
+
+  console.log('  📦 Building raw Node.js servers...');
+  try {
+    execSync('npx tsc', {
+      cwd: path.resolve(__dirname, '../servers/node'),
+      stdio: 'inherit',
+    });
+  } catch {
+    console.error('  ❌ Raw build failed. Run "cd servers/node && npm install" first.');
+    process.exit(1);
+  }
+  console.log('  ✅ Raw build complete\n');
 
   // ─── Pre-flight: Cold Start & Response Size Verification ──
   const { measureColdStart, measureResponseSizes } = require('./preflight');
@@ -437,13 +493,18 @@ async function main() {
 
     // Check sizes match
     const serverNames = Object.keys(preflight.response_sizes);
+    // health echoes each server's ADAPTER name back, so discount its length
+    const adapterLen = (name) =>
+      SERVERS.find((s) => s.name.toLowerCase() === name)?.env.ADAPTER?.length || 0;
     if (serverNames.length >= 2) {
       const first = preflight.response_sizes[serverNames[0]];
       let allMatch = true;
       for (let i = 1; i < serverNames.length; i++) {
         const other = preflight.response_sizes[serverNames[i]];
         for (const qid of Object.keys(first)) {
-          const diff = Math.abs((first[qid]?.bytes || 0) - (other[qid]?.bytes || 0));
+          const nameDiff =
+            qid === 'health' ? adapterLen(serverNames[i]) - adapterLen(serverNames[0]) : 0;
+          const diff = Math.abs((other[qid]?.bytes || 0) - (first[qid]?.bytes || 0) - nameDiff);
           if (diff > 10) {
             // allow tiny float rounding differences
             console.log(

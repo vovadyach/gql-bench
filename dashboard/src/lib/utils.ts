@@ -1,11 +1,47 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Finding, Scenario } from '@/lib/types';
-import { SERVERS } from '@/lib/constants';
-import { Gauge, Database, ArrowLeftRight, SquarePen } from 'lucide-react';
+import { Finding, Scenario, ServerResult } from '@/lib/types';
+import { SERVERS, TIER_LABELS } from '@/lib/constants';
+import { Gauge, Database, ArrowLeftRight, SquarePen, Layers } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+// Tier-qualified name: "NestJS Express + Apollo" / "Direct Fastify + Mercurius"
+export function serverName(key: string): string {
+  const server = SERVERS[key];
+  if (!server) return key;
+  return `${TIER_LABELS[server.tier]} ${server.label}`;
+}
+
+// Theme-aware server color (defined per theme in globals.css)
+export function serverColor(key: string): string {
+  return `var(--server-${key})`;
+}
+
+// Chart series order: each NestJS server followed by its direct twin, then direct-only servers
+export function chartOrder(visible: string[]): string[] {
+  const keys = Object.keys(SERVERS);
+  const paired = keys.flatMap((k) =>
+    SERVERS[k].tier === 'nestjs' ? [k, ...keys.filter((d) => SERVERS[d].nestjsTwin === k)] : [],
+  );
+  return [...paired, ...keys.filter((k) => !paired.includes(k))].filter((k) => visible.includes(k));
+}
+
+// Direct server vs its NestJS twin in one result set: +33 means 33% more req/s without NestJS
+export function nestjsDelta(results: Record<string, ServerResult>, key: string): number | null {
+  const twin = SERVERS[key]?.nestjsTwin;
+  const direct = results[key]?.requests?.rate;
+  const nestjs = twin ? results[twin]?.requests?.rate : undefined;
+  if (!direct || !nestjs) return null;
+  return ((direct - nestjs) / nestjs) * 100;
+}
+
+// 33.4 → "+33%", -17 → "−17%"
+export function formatSignedPct(n: number): string {
+  const rounded = Math.round(n);
+  return `${rounded > 0 ? '+' : rounded < 0 ? '−' : '±'}${Math.abs(rounded)}%`;
 }
 
 // Calculate percentage difference
@@ -15,13 +51,14 @@ export function calcPercentage(rate: number, baseline: number): number {
 }
 
 // Format number: 14108 → "14,108"
+// Fixed locale: the page is prerendered, so the visitor's locale would mismatch on hydration
 export function formatNumber(n: number): string {
-  return Math.round(n).toLocaleString();
+  return Math.round(n).toLocaleString('en-US');
 }
 
-// Format for chart axis: 14108 → "14k"
+// Format for chart axis: 14108 → "14.1k", 2500 → "2.5k"
 export function formatReqPerSec(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(0)}k`;
+  if (n >= 1000) return `${parseFloat((n / 1000).toFixed(1))}k`;
   return String(n);
 }
 
@@ -85,9 +122,28 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
     wins[bestKey]++;
   });
 
+  // 0. Headline: the same stack with and without NestJS, across every scenario
+  const twins = visible.filter((k) => {
+    const twin = SERVERS[k]?.nestjsTwin;
+    return twin !== undefined && visible.includes(twin);
+  });
+  const deltas = scenarios.flatMap((s) =>
+    twins.map((k) => nestjsDelta(s.servers, k)).filter((d): d is number => d !== null),
+  );
+  if (deltas.length) {
+    const avg = deltas.reduce((sum, d) => sum + d, 0) / deltas.length;
+    findings.push({
+      icon: Layers,
+      title: `Without NestJS: ${formatSignedPct(avg)} req/s on average`,
+      desc: `Same stack with and without NestJS, ${deltas.length} comparisons across ${scenarios.length} scenarios (${formatSignedPct(Math.min(...deltas))} to ${formatSignedPct(Math.max(...deltas))})`,
+      color: 'var(--muted-foreground)',
+      wide: true,
+    });
+  }
+
   const topWinner = Object.entries(wins).sort((a, b) => b[1] - a[1])[0];
   const winnerKey = topWinner[0];
-  const winnerLabel = SERVERS[winnerKey]?.short || winnerKey;
+  const winnerLabel = serverName(winnerKey);
 
   // 1. Overall winner
   const healthScenario = scenarios.find((s) => s.id === 'health');
@@ -107,7 +163,7 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
     icon: Gauge,
     title: `${winnerLabel} wins ${topWinner[1]} of ${scenarios.length} scenarios`,
     desc: `Up to ${healthPct}% faster than slowest on light queries`,
-    color: SERVERS[winnerKey]?.color || '#00b0ff',
+    color: serverColor(winnerKey),
   });
 
   // 2. Find who loses on heavy queries
@@ -124,14 +180,15 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
     const bestHeavyRate = Math.max(
       ...visible.map((k) => heavyScenario.servers[k]?.requests?.rate || 0),
     );
-    const heavyPct = Math.round(((bestHeavyRate - worstRate) / worstRate) * 100);
-    const worstLabel = SERVERS[worstKey]?.short || worstKey;
+    // "behind fastest" is measured against the fastest, not the slowest
+    const heavyPct = Math.round(((bestHeavyRate - worstRate) / bestHeavyRate) * 100);
+    const worstLabel = serverName(worstKey);
 
     findings.push({
       icon: Database,
       title: `${worstLabel} slowest on heavy queries`,
       desc: `${heavyPct}% behind fastest on ${heavyScenario.name}`,
-      color: SERVERS[worstKey]?.color || '#ff4757',
+      color: serverColor(worstKey),
     });
   }
 
@@ -153,13 +210,14 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
         mutLoser = k;
       }
     });
-    const mutPct = Math.round(((mutBest - mutWorst) / mutWorst) * 100);
+    // "N% slower" is measured against the winner's rate
+    const mutPct = Math.round(((mutBest - mutWorst) / mutBest) * 100);
 
     findings.push({
       icon: SquarePen,
-      title: `Mutations: ${SERVERS[mutWinner]?.short} wins`,
-      desc: `${SERVERS[mutLoser]?.short} is ${mutPct}% slower on writes`,
-      color: SERVERS[mutWinner]?.color || '#00e676',
+      title: `Mutations: ${serverName(mutWinner)} wins`,
+      desc: `${serverName(mutLoser)} is ${mutPct}% slower on writes`,
+      color: serverColor(mutWinner),
     });
   }
 
@@ -174,11 +232,16 @@ export function generateFindings(scenarios: Scenario[], visible: string[]): Find
     const heavyGap =
       heavySlowest > 0 ? Math.round(((heavyFastest - heavySlowest) / heavySlowest) * 100) : 0;
 
+    const shrinks = heavyGap < healthPct;
     findings.push({
       icon: ArrowLeftRight,
-      title: 'Gap shrinks under load',
-      desc: `${healthPct}% on ${healthScenario.name} → ${heavyGap}% on ${heavyScenario.name}. Framework matters less as queries grow`,
-      color: '#ffa726',
+      title: shrinks ? 'Gap shrinks under load' : 'Gap grows under load',
+      desc: `Fastest vs slowest: ${healthPct}% on ${healthScenario.name} → ${heavyGap}% on ${heavyScenario.name}. ${
+        shrinks
+          ? 'Framework matters less as queries grow'
+          : 'Framework matters more as queries grow'
+      }`,
+      color: 'var(--complexity-heavy)',
     });
   }
 
