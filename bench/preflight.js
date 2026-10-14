@@ -6,7 +6,6 @@
 // This data goes into the results JSON and proves the benchmark is fair.
 
 const { spawn } = require('child_process');
-const path = require('path');
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -25,12 +24,14 @@ const QUERIES = [
 ];
 
 // ─── Cold Start Measurement ────────────────────────────
-// Start server, immediately start polling, measure time to first response
+// Start server, immediately start polling, measure time to first response.
+// `command` is the full start command, e.g. ['node', '/abs/dist/main.js'] or a Python interpreter + script
 
-async function measureColdStart(entry, port, env) {
+async function measureColdStart(command, port, env) {
   const start = Date.now();
 
-  const proc = spawn('node', [path.resolve(__dirname, entry)], {
+  const [cmd, ...args] = command;
+  const proc = spawn(cmd, args, {
     env: { ...process.env, PORT: String(port), ...env },
     stdio: 'pipe',
   });
