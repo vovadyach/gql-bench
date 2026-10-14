@@ -81,7 +81,7 @@ Results in `results/latest.json`.
 | Test | What it reveals |
 |---|---|
 | Pre-flight | Cold start times + response size verification |
-| Mixed traffic | Production-like query distribution (60/25/15 split) |
+| Mixed traffic | Production-like query mix: 30% health, 25% single-user, 20% mutation, 15% user-list, 10% deep-nested |
 | Degradation | Ramp 10→500 users, find the breaking point |
 
 ## Key Comparisons
