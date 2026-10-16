@@ -6,8 +6,9 @@ import { LucideProps } from 'lucide-react';
 export interface ServerConfig {
   key: string;
   label: string; // "Express + Apollo"
-  tier: 'nestjs' | 'raw' | 'standalone'; // "nestjs"
+  tier: 'nestjs' | 'raw' | 'standalone' | 'other'; // "other" = languages other than Node.js
   nestjsTwin?: string; // the same stack under NestJS, e.g. "express" for raw-express-apollo
+  lang?: string; // "Python", for the "other" tier
 }
 
 // Result from one server on one scenario
@@ -60,6 +61,7 @@ export interface BenchmarkMeta {
   profile: string;
   warmup_requests: number;
   node_version: string;
+  python_version?: string; // only when the run included the Python server
   platform: string;
   arch: string;
   cpus: number;

@@ -1,0 +1,401 @@
+{
+  "meta": {
+    "date": "2026-10-16T14:44:22.211Z",
+    "tool": "k6",
+    "profile": "quick",
+    "warmup_requests": 500,
+    "node_version": "v24.19.0",
+    "python_version": "3.14.8",
+    "only": [
+      "python",
+      "raw-fastify-mercurius"
+    ],
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 10,
+    "cpu_model": "Apple M1 Max",
+    "memory_gb": 64,
+    "methodology": [
+      "Sequential execution — one server at a time, full CPU",
+      "Warmup: 500 throwaway requests before each server",
+      "Profile: quick (k6 ramping-vus with gradual ramp-up)",
+      "Response validation: every GraphQL response checked for errors",
+      "Response sizes verified identical across all servers",
+      "Cooldown: 2s between servers",
+      "Python: single process (one uvicorn worker), same as the single-threaded Node servers"
+    ]
+  },
+  "preflight": {
+    "cold_starts": {},
+    "response_sizes": {}
+  },
+  "scenarios": [
+    {
+      "id": "health",
+      "name": "Health Check (Scalar)",
+      "complexity": "light",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 489304,
+            "rate": 27183.4
+          },
+          "iterations": {
+            "total": 489304,
+            "rate": 27183.4
+          },
+          "latency_ms": {
+            "avg": 0.24,
+            "min": 0.05,
+            "max": 8.42,
+            "med": 0.21,
+            "p90": 0.43,
+            "p95": 0.47,
+            "p99": 0.55
+          },
+          "throughput": {
+            "received_mb": 141.12,
+            "sent_mb": 103.13
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 130
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 67634,
+            "rate": 3757.39
+          },
+          "iterations": {
+            "total": 67634,
+            "rate": 3757.39
+          },
+          "latency_ms": {
+            "avg": 2.05,
+            "min": 0.32,
+            "max": 16.52,
+            "med": 2.15,
+            "p90": 2.97,
+            "p95": 3.31,
+            "p99": 4.07
+          },
+          "throughput": {
+            "received_mb": 16.8,
+            "sent_mb": 14.25
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 134
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "single-user",
+      "name": "Single User + Posts",
+      "complexity": "medium",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 66630,
+            "rate": 3701.01
+          },
+          "iterations": {
+            "total": 66630,
+            "rate": 3701.01
+          },
+          "latency_ms": {
+            "avg": 1.97,
+            "min": 0.33,
+            "max": 14.27,
+            "med": 2.11,
+            "p90": 2.68,
+            "p95": 2.79,
+            "p99": 4.34
+          },
+          "throughput": {
+            "received_mb": 83.34,
+            "sent_mb": 19.83
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 36557,
+            "rate": 2029.78
+          },
+          "iterations": {
+            "total": 36557,
+            "rate": 2029.78
+          },
+          "latency_ms": {
+            "avg": 3.81,
+            "min": 0.93,
+            "max": 20.31,
+            "med": 3.73,
+            "p90": 5.06,
+            "p95": 5.55,
+            "p99": 6.76
+          },
+          "throughput": {
+            "received_mb": 44.12,
+            "sent_mb": 10.88
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "user-list",
+      "name": "Paginated Users (10)",
+      "complexity": "heavy",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 24189,
+            "rate": 1343.77
+          },
+          "iterations": {
+            "total": 24189,
+            "rate": 1343.77
+          },
+          "latency_ms": {
+            "avg": 5.53,
+            "min": 2.65,
+            "max": 23.06,
+            "med": 5.56,
+            "p90": 6.87,
+            "p95": 7.14,
+            "p99": 7.57
+          },
+          "throughput": {
+            "received_mb": 221.83,
+            "sent_mb": 7.38
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 10068,
+            "rate": 559.21
+          },
+          "iterations": {
+            "total": 10068,
+            "rate": 559.21
+          },
+          "latency_ms": {
+            "avg": 13.87,
+            "min": 4.84,
+            "max": 38.81,
+            "med": 14.06,
+            "p90": 19.1,
+            "p95": 21.1,
+            "p99": 24.21
+          },
+          "throughput": {
+            "received_mb": 91.95,
+            "sent_mb": 3.07
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9450
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "deep-nested",
+      "name": "Deep Nested (5×10×8)",
+      "complexity": "extreme",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 14643,
+            "rate": 813.25
+          },
+          "iterations": {
+            "total": 14643,
+            "rate": 813.25
+          },
+          "latency_ms": {
+            "avg": 8.85,
+            "min": 3.43,
+            "max": 16.56,
+            "med": 9.78,
+            "p90": 10.23,
+            "p95": 10.39,
+            "p99": 10.98
+          },
+          "throughput": {
+            "received_mb": 1263.16,
+            "sent_mb": 5
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 2350,
+            "rate": 130.52
+          },
+          "iterations": {
+            "total": 2350,
+            "rate": 130.52
+          },
+          "latency_ms": {
+            "avg": 59.32,
+            "min": 10.12,
+            "max": 134.18,
+            "med": 65.11,
+            "p90": 84.35,
+            "p95": 97.27,
+            "p99": 114.44
+          },
+          "throughput": {
+            "received_mb": 202.64,
+            "sent_mb": 0.8
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90290
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "mutation",
+      "name": "Create Post (Mutation)",
+      "complexity": "medium",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 28932,
+            "rate": 1607.29
+          },
+          "iterations": {
+            "total": 28932,
+            "rate": 1607.29
+          },
+          "latency_ms": {
+            "avg": 4.67,
+            "min": 2.26,
+            "max": 31.05,
+            "med": 4.27,
+            "p90": 6.33,
+            "p95": 7.66,
+            "p99": 11.75
+          },
+          "throughput": {
+            "received_mb": 8.39,
+            "sent_mb": 9.27
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 29870,
+            "rate": 1658.93
+          },
+          "iterations": {
+            "total": 29870,
+            "rate": 1658.93
+          },
+          "latency_ms": {
+            "avg": 4.66,
+            "min": 2.6,
+            "max": 33.64,
+            "med": 4.67,
+            "p90": 5.45,
+            "p95": 5.81,
+            "p99": 6.9
+          },
+          "throughput": {
+            "received_mb": 7.35,
+            "sent_mb": 9.57
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    }
+  ],
+  "mixed_traffic": null,
+  "degradation": null
+}

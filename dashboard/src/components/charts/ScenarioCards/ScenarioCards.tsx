@@ -1,13 +1,16 @@
 import type { ScenarioCardsProps } from '@/components/charts/ScenarioCards/ScenarioCards.types';
-import { calcPercentage, cn, getSlowest, getWinner } from '@/lib/utils';
-import { SERVERS, TIER_LABELS } from '@/lib/constants';
+import { calcPercentage, cn, getSlowest, getWinner, isNodeServer, tierLabel } from '@/lib/utils';
+import { SERVERS } from '@/lib/constants';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
+import { VsFastestNode } from '@/components/shared/VsFastestNode/VsFastestNode';
 
 export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
   const winner = getWinner(scenario, visible);
-  const slowest = getSlowest(scenario, visible);
+  // "vs slowest" stays within Node; other languages compare against the fastest Node server
+  const visibleNode = visible.filter((k) => isNodeServer(k));
+  const slowest = getSlowest(scenario, visibleNode);
   const slowestRate = scenario.servers[slowest]?.requests?.rate || 0;
 
   return (
@@ -19,10 +22,12 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
           const data = scenario.servers[key];
           const isOn = visible.includes(key);
 
-          if (!data) return null;
+          // Hidden Node servers stay as dimmed cards; other languages only appear when on
+          if (!data || (!isOn && !isNodeServer(key))) return null;
 
           const isWinner = key === winner;
           const pct = calcPercentage(data.requests.rate, slowestRate);
+          const showVsSlowest = isOn && isNodeServer(key) && visibleNode.length > 1;
 
           return (
             <div
@@ -56,7 +61,7 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
                   {server.label}
                 </span>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 border border-border rounded">
-                  {TIER_LABELS[server.tier]}
+                  {tierLabel(key)}
                 </span>
               </div>
 
@@ -68,28 +73,31 @@ export function ScenarioCards({ scenario, visible }: ScenarioCardsProps) {
                 <span className="text-xs text-muted-foreground ml-2">req/s</span>
               </div>
 
-              <div className="mt-2 h-4">
-                <p
-                  className={cn(
-                    'text-xs',
-                    (!isOn || visible.length <= 1) && 'opacity-0',
-                    isOn && key === slowest && visible.length > 1 && 'text-muted-foreground',
-                    isOn && key !== slowest && visible.length > 1 && 'font-bold',
-                  )}
-                  style={
-                    isOn && key !== slowest && visible.length > 1
-                      ? { color: `var(--server-${key})` }
-                      : undefined
-                  }
-                >
-                  {!isOn || visible.length <= 1
-                    ? 'placeholder'
-                    : key === slowest
-                      ? 'baseline'
-                      : `+${pct}% vs slowest`}
-                </p>
-              </div>
+              {isNodeServer(key) && (
+                <div className="mt-2 h-4">
+                  <p
+                    className={cn(
+                      'text-xs',
+                      !showVsSlowest && 'opacity-0',
+                      showVsSlowest && key === slowest && 'text-muted-foreground',
+                      showVsSlowest && key !== slowest && 'font-bold',
+                    )}
+                    style={
+                      showVsSlowest && key !== slowest
+                        ? { color: `var(--server-${key})` }
+                        : undefined
+                    }
+                  >
+                    {!showVsSlowest
+                      ? 'placeholder'
+                      : key === slowest
+                        ? 'baseline'
+                        : `+${pct}% vs slowest`}
+                  </p>
+                </div>
+              )}
               <NestjsDelta results={scenario.servers} serverKey={key} className="mt-1" />
+              <VsFastestNode results={scenario.servers} serverKey={key} className="mt-2" />
 
               <div className="grid grid-cols-2 gap-1 mt-4 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {data.latency_ms.avg}ms</span>

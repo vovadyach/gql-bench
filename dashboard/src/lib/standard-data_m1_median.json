@@ -17,12 +17,30 @@
       "Response validation: every GraphQL response checked for errors",
       "Response sizes verified identical across all servers",
       "Cooldown: 5s between servers",
-      "Median of 3 full runs (every metric is the median across runs)"
+      "Median of 3 full runs (every metric is the median across runs)",
+      "Python: single process (one uvicorn worker), same as the single-threaded Node servers",
+      "Python added later (2026-10-16): median of 3 runs on the same machine; raw-fastify-mercurius, re-run alongside, stayed within 5% of the numbers here"
     ],
     "runs": [
       "2026-10-09T19:40:37.672Z",
       "2026-10-09T23:50:58.792Z",
       "2026-10-10T02:04:51.154Z"
+    ],
+    "python_version": "3.14.8",
+    "added": [
+      {
+        "servers": [
+          "python-fastapi-strawberry"
+        ],
+        "runs": [
+          "2026-10-16T03:59:52.787Z",
+          "2026-10-16T04:34:07.603Z",
+          "2026-10-16T15:01:18.809Z"
+        ],
+        "check": [
+          "raw-fastify-mercurius"
+        ]
+      }
     ]
   },
   "preflight": {
@@ -36,7 +54,8 @@
       "yoga": 488,
       "raw-fastify-yoga": 230,
       "raw-express-yoga": 231,
-      "yoga-standalone": 184
+      "yoga-standalone": 184,
+      "python-fastapi-strawberry": 341
     },
     "response_sizes": {
       "express": {
@@ -176,6 +195,20 @@
         },
         "user-list": {
           "bytes": 9444,
+          "valid": true
+        }
+      },
+      "python-fastapi-strawberry": {
+        "health": {
+          "bytes": 134,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1139,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9450,
           "valid": true
         }
       }
@@ -516,6 +549,39 @@
           },
           "thresholds": {},
           "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 189562,
+            "rate": 4212.46
+          },
+          "iterations": {
+            "total": 189562,
+            "rate": 4212.46
+          },
+          "latency_ms": {
+            "avg": 9.84,
+            "min": 0.32,
+            "max": 31.02,
+            "med": 10.8,
+            "p90": 12.75,
+            "p95": 13.82,
+            "p99": 23.01
+          },
+          "throughput": {
+            "received_mb": 47.13,
+            "sent_mb": 39.95
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 135
+          },
+          "thresholds": {},
+          "thresholds_passed": true
         }
       }
     },
@@ -847,6 +913,39 @@
             "http_failure_rate": 0,
             "graphql_error_rate": 0,
             "valid_response_rate": 0
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 106860,
+            "rate": 2374.67
+          },
+          "iterations": {
+            "total": 106860,
+            "rate": 2374.67
+          },
+          "latency_ms": {
+            "avg": 17.47,
+            "min": 0.89,
+            "max": 55.48,
+            "med": 18.39,
+            "p90": 22.94,
+            "p95": 25.15,
+            "p99": 37.72
+          },
+          "throughput": {
+            "received_mb": 128.97,
+            "sent_mb": 31.8
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
           },
           "response_size_bytes": {
             "avg": 1139
@@ -1190,6 +1289,39 @@
           },
           "thresholds": {},
           "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 32490,
+            "rate": 721.92
+          },
+          "iterations": {
+            "total": 32490,
+            "rate": 721.92
+          },
+          "latency_ms": {
+            "avg": 57.53,
+            "min": 5.17,
+            "max": 137.42,
+            "med": 61.2,
+            "p90": 80.88,
+            "p95": 90.29,
+            "p99": 103.64
+          },
+          "throughput": {
+            "received_mb": 296.73,
+            "sent_mb": 9.92
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9450
+          },
+          "thresholds": {},
+          "thresholds_passed": true
         }
       }
     },
@@ -1524,6 +1656,39 @@
           },
           "response_size_bytes": {
             "avg": 90280
+          },
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 6272,
+            "rate": 139.36
+          },
+          "iterations": {
+            "total": 6272,
+            "rate": 139.36
+          },
+          "latency_ms": {
+            "avg": 298.7,
+            "min": 10.5,
+            "max": 649.17,
+            "med": 329.36,
+            "p90": 404.43,
+            "p95": 452.27,
+            "p99": 535.64
+          },
+          "throughput": {
+            "received_mb": 540.83,
+            "sent_mb": 2.14
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90290
           },
           "thresholds": {},
           "thresholds_passed": true
@@ -1864,6 +2029,39 @@
           },
           "thresholds": {},
           "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 142563,
+            "rate": 3167.79
+          },
+          "iterations": {
+            "total": 142563,
+            "rate": 3167.79
+          },
+          "latency_ms": {
+            "avg": 13.09,
+            "min": 2.65,
+            "max": 40.59,
+            "med": 13.42,
+            "p90": 16.69,
+            "p95": 17.88,
+            "p99": 32
+          },
+          "throughput": {
+            "received_mb": 35.08,
+            "sent_mb": 45.68
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "thresholds": {},
+          "thresholds_passed": true
         }
       }
     }
@@ -2187,6 +2385,39 @@
       "throughput": {
         "received_mb": 1715.06,
         "sent_mb": 63.25
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "python-fastapi-strawberry": {
+      "requests": {
+        "total": 46891,
+        "rate": 1041.89
+      },
+      "iterations": {
+        "total": 46891,
+        "rate": 1041.89
+      },
+      "latency_ms": {
+        "avg": 39.84,
+        "min": 0.35,
+        "max": 112.98,
+        "med": 41.54,
+        "p90": 61,
+        "p95": 66.44,
+        "p99": 77.02
+      },
+      "throughput": {
+        "received_mb": 326.14,
+        "sent_mb": 12
       },
       "errors": {
         "http_failure_rate": 0,
@@ -2527,6 +2758,39 @@
       },
       "response_size_bytes": {
         "avg": 86
+      },
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "python-fastapi-strawberry": {
+      "requests": {
+        "total": 536197,
+        "rate": 4124.58
+      },
+      "iterations": {
+        "total": 536197,
+        "rate": 4124.58
+      },
+      "latency_ms": {
+        "avg": 35.32,
+        "min": 0.32,
+        "max": 175.53,
+        "med": 16.88,
+        "p90": 126.04,
+        "p95": 132.25,
+        "p99": 154.44
+      },
+      "throughput": {
+        "received_mb": 113.05,
+        "sent_mb": 94.6
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 96
       },
       "thresholds": {},
       "thresholds_passed": true

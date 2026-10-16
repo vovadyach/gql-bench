@@ -1,16 +1,21 @@
 import { HeroCardsProps } from '@/components/charts/HeroCards/HeroCards.types';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
-import { cn } from '@/lib/utils';
+import { VsFastestNode } from '@/components/shared/VsFastestNode/VsFastestNode';
+import { cn, serverLabel } from '@/lib/utils';
 
-// Column counts that never leave a card alone on the last row
+// Column counts that never leave a card alone on the last row; 1–2 cards keep the
+// card width of the 4-card row above
 const GRID_COLUMNS: Record<number, string> = {
+  1: 'grid-cols-2 xl:grid-cols-4',
+  2: 'grid-cols-2 xl:grid-cols-4',
   4: 'grid-cols-2 xl:grid-cols-4',
   6: 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-6',
 };
 
 export function HeroCards({ scenario, visible, title, servers }: HeroCardsProps) {
   const cards = servers.filter(([key]) => scenario.servers[key]);
+  if (!cards.length) return null;
 
   return (
     <div className="mb-4">
@@ -56,7 +61,7 @@ export function HeroCards({ scenario, visible, title, servers }: HeroCardsProps)
                   className="text-xs font-bold tracking-wide"
                   style={{ color: `var(--server-${key})` }}
                 >
-                  {server.label}
+                  {serverLabel(key)}
                 </span>
               </div>
 
@@ -72,6 +77,7 @@ export function HeroCards({ scenario, visible, title, servers }: HeroCardsProps)
               <p className="text-[11px] text-muted-foreground mt-2">req/s on health check</p>
 
               <NestjsDelta results={scenario.servers} serverKey={key} className="mt-1" />
+              <VsFastestNode results={scenario.servers} serverKey={key} className="mt-1" />
 
               <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {data.latency_ms.avg}ms</span>

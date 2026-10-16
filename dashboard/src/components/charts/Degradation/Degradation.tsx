@@ -1,9 +1,10 @@
 import { DegradationProps } from '@/components/charts/Degradation/Degradation.types';
-import { SERVERS, TIER_LABELS } from '@/lib/constants';
-import { calcPercentage, cn, formatNumber } from '@/lib/utils';
+import { SERVERS } from '@/lib/constants';
+import { calcPercentage, cn, formatNumber, isNodeServer, tierLabel } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
+import { VsFastestNode } from '@/components/shared/VsFastestNode/VsFastestNode';
 
 export default function Degradation({ data, visible }: DegradationProps) {
   if (!data) return null;
@@ -12,9 +13,11 @@ export default function Degradation({ data, visible }: DegradationProps) {
     (best, k) => ((data[k]?.requests?.rate || 0) > (data[best]?.requests?.rate || 0) ? k : best),
     visible[0],
   );
-  const slowest = visible.reduce(
+  // "vs slowest" stays within Node; other languages compare against the fastest Node server
+  const visibleNode = visible.filter((k) => isNodeServer(k));
+  const slowest = visibleNode.reduce(
     (worst, k) => ((data[k]?.requests?.rate || 0) < (data[worst]?.requests?.rate || 0) ? k : worst),
-    visible[0],
+    visibleNode[0],
   );
   const slowestRate = data[slowest]?.requests?.rate || 0;
 
@@ -29,9 +32,11 @@ export default function Degradation({ data, visible }: DegradationProps) {
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
-          if (!d) return null;
+          // Hidden Node servers stay as dimmed cards; other languages only appear when on
+          if (!d || (!isOn && !isNodeServer(key))) return null;
           const isWinner = key === winner;
           const pct = calcPercentage(d.requests.rate, slowestRate);
+          const showVsSlowest = isOn && isNodeServer(key) && visibleNode.length > 1;
 
           return (
             <div
@@ -63,7 +68,7 @@ export default function Degradation({ data, visible }: DegradationProps) {
                   {server.label}
                 </span>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 border border-border rounded">
-                  {TIER_LABELS[server.tier]}
+                  {tierLabel(key)}
                 </span>
               </div>
 
@@ -74,24 +79,21 @@ export default function Degradation({ data, visible }: DegradationProps) {
                 <AnimatedNumber value={d.requests.rate} />
                 <span className="text-xs text-muted-foreground ml-1">req/s</span>
               </div>
-              <p
-                className={cn(
-                  'text-xs mt-1 min-h-[16px]',
-                  key === slowest ? 'text-muted-foreground' : 'font-bold',
-                )}
-                style={
-                  isOn && visible.length > 1 && key !== slowest
-                    ? { color: `var(--server-${key})` }
-                    : undefined
-                }
-              >
-                {isOn && visible.length > 1
-                  ? key === slowest
-                    ? 'baseline'
-                    : `+${pct}% vs slowest`
-                  : null}
-              </p>
+              {isNodeServer(key) && (
+                <p
+                  className={cn(
+                    'text-xs mt-1 min-h-[16px]',
+                    key === slowest ? 'text-muted-foreground' : 'font-bold',
+                  )}
+                  style={
+                    showVsSlowest && key !== slowest ? { color: `var(--server-${key})` } : undefined
+                  }
+                >
+                  {showVsSlowest ? (key === slowest ? 'baseline' : `+${pct}% vs slowest`) : null}
+                </p>
+              )}
               <NestjsDelta results={data} serverKey={key} className="mt-1" />
+              <VsFastestNode results={data} serverKey={key} className="mt-1" />
               <div className="grid grid-cols-2 gap-1 mt-3 text-[11px] text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>med {d.latency_ms.med}ms</span>

@@ -2,7 +2,7 @@
 
 // HOW THIS WORKS:
 //
-// 1. Build TypeScript
+// 1. Build TypeScript (Node servers), sync the Python environment (uv)
 // 2. For each server (one at a time, never parallel):
 //    a. Start the server
 //    b. Warm it up (throwaway requests)
@@ -15,7 +15,10 @@
 //    e. Wait (let CPU cool)
 // 3. Save all results to results/latest.json
 //
-// REQUIRES: k6 installed (brew install k6 / snap install k6)
+// REQUIRES: k6 installed (brew install k6 / snap install k6), uv for the Python server
+//
+// --only=python,mercurius runs just the servers whose name or language matches
+// (for quick checks; partial results aren't meant for the dashboard)
 
 const { execSync, spawn, spawnSync } = require('child_process');
 const path = require('path');
@@ -42,6 +45,12 @@ const PROFILE = IS_QUICK ? 'quick' : 'standard';
 const WARMUP_COUNT = IS_QUICK ? 500 : 3000;
 const COOLDOWN = IS_QUICK ? 2000 : 5000; // ms between servers
 const MINUTES_PER_SERVER = IS_QUICK ? 1.6 : 7.1; // measured on full 10-server runs
+const ONLY = process.argv
+  .find((arg) => arg.startsWith('--only='))
+  ?.slice('--only='.length)
+  .toLowerCase()
+  .split(',')
+  .filter(Boolean);
 
 // ─── Scenarios ─────────────────────────────────────────
 // Each is a real GraphQL query at different complexity levels.
@@ -84,10 +93,14 @@ const SCENARIOS = [
 ];
 
 // ─── Servers ───────────────────────────────────────────
+// Node servers name their built `entry` file; other languages give the full `command`.
+
+const PYTHON_DIR = path.resolve(__dirname, '../servers/python');
+const PYTHON_BIN = path.join(PYTHON_DIR, '.venv/bin/python');
 
 // Each NestJS server runs right before its direct twin, so every NestJS-vs-direct
 // comparison is measured minutes apart under the same machine conditions
-const SERVERS = [
+const ALL_SERVERS = [
   {
     name: 'Express',
     port: 3001,
@@ -150,14 +163,40 @@ const SERVERS = [
     env: { ADAPTER: 'yoga-standalone' },
   },
 
-  // Future: add Go, C#, Java here
-  // { name: 'Go-Chi',  port: 3011, entry: '../servers/go/bin/chi',   env: { ADAPTER: 'go-chi' } },
+  // Other languages: one process each, like the single-threaded Node servers
+  {
+    name: 'Python-FastAPI-Strawberry',
+    lang: 'python',
+    port: 3011,
+    command: [PYTHON_BIN, path.join(PYTHON_DIR, 'main.py')],
+    env: { ADAPTER: 'python-fastapi-strawberry' },
+  },
+
+  // Future: add Go, C#, Java here, e.g.
+  // { name: 'Go-Chi-Gqlgen', lang: 'go', port: 3012, command: [GO_BIN], env: { ADAPTER: 'go-chi-gqlgen' } },
 ];
+
+const langOf = (server) => server.lang || 'node';
+const SERVERS = ONLY
+  ? ALL_SERVERS.filter((s) => ONLY.some((f) => s.name.toLowerCase().includes(f) || langOf(s) === f))
+  : ALL_SERVERS;
+if (!SERVERS.length) {
+  console.error(`\n  ❌ --only=${ONLY.join(',')} matched no server. Servers:`);
+  for (const s of ALL_SERVERS) console.error(`     ${s.name} (${langOf(s)})`);
+  process.exit(1);
+}
+const RUNS_NODE = SERVERS.some((s) => langOf(s) === 'node');
+const RUNS_PYTHON = SERVERS.some((s) => langOf(s) === 'python');
 
 const estMinutes = Math.round(SERVERS.length * MINUTES_PER_SERVER);
 console.log(
   `\n  Mode: ${IS_QUICK ? 'QUICK' : 'STANDARD'} (~${estMinutes} min, ${SERVERS.length} servers)`,
 );
+if (ONLY) {
+  console.log(
+    `  Only: ${SERVERS.map((s) => s.name).join(', ')} (partial run, not for the dashboard)`,
+  );
+}
 console.log(`  Profile: ${PROFILE}`);
 console.log(`  Tool: k6 (${execSync('k6 version', { encoding: 'utf-8' }).trim()})\n`);
 
@@ -165,9 +204,14 @@ console.log(`  Tool: k6 (${execSync('k6 version', { encoding: 'utf-8' }).trim()}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function startServer(entry, port, env) {
-  const child = spawn('node', [path.resolve(__dirname, entry)], {
-    env: { ...process.env, PORT: String(port), ...env },
+function serverCommand(server) {
+  return server.command || ['node', path.resolve(__dirname, server.entry)];
+}
+
+function startServer(server) {
+  const [cmd, ...args] = serverCommand(server);
+  const child = spawn(cmd, args, {
+    env: { ...process.env, PORT: String(server.port), ...server.env },
     stdio: 'pipe',
   });
   child.stderr.on('data', (d) => {
@@ -422,36 +466,53 @@ async function main() {
   console.log('  ╚════════════════════════════════════════════════════════════════════════╝\n');
 
   // Cleanup leftover servers from previous runs
-  for (const server of SERVERS) {
+  for (const server of ALL_SERVERS) {
     try {
       execSync(`kill -9 $(lsof -ti:${server.port}) 2>/dev/null`, { stdio: 'ignore' });
     } catch {}
   }
 
   // Step 1: Build TypeScript (Node servers)
-  console.log('  📦 Building NestJS servers...');
-  try {
-    execSync('npx nest build', {
-      cwd: path.resolve(__dirname, '../servers/nestjs'),
-      stdio: 'inherit',
-    });
-  } catch {
-    console.error('  ❌ NestJS Build failed. Run "cd servers/nestjs && npm install" first.');
-    process.exit(1);
-  }
-  console.log('  ✅ NestJS Build complete\n');
+  if (RUNS_NODE) {
+    console.log('  📦 Building NestJS servers...');
+    try {
+      execSync('npx nest build', {
+        cwd: path.resolve(__dirname, '../servers/nestjs'),
+        stdio: 'inherit',
+      });
+    } catch {
+      console.error('  ❌ NestJS Build failed. Run "cd servers/nestjs && npm install" first.');
+      process.exit(1);
+    }
+    console.log('  ✅ NestJS Build complete\n');
 
-  console.log('  📦 Building raw Node.js servers...');
-  try {
-    execSync('npx tsc', {
-      cwd: path.resolve(__dirname, '../servers/node'),
-      stdio: 'inherit',
-    });
-  } catch {
-    console.error('  ❌ Raw build failed. Run "cd servers/node && npm install" first.');
-    process.exit(1);
+    console.log('  📦 Building raw Node.js servers...');
+    try {
+      execSync('npx tsc', {
+        cwd: path.resolve(__dirname, '../servers/node'),
+        stdio: 'inherit',
+      });
+    } catch {
+      console.error('  ❌ Raw build failed. Run "cd servers/node && npm install" first.');
+      process.exit(1);
+    }
+    console.log('  ✅ Raw build complete\n');
   }
-  console.log('  ✅ Raw build complete\n');
+
+  // Install exactly the versions in uv.lock, with bytecode precompiled so the
+  // cold start measures server startup, not first-run compilation
+  if (RUNS_PYTHON) {
+    console.log('  📦 Syncing Python server (uv)...');
+    try {
+      execSync('uv sync --locked --compile-bytecode', { cwd: PYTHON_DIR, stdio: 'inherit' });
+    } catch {
+      console.error('  ❌ Python setup failed. Install uv, then run "npm run setup":');
+      console.error('     Mac (Apple Silicon): brew install uv');
+      console.error('     Intel Mac / Linux:   curl -LsSf https://astral.sh/uv/install.sh | sh');
+      process.exit(1);
+    }
+    console.log('  ✅ Python ready\n');
+  }
 
   // ─── Pre-flight: Cold Start & Response Size Verification ──
   const { measureColdStart, measureResponseSizes } = require('./preflight');
@@ -464,7 +525,7 @@ async function main() {
     // Cold start times
     console.log('  🕐 Measuring cold start times...');
     for (const server of SERVERS) {
-      const ms = await measureColdStart(server.entry, server.port, server.env);
+      const ms = await measureColdStart(serverCommand(server), server.port, server.env);
       preflight.cold_starts[server.name.toLowerCase()] = ms;
       console.log(`    ${server.name}: ${ms}ms to first response`);
     }
@@ -473,7 +534,7 @@ async function main() {
     // Response size verification (start Express to measure, it's representative)
     console.log('  📏 Verifying response sizes match across servers...');
     for (const server of SERVERS) {
-      const proc = startServer(server.entry, server.port, server.env);
+      const proc = startServer(server);
       try {
         await waitForServer(server.port);
         const sizes = await measureResponseSizes(server.port);
@@ -530,6 +591,10 @@ async function main() {
       profile: PROFILE,
       warmup_requests: WARMUP_COUNT,
       node_version: process.version,
+      python_version: RUNS_PYTHON
+        ? execSync(`"${PYTHON_BIN}" --version`, { encoding: 'utf-8' }).trim().replace('Python ', '')
+        : undefined,
+      only: ONLY,
       platform: os.platform(),
       arch: os.arch(),
       cpus: os.cpus().length,
@@ -542,6 +607,11 @@ async function main() {
         'Response validation: every GraphQL response checked for errors',
         'Response sizes verified identical across all servers',
         `Cooldown: ${COOLDOWN / 1000}s between servers`,
+        ...(RUNS_PYTHON
+          ? [
+              'Python: single process (one uvicorn worker), same as the single-threaded Node servers',
+            ]
+          : []),
       ],
     },
     preflight,
@@ -561,7 +631,7 @@ async function main() {
 
     // Start server
     console.log(`\n    Starting ${server.name}...`);
-    const proc = startServer(server.entry, server.port, server.env);
+    const proc = startServer(server);
 
     try {
       await waitForServer(server.port);
@@ -641,7 +711,7 @@ async function main() {
     results.mixed_traffic = {};
     for (const server of SERVERS) {
       console.log(`    🔧 ${server.name}...`);
-      const proc = startServer(server.entry, server.port, server.env);
+      const proc = startServer(server);
       try {
         await waitForServer(server.port);
         await warmup(server.port, WARMUP_COUNT);
@@ -676,7 +746,7 @@ async function main() {
 
     results.degradation = {};
     for (const server of SERVERS) {
-      const proc = startServer(server.entry, server.port, server.env);
+      const proc = startServer(server);
       try {
         await waitForServer(server.port);
         await warmup(server.port, WARMUP_COUNT);
@@ -761,7 +831,7 @@ async function main() {
 }
 
 main().catch((err) => {
-  for (const server of SERVERS) {
+  for (const server of ALL_SERVERS) {
     try {
       execSync(`kill -9 $(lsof -ti:${server.port}) 2>/dev/null`, { stdio: 'ignore' });
     } catch {}

@@ -1,7 +1,16 @@
 'use client';
 
 import { SERVERS } from '@/lib/constants';
-import { getWinner, calcPercentage, getSlowest, formatNumber } from '@/lib/utils';
+import {
+  getWinner,
+  calcPercentage,
+  getSlowest,
+  formatNumber,
+  formatRatio,
+  isNodeServer,
+  serverLabel,
+  vsFastestNode,
+} from '@/lib/utils';
 import type { RawDataTableProps } from './RawDataTable.types';
 import { HEADERS } from '@/components/sections/RawDataTable/RawDataTable.constants';
 import { Crown } from 'lucide-react';
@@ -9,7 +18,11 @@ import { Fragment } from 'react';
 
 export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
   const winner = getWinner(scenario, visible);
-  const slowest = getSlowest(scenario, visible);
+  // "vs slowest" stays within Node; other languages compare against the fastest Node server
+  const slowest = getSlowest(
+    scenario,
+    visible.filter((k) => isNodeServer(k)),
+  );
   const slowestRate = scenario.servers[slowest]?.requests?.rate || 0;
 
   return (
@@ -35,7 +48,7 @@ export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
             </tr>
           </thead>
           <tbody>
-            {['nestjs', 'raw'].map((tier) => {
+            {['nestjs', 'raw', 'other'].map((tier) => {
               const tierServers = Object.entries(SERVERS).filter(
                 ([key, s]) => s.tier === tier && visible.includes(key),
               );
@@ -46,6 +59,7 @@ export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
                 nestjs: 'NestJS',
                 raw: 'Direct · without NestJS',
                 standalone: 'Standalone',
+                other: 'Other languages · vs fastest Node',
               };
 
               return (
@@ -58,15 +72,18 @@ export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
                       {tierNames[tier]}
                     </td>
                   </tr>
-                  {tierServers.map(([key, server]) => {
+                  {tierServers.map(([key]) => {
                     const data = scenario.servers[key];
                     if (!data) return null;
 
                     const isWinner = key === winner;
+                    const ratio = isNodeServer(key) ? null : vsFastestNode(scenario.servers, key);
                     const pct =
-                      key === slowest
-                        ? 'baseline'
-                        : `+${calcPercentage(data.requests.rate, slowestRate)}%`;
+                      ratio !== null
+                        ? formatRatio(ratio)
+                        : key === slowest
+                          ? 'baseline'
+                          : `+${calcPercentage(data.requests.rate, slowestRate)}%`;
 
                     return (
                       <tr
@@ -83,7 +100,7 @@ export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
                           style={{ color: `var(--server-${key})` }}
                         >
                           <div className="inline-flex items-center gap-1">
-                            {server.label}{' '}
+                            {serverLabel(key)}{' '}
                             {isWinner && (
                               <Crown
                                 className="h-3 w-3 text-foreground/80 dark:text-amber-400"
@@ -104,7 +121,7 @@ export default function RawDataTable({ scenario, visible }: RawDataTableProps) {
                             color:
                               pct === 'baseline'
                                 ? 'var(--muted-foreground)'
-                                : pct.startsWith('+')
+                                : pct.startsWith('+') || pct.endsWith('faster')
                                   ? '#00e676'
                                   : '#ff4757',
                           }}

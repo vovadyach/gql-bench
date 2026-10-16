@@ -47,7 +47,14 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
             </p>
             <p className="text-sm font-semibold text-foreground mt-4">Environment</p>
             <p className="text-sm text-muted-foreground">
-              {meta.tool} · {meta.node_version} · {meta.platform}/{meta.arch}
+              {[
+                meta.tool,
+                meta.node_version,
+                meta.python_version && `Python ${meta.python_version}`,
+                `${meta.platform}/${meta.arch}`,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
             </p>
             <p className="text-sm font-semibold text-foreground mt-4">Profile</p>
             <p className="text-sm text-muted-foreground">{meta.profile}</p>

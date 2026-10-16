@@ -3,8 +3,10 @@ import { cn, formatSignedPct, nestjsDelta } from '@/lib/utils';
 import type { NestjsDeltaProps } from './NestjsDelta.types';
 
 // "+33% vs NestJS" on direct cards: the same stack with and without NestJS
+// (other languages compare against the fastest Node server instead, see VsFastestNode)
 export function NestjsDelta({ results, serverKey, className }: NestjsDeltaProps) {
-  if (SERVERS[serverKey]?.tier === 'nestjs') return null;
+  const tier = SERVERS[serverKey]?.tier;
+  if (tier === 'nestjs' || tier === 'other') return null;
   const delta = nestjsDelta(results, serverKey);
 
   return (
