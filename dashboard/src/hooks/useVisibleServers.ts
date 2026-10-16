@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { SERVER_KEYS } from '@/lib/constants';
+import { isNodeServer } from '@/lib/utils';
+
+// Node servers start visible; other languages are opt-in, so the default view stays Node-only
+export const DEFAULT_VISIBLE = SERVER_KEYS.filter((k) => isNodeServer(k));
 
 export function useVisibleServers() {
-  const [visible, setVisible] = useState<string[]>(SERVER_KEYS);
+  const [visible, setVisible] = useState<string[]>(DEFAULT_VISIBLE);
 
   const toggle = (key: string) => {
     setVisible((v) =>

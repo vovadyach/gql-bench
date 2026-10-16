@@ -1,19 +1,20 @@
 import { SERVERS, TIER_FILL_OPACITY, TIER_LABELS } from '@/lib/constants';
-import { chartOrder, serverColor } from '@/lib/utils';
+import { chartOrder, serverColor, serverLabel } from '@/lib/utils';
 import type { ChartLegendProps } from './ChartLegend.types';
 
-// Color = stack (a NestJS server and its direct twin share it), fill = tier
+// Color = stack (a NestJS server and its direct twin share it), fill = tier;
+// other languages have their own color and no NestJS/direct fill
 export function ChartLegend({ visible }: ChartLegendProps) {
   const ordered = chartOrder(visible);
   const stacks = [...new Set(ordered.map((k) => SERVERS[k].nestjsTwin ?? k))];
-  const tiers = [...new Set(ordered.map((k) => SERVERS[k].tier))];
+  const tiers = [...new Set(ordered.map((k) => SERVERS[k].tier))].filter((t) => t !== 'other');
 
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-3 text-[11px] text-muted-foreground">
       {stacks.map((k) => (
         <span key={k} className="inline-flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: serverColor(k) }} />
-          {SERVERS[k].label}
+          {serverLabel(k)}
         </span>
       ))}
       {tiers.length > 1 && (

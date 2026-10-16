@@ -2,17 +2,66 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Finding, Scenario, ServerResult } from '@/lib/types';
 import { SERVERS, TIER_LABELS } from '@/lib/constants';
-import { Gauge, Database, ArrowLeftRight, SquarePen, Layers } from 'lucide-react';
+import { Gauge, Database, ArrowLeftRight, SquarePen, Layers, Languages } from 'lucide-react';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// Tier-qualified name: "NestJS Express + Apollo" / "Direct Fastify + Mercurius"
+// Short tag shown next to a label: "NestJS" / "Direct", or the language for other languages
+export function tierLabel(key: string): string {
+  const server = SERVERS[key];
+  if (!server) return '';
+  return server.lang ?? TIER_LABELS[server.tier];
+}
+
+// Label for places without a tier tag: "Express + Apollo", "Python · FastAPI + Strawberry"
+export function serverLabel(key: string): string {
+  const server = SERVERS[key];
+  if (!server) return key;
+  return server.lang ? `${server.lang} · ${server.label}` : server.label;
+}
+
+// Tier-qualified name: "NestJS Express + Apollo" / "Direct Fastify + Mercurius" /
+// "Python FastAPI + Strawberry"
 export function serverName(key: string): string {
   const server = SERVERS[key];
   if (!server) return key;
-  return `${TIER_LABELS[server.tier]} ${server.label}`;
+  return `${tierLabel(key)} ${server.label}`;
+}
+
+// Node.js servers (NestJS and direct); other languages are compared against them
+export function isNodeServer(key: string): boolean {
+  return SERVERS[key] !== undefined && SERVERS[key].tier !== 'other';
+}
+
+// Fastest Node.js server in one result set, whether or not it's visible, so the
+// reference for other languages doesn't move when Node servers are toggled
+export function fastestNode(
+  results: Record<string, ServerResult>,
+): { key: string; rate: number } | null {
+  let best: { key: string; rate: number } | null = null;
+  for (const key of Object.keys(results)) {
+    const rate = results[key]?.requests?.rate;
+    if (isNodeServer(key) && rate && (!best || rate > best.rate)) best = { key, rate };
+  }
+  return best;
+}
+
+// req/s as a multiple of the fastest Node server: 0.05 means 20× slower
+export function vsFastestNode(results: Record<string, ServerResult>, key: string): number | null {
+  const rate = results[key]?.requests?.rate;
+  const fastest = fastestNode(results);
+  if (!rate || !fastest) return null;
+  return rate / fastest.rate;
+}
+
+// 0.05 → "20× slower", 1.6 → "1.6× faster", 0.8 → "−20%" (close gaps read better as %)
+export function formatRatio(ratio: number): string {
+  if (ratio > 0.5 && ratio < 2) return formatSignedPct((ratio - 1) * 100);
+  const factor = ratio >= 1 ? ratio : 1 / ratio;
+  const rounded = factor >= 10 ? Math.round(factor) : parseFloat(factor.toFixed(1));
+  return `${rounded}× ${ratio >= 1 ? 'faster' : 'slower'}`;
 }
 
 // Theme-aware server color (defined per theme in globals.css)
@@ -100,6 +149,35 @@ export function formatDate(iso: string): string {
 }
 
 export function generateFindings(scenarios: Scenario[], visible: string[]): Finding[] {
+  // Node findings compare Node servers with each other; other languages get their own below
+  return [
+    ...nodeFindings(
+      scenarios,
+      visible.filter((k) => isNodeServer(k)),
+    ),
+    ...visible
+      .filter((k) => SERVERS[k] && !isNodeServer(k))
+      .flatMap((k) => languageFinding(scenarios, k) ?? []),
+  ];
+}
+
+// "Python FastAPI + Strawberry vs the fastest Node server: health 19× slower · …"
+function languageFinding(scenarios: Scenario[], key: string): Finding | null {
+  const parts = scenarios.flatMap((s) => {
+    const ratio = vsFastestNode(s.servers, key);
+    return ratio === null ? [] : [`${s.name} ${formatRatio(ratio)}`];
+  });
+  if (!parts.length) return null;
+
+  return {
+    icon: Languages,
+    title: `${serverName(key)} vs the fastest Node server`,
+    desc: parts.join(' · '),
+    color: serverColor(key),
+  };
+}
+
+function nodeFindings(scenarios: Scenario[], visible: string[]): Finding[] {
   const findings: Finding[] = [];
   if (visible.length < 2) return findings;
 

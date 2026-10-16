@@ -91,6 +91,7 @@
   --server-raw-fastify-mercurius: #0077b3;
   --server-raw-fastify-yoga: #7c3aed;
   --server-yoga-standalone: #0d9488;
+  --server-python-fastapi-strawberry: #a16207;
   /* Sequential (one-hue) scale for the relative-throughput heatmap */
   --heat: #2a78d6;
   --heat-max: 45%;
@@ -143,6 +144,7 @@
   --server-raw-fastify-mercurius: #00b0ff;
   --server-raw-fastify-yoga: #8b5cf6;
   --server-yoga-standalone: #2dd4bf;
+  --server-python-fastapi-strawberry: #eab308;
   --heat: #5598e7;
   --heat-max: 60%;
   --complexity-light: #00e676;

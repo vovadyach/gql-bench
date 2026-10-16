@@ -71,6 +71,16 @@ export function Dashboard() {
 
   const nestjsServers = Object.entries(SERVERS).filter(([, s]) => s.tier === 'nestjs');
   const rawServers = Object.entries(SERVERS).filter(([, s]) => s.tier === 'raw');
+  // Other languages get a hero row only while toggled on, so the default view stays Node-only
+  const otherServers = Object.entries(SERVERS).filter(
+    ([key, s]) => s.tier === 'other' && visible.includes(key),
+  );
+
+  // Servers with results in this profile: a server without data gets no toggle
+  const available = Object.keys(SERVERS).filter((key) =>
+    data.scenarios.some((s) => s.servers[key]),
+  );
+  const releasedLangs = available.flatMap((key) => SERVERS[key].lang ?? []);
 
   return (
     <>
@@ -94,6 +104,7 @@ export function Dashboard() {
       <FadeIn delay={50}>
         <ServerToggles
           visible={visible}
+          available={available}
           onToggle={handleServerToggle}
           onToggleTier={handleTierToggle}
         />
@@ -114,6 +125,16 @@ export function Dashboard() {
           servers={rawServers}
         />
       </FadeIn>
+      {otherServers.length > 0 && (
+        <FadeIn>
+          <HeroCards
+            scenario={data.scenarios[0]}
+            visible={visible}
+            title="Other languages · vs fastest Node"
+            servers={otherServers}
+          />
+        </FadeIn>
+      )}
       <FadeIn delay={300}>
         <ThroughputChart scenarios={data.scenarios} visible={visible} />
       </FadeIn>
@@ -187,7 +208,7 @@ export function Dashboard() {
         <RawDataTable scenario={activeScenarioData} visible={visible} />
       </LazySection>
       <FadeIn>
-        <ComingSoon />
+        <ComingSoon released={releasedLangs} />
       </FadeIn>
       <FadeIn>
         <Footer meta={data.meta} />

@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { Scenario, ServerResult } from '@/lib/types';
-import { chartOrder, formatSignedPct, generateFindings, nestjsDelta } from '@/lib/utils';
+import {
+  chartOrder,
+  formatRatio,
+  formatSignedPct,
+  generateFindings,
+  nestjsDelta,
+  vsFastestNode,
+} from '@/lib/utils';
 import { SERVER_KEYS } from '@/lib/constants';
+import { DEFAULT_VISIBLE } from '@/hooks/useVisibleServers';
 
 const result = (rate: number) => ({ requests: { total: 0, rate } }) as unknown as ServerResult;
 const scenario = (id: string, complexity: Scenario['complexity'], rates: Record<string, number>) =>
@@ -13,7 +21,7 @@ const scenario = (id: string, complexity: Scenario['complexity'], rates: Record<
   }) as Scenario;
 
 describe('chartOrder', () => {
-  it('puts each NestJS server next to its direct twin, then direct-only servers', () => {
+  it('puts each NestJS server next to its direct twin, then direct-only servers, then other languages', () => {
     expect(chartOrder(SERVER_KEYS)).toEqual([
       'express',
       'raw-express-apollo',
@@ -25,6 +33,7 @@ describe('chartOrder', () => {
       'raw-fastify-yoga',
       'raw-express-yoga',
       'yoga-standalone',
+      'python-fastapi-strawberry',
     ]);
   });
 
@@ -76,5 +85,49 @@ describe('generateFindings', () => {
   it('says the gap grows when the heavy-query gap is larger', () => {
     // 25% on health → 60% on user-list
     expect(findings.map((f) => f.title)).toContain('Gap grows under load');
+  });
+});
+
+describe('other languages', () => {
+  const python = 'python-fastapi-strawberry';
+
+  it('start hidden, so the default view stays Node-only', () => {
+    expect(DEFAULT_VISIBLE).not.toContain(python);
+    expect(DEFAULT_VISIBLE).toContain('mercurius');
+  });
+
+  it('compare against the fastest Node server, visible or not', () => {
+    const results = {
+      express: result(4000),
+      mercurius: result(10000),
+      [python]: result(500),
+    };
+    expect(vsFastestNode(results, python)).toBe(0.05);
+    expect(vsFastestNode({ [python]: result(500) }, python)).toBeNull();
+  });
+
+  it('show big gaps as a factor and small ones as a percentage', () => {
+    expect(formatRatio(0.05)).toBe('20× slower');
+    expect(formatRatio(0.125)).toBe('8× slower');
+    expect(formatRatio(2.5)).toBe('2.5× faster');
+    expect(formatRatio(0.8)).toBe('−20%');
+    expect(formatRatio(1.6)).toBe('+60%');
+  });
+
+  it("don't change the Node findings, and get a finding of their own", () => {
+    const visible = ['express', 'raw-express-apollo', python];
+    const scenarios = [
+      scenario('health', 'light', { express: 4000, 'raw-express-apollo': 5000, [python]: 250 }),
+      scenario('user-list', 'heavy', { express: 1000, 'raw-express-apollo': 1600, [python]: 80 }),
+      scenario('mutation', 'medium', { express: 5000, 'raw-express-apollo': 10000, [python]: 500 }),
+    ];
+    const nodeOnly = generateFindings(scenarios, ['express', 'raw-express-apollo']);
+    const withPython = generateFindings(scenarios, visible);
+
+    expect(withPython.slice(0, nodeOnly.length)).toEqual(nodeOnly);
+    expect(withPython.at(-1)?.title).toBe('Python FastAPI + Strawberry vs the fastest Node server');
+    expect(withPython.at(-1)?.desc).toBe(
+      'health 20× slower · user-list 20× slower · mutation 20× slower',
+    );
   });
 });

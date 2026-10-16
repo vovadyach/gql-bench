@@ -59,6 +59,13 @@ export const SERVERS: Record<string, ServerConfig> = {
     label: 'Yoga Standalone',
     tier: 'raw',
   },
+  // Other languages: hidden until toggled on, compared with the fastest Node server
+  'python-fastapi-strawberry': {
+    key: 'python-fastapi-strawberry',
+    label: 'FastAPI + Strawberry',
+    tier: 'other',
+    lang: 'Python',
+  },
 };
 
 export const SERVER_KEYS = Object.keys(SERVERS);
@@ -68,13 +75,16 @@ export const TIER_LABELS: Record<ServerConfig['tier'], string> = {
   nestjs: 'NestJS',
   raw: 'Direct',
   standalone: 'Standalone',
+  other: 'Other',
 };
 
-// Chart fills: solid for NestJS, faded for direct, so twins sharing a color stay distinct
+// Chart fills: solid for NestJS, faded for direct, so twins sharing a color stay distinct;
+// other languages have colors of their own
 export const TIER_FILL_OPACITY: Record<ServerConfig['tier'], number> = {
   nestjs: 1,
   raw: 0.5,
   standalone: 0.5,
+  other: 1,
 };
 
 // Complexity colors for scenario badges
@@ -85,7 +95,7 @@ export const COMPLEXITY_COLORS: Record<string, string> = {
   extreme: '#ff4757',
 };
 
-// Coming soon languages
+// Coming soon languages; a language drops off once its results are in the data
 export const COMING_SOON = [
   { lang: 'Python', frameworks: 'FastAPI + Strawberry', color: '#eab308' },
   { lang: 'Go', frameworks: 'chi + gqlgen', color: '#00d4ff' },

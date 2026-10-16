@@ -1,9 +1,10 @@
 import { MixedTrafficProps } from '@/components/charts/MixedTraffic/MixedTraffic.types';
-import { SERVERS, TIER_LABELS } from '@/lib/constants';
-import { calcPercentage, cn } from '@/lib/utils';
+import { SERVERS } from '@/lib/constants';
+import { calcPercentage, cn, isNodeServer, tierLabel } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/shared/AnimatedNumber/AnimatedNumber';
 import { Crown } from 'lucide-react';
 import { NestjsDelta } from '@/components/shared/NestjsDelta/NestjsDelta';
+import { VsFastestNode } from '@/components/shared/VsFastestNode/VsFastestNode';
 
 export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
   if (!data) return null;
@@ -12,9 +13,11 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
     (best, k) => ((data[k]?.requests?.rate || 0) > (data[best]?.requests?.rate || 0) ? k : best),
     visible[0],
   );
-  const slowest = visible.reduce(
+  // "vs slowest" stays within Node; other languages compare against the fastest Node server
+  const visibleNode = visible.filter((k) => isNodeServer(k));
+  const slowest = visibleNode.reduce(
     (worst, k) => ((data[k]?.requests?.rate || 0) < (data[worst]?.requests?.rate || 0) ? k : worst),
-    visible[0],
+    visibleNode[0],
   );
   const slowestRate = data[slowest]?.requests?.rate || 0;
 
@@ -30,9 +33,11 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
         {Object.entries(SERVERS).map(([key, server]) => {
           const isOn = visible.includes(key);
           const d = data[key];
-          if (!d) return null;
+          // Hidden Node servers stay as dimmed cards; other languages only appear when on
+          if (!d || (!isOn && !isNodeServer(key))) return null;
           const isWinner = key === winner;
           const pct = calcPercentage(d.requests.rate, slowestRate);
+          const showVsSlowest = isOn && isNodeServer(key) && visibleNode.length > 1;
 
           return (
             <div
@@ -64,7 +69,7 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
                   {server.label}
                 </span>
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 border border-border rounded">
-                  {TIER_LABELS[server.tier]}
+                  {tierLabel(key)}
                 </span>
               </div>
 
@@ -75,21 +80,22 @@ export default function MixedTraffic({ data, visible }: MixedTrafficProps) {
                 <AnimatedNumber value={d.requests.rate} />
                 <span className="text-xs text-muted-foreground ml-1">req/s</span>
               </div>
-              <p
-                className={cn(
-                  'text-xs mt-1 min-h-[16px]',
-                  !(isOn && visible.length > 1) && 'invisible',
-                  key === slowest ? 'text-muted-foreground font-normal' : 'font-bold',
-                )}
-                style={
-                  isOn && visible.length > 1 && key !== slowest
-                    ? { color: `var(--server-${key})` }
-                    : undefined
-                }
-              >
-                {key === slowest ? 'baseline' : `+${pct}% vs slowest`}
-              </p>
+              {isNodeServer(key) && (
+                <p
+                  className={cn(
+                    'text-xs mt-1 min-h-[16px]',
+                    !showVsSlowest && 'invisible',
+                    key === slowest ? 'text-muted-foreground font-normal' : 'font-bold',
+                  )}
+                  style={
+                    showVsSlowest && key !== slowest ? { color: `var(--server-${key})` } : undefined
+                  }
+                >
+                  {key === slowest ? 'baseline' : `+${pct}% vs slowest`}
+                </p>
+              )}
               <NestjsDelta results={data} serverKey={key} className="mt-1" />
+              <VsFastestNode results={data} serverKey={key} className="mt-1" />
               <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground font-mono tabular-nums">
                 <span>avg {d.latency_ms.avg}ms</span>
                 <span>p99 {d.latency_ms.p99}ms</span>

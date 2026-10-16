@@ -1,7 +1,7 @@
 'use client';
 
-import { SERVERS, TIER_FILL_OPACITY, TIER_LABELS } from '@/lib/constants';
-import { chartOrder, cn, serverColor } from '@/lib/utils';
+import { SERVERS, TIER_FILL_OPACITY } from '@/lib/constants';
+import { chartOrder, cn, serverColor, tierLabel } from '@/lib/utils';
 import type { RelativeHeatmapProps } from './RelativeHeatmap.types';
 
 // Throughput as % of the fastest visible server in each scenario. One hue, stronger = faster;
@@ -56,7 +56,7 @@ export default function RelativeHeatmap({ scenarios, visible }: RelativeHeatmapP
                     />
                     <span className="font-semibold">{SERVERS[k].label}</span>
                     <span className="text-[9px] uppercase tracking-wider text-muted-foreground px-1.5 py-0.5 border border-border rounded">
-                      {TIER_LABELS[SERVERS[k].tier]}
+                      {tierLabel(k)}
                     </span>
                   </span>
                 </td>
