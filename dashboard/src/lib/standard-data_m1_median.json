@@ -2046,7 +2046,7 @@
             "med": 13.42,
             "p90": 16.69,
             "p95": 17.88,
-            "p99": 32
+            "p99": 31.96
           },
           "throughput": {
             "received_mb": 35.08,
@@ -2417,7 +2417,7 @@
       },
       "throughput": {
         "received_mb": 326.14,
-        "sent_mb": 12
+        "sent_mb": 12.13
       },
       "errors": {
         "http_failure_rate": 0,
