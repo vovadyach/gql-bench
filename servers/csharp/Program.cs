@@ -1,4 +1,5 @@
-// ASP.NET Core + Hot Chocolate. One process, like the single-process Node and Python servers.
+// ASP.NET Core + Hot Chocolate. One process, like the single-process Node and Python servers;
+// GqlBench.csproj keeps it on one thread pool thread.
 var builder = WebApplication.CreateBuilder(args);
 
 // Warnings and errors only: no per-request logs, like the Node servers and uvicorn's log_level="warning"

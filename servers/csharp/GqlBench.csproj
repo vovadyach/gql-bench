@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- Exact versions of every package, including indirect ones, are pinned in packages.lock.json -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- One core, like the Node and Python servers: one thread pool thread runs all request work,
+         as Node's single JavaScript thread does, and workstation GC replaces the default server GC,
+         which collects on many threads at once -->
+    <ThreadPoolMinThreads>1</ThreadPoolMinThreads>
+    <ThreadPoolMaxThreads>1</ThreadPoolMaxThreads>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
