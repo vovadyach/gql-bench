@@ -7,7 +7,11 @@ builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
 // Hot Chocolate's default security rules (cost analysis, introspection off outside development,
 // a field-cycle depth rule) are off: the Node and Python servers run none of them
-builder.AddGraphQL(disableDefaultSecurity: true).AddTypes();
+builder.AddGraphQL(disableDefaultSecurity: true)
+    .AddTypes()
+    // No limit on requests executing at once, like the Node and Python servers. Hot Chocolate's default
+    // is 64, and requests past it wait for a free slot
+    .ModifyServerOptions(o => o.MaxConcurrentExecutions = null);
 
 var app = builder.Build();
 
