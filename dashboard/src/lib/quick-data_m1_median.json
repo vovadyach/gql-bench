@@ -25,7 +25,9 @@
       "Python: single process (one uvicorn worker), same as the single-threaded Node servers",
       "Median of 3 full runs (every metric is the median across runs)",
       "C#: single process, all request work on one thread pool thread, workstation GC; same as the single-threaded Node servers",
-      "C# measured separately: median of 3 runs on the same machine; raw-fastify-mercurius, re-run alongside, stayed within 10% of the numbers here"
+      "C# measured separately: median of 3 runs on the same machine; raw-fastify-mercurius, re-run alongside, stayed within 10% of the numbers here",
+      "Go: single process, GOMAXPROCS=1 (Go code on one thread); same as the single-threaded Node servers",
+      "Go measured separately: median of 3 runs on the same machine; raw-fastify-mercurius, re-run alongside, stayed within 10% of the numbers here"
     ],
     "runs": [
       "2026-10-19T23:12:24.267Z",
@@ -46,8 +48,22 @@
         "check": [
           "raw-fastify-mercurius"
         ]
+      },
+      {
+        "servers": [
+          "go-chi-gqlgen"
+        ],
+        "runs": [
+          "2026-10-20T19:27:44.334Z",
+          "2026-10-20T19:45:16.586Z",
+          "2026-10-20T20:02:48.842Z"
+        ],
+        "check": [
+          "raw-fastify-mercurius"
+        ]
       }
-    ]
+    ],
+    "go_version": "1.27.3"
   },
   "preflight": {
     "cold_starts": {},
@@ -466,6 +482,40 @@
           "cpu_cores": 1,
           "thresholds": {},
           "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 673331,
+            "rate": 37406.92
+          },
+          "iterations": {
+            "total": 673331,
+            "rate": 37406.92
+          },
+          "latency_ms": {
+            "avg": 0.16,
+            "min": 0.04,
+            "max": 1.67,
+            "med": 0.14,
+            "p90": 0.27,
+            "p95": 0.35,
+            "p99": 0.59
+          },
+          "throughput": {
+            "received_mb": 148.6,
+            "sent_mb": 141.91
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 122
+          },
+          "cpu_cores": 0.9,
+          "thresholds": {},
+          "thresholds_passed": true
         }
       }
     },
@@ -879,6 +929,40 @@
             "avg": 1139
           },
           "cpu_cores": 0.47,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 79031,
+            "rate": 4390.37
+          },
+          "iterations": {
+            "total": 79031,
+            "rate": 4390.37
+          },
+          "latency_ms": {
+            "avg": 1.69,
+            "min": 1.11,
+            "max": 16.39,
+            "med": 1.54,
+            "p90": 2.22,
+            "p95": 2.61,
+            "p99": 3.31
+          },
+          "throughput": {
+            "received_mb": 94.1,
+            "sent_mb": 23.52
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.43,
           "thresholds": {},
           "thresholds_passed": true
         }
@@ -1296,6 +1380,40 @@
           "cpu_cores": 0.38,
           "thresholds": {},
           "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 19364,
+            "rate": 1075.47
+          },
+          "iterations": {
+            "total": 19364,
+            "rate": 1075.47
+          },
+          "latency_ms": {
+            "avg": 7.13,
+            "min": 3.37,
+            "max": 14.98,
+            "med": 6.91,
+            "p90": 9.21,
+            "p95": 10.14,
+            "p99": 12.53
+          },
+          "throughput": {
+            "received_mb": 176.77,
+            "sent_mb": 5.91
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.52,
+          "thresholds": {},
+          "thresholds_passed": true
         }
       }
     },
@@ -1711,6 +1829,40 @@
           "cpu_cores": 0.56,
           "thresholds": {},
           "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 6719,
+            "rate": 373.17
+          },
+          "iterations": {
+            "total": 6719,
+            "rate": 373.17
+          },
+          "latency_ms": {
+            "avg": 20.19,
+            "min": 4.8,
+            "max": 52.74,
+            "med": 19.95,
+            "p90": 30.8,
+            "p95": 33.91,
+            "p99": 39.77
+          },
+          "throughput": {
+            "received_mb": 579.32,
+            "sent_mb": 2.29
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 0.9,
+          "thresholds": {},
+          "thresholds_passed": true
         }
       }
     },
@@ -2124,6 +2276,40 @@
             "avg": 132
           },
           "cpu_cores": 0.25,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 32642,
+            "rate": 1813.07
+          },
+          "iterations": {
+            "total": 32642,
+            "rate": 1813.07
+          },
+          "latency_ms": {
+            "avg": 4.19,
+            "min": 3.08,
+            "max": 22.09,
+            "med": 3.61,
+            "p90": 4.58,
+            "p95": 6.35,
+            "p99": 15.71
+          },
+          "throughput": {
+            "received_mb": 7.5,
+            "sent_mb": 10.46
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.17,
           "thresholds": {},
           "thresholds_passed": true
         }

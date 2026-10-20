@@ -35,6 +35,7 @@ describe('chartOrder', () => {
       'yoga-standalone',
       'python-fastapi-strawberry',
       'csharp-aspnetcore-hotchocolate',
+      'go-chi-gqlgen',
     ]);
   });
 

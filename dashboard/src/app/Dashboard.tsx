@@ -94,8 +94,8 @@ export function Dashboard() {
           />
           <span className="text-xs text-muted-foreground">
             {profile === 'quick'
-              ? '5 scenarios · 10 VUs · ~19 min'
-              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~85 min'}
+              ? '5 scenarios · 10 VUs · ~21 min'
+              : '5 scenarios + mixed traffic + degradation · 50 VUs · ~92 min'}
           </span>
         </div>
 

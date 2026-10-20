@@ -72,6 +72,12 @@ export const SERVERS: Record<string, ServerConfig> = {
     tier: 'other',
     lang: 'C#',
   },
+  'go-chi-gqlgen': {
+    key: 'go-chi-gqlgen',
+    label: 'chi + gqlgen',
+    tier: 'other',
+    lang: 'Go',
+  },
 };
 
 export const SERVER_KEYS = Object.keys(SERVERS);

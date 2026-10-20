@@ -1,0 +1,411 @@
+{
+  "meta": {
+    "date": "2026-10-20T19:27:44.334Z",
+    "tool": "k6",
+    "profile": "quick",
+    "warmup_requests": 500,
+    "node_version": "v24.19.0",
+    "go_version": "1.27.3",
+    "only": [
+      "go",
+      "raw-fastify-mercurius"
+    ],
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 10,
+    "cpu_model": "Apple M1 Max",
+    "memory_gb": 64,
+    "methodology": [
+      "Sequential execution — one server at a time, full CPU",
+      "Warmup: 500 throwaway requests before each server",
+      "Profile: quick (k6 ramping-vus with gradual ramp-up)",
+      "Response validation: every GraphQL response checked for errors",
+      "Response sizes verified identical across all servers",
+      "Cooldown: 2s between servers",
+      "Go: single process, GOMAXPROCS=1 (Go code on one thread); same as the single-threaded Node servers"
+    ]
+  },
+  "preflight": {
+    "cold_starts": {},
+    "response_sizes": {}
+  },
+  "scenarios": [
+    {
+      "id": "health",
+      "name": "Health Check (Scalar)",
+      "complexity": "light",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 496052,
+            "rate": 27558.01
+          },
+          "iterations": {
+            "total": 496052,
+            "rate": 27558.01
+          },
+          "latency_ms": {
+            "avg": 0.24,
+            "min": 0.05,
+            "max": 6.42,
+            "med": 0.2,
+            "p90": 0.41,
+            "p95": 0.46,
+            "p99": 0.56
+          },
+          "throughput": {
+            "received_mb": 143.07,
+            "sent_mb": 104.55
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 130
+          },
+          "cpu_cores": 0.93,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 672656,
+            "rate": 37369.28
+          },
+          "iterations": {
+            "total": 672656,
+            "rate": 37369.28
+          },
+          "latency_ms": {
+            "avg": 0.16,
+            "min": 0.04,
+            "max": 1.59,
+            "med": 0.14,
+            "p90": 0.27,
+            "p95": 0.35,
+            "p99": 0.59
+          },
+          "throughput": {
+            "received_mb": 148.45,
+            "sent_mb": 141.77
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 122
+          },
+          "cpu_cores": 0.9,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "single-user",
+      "name": "Single User + Posts",
+      "complexity": "medium",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 76976,
+            "rate": 4275.88
+          },
+          "iterations": {
+            "total": 76976,
+            "rate": 4275.88
+          },
+          "latency_ms": {
+            "avg": 1.73,
+            "min": 0.15,
+            "max": 16.61,
+            "med": 1.81,
+            "p90": 2.33,
+            "p95": 2.58,
+            "p99": 3.38
+          },
+          "throughput": {
+            "received_mb": 96.28,
+            "sent_mb": 22.9
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.48,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 78909,
+            "rate": 4383.45
+          },
+          "iterations": {
+            "total": 78909,
+            "rate": 4383.45
+          },
+          "latency_ms": {
+            "avg": 1.7,
+            "min": 1.11,
+            "max": 14.39,
+            "med": 1.56,
+            "p90": 2.22,
+            "p95": 2.61,
+            "p99": 3.31
+          },
+          "throughput": {
+            "received_mb": 93.95,
+            "sent_mb": 23.48
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1138
+          },
+          "cpu_cores": 0.43,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "user-list",
+      "name": "Paginated Users (10)",
+      "complexity": "heavy",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 28476,
+            "rate": 1581.71
+          },
+          "iterations": {
+            "total": 28476,
+            "rate": 1581.71
+          },
+          "latency_ms": {
+            "avg": 4.77,
+            "min": 2.4,
+            "max": 10.67,
+            "med": 4.8,
+            "p90": 5.81,
+            "p95": 5.93,
+            "p99": 6.47
+          },
+          "throughput": {
+            "received_mb": 261.14,
+            "sent_mb": 8.69
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.42,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 19448,
+            "rate": 1080.14
+          },
+          "iterations": {
+            "total": 19448,
+            "rate": 1080.14
+          },
+          "latency_ms": {
+            "avg": 7.1,
+            "min": 3.35,
+            "max": 14.68,
+            "med": 6.86,
+            "p90": 9.2,
+            "p95": 10.14,
+            "p99": 12.53
+          },
+          "throughput": {
+            "received_mb": 177.53,
+            "sent_mb": 5.94
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.52,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "deep-nested",
+      "name": "Deep Nested (5×10×8)",
+      "complexity": "extreme",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 14659,
+            "rate": 814.21
+          },
+          "iterations": {
+            "total": 14659,
+            "rate": 814.21
+          },
+          "latency_ms": {
+            "avg": 8.84,
+            "min": 3.3,
+            "max": 16.88,
+            "med": 9.82,
+            "p90": 10.26,
+            "p95": 10.43,
+            "p99": 11.05
+          },
+          "throughput": {
+            "received_mb": 1264.54,
+            "sent_mb": 5
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 0.87,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 6722,
+            "rate": 373.41
+          },
+          "iterations": {
+            "total": 6722,
+            "rate": 373.41
+          },
+          "latency_ms": {
+            "avg": 20.17,
+            "min": 4.8,
+            "max": 51.59,
+            "med": 19.95,
+            "p90": 30.8,
+            "p95": 34,
+            "p99": 40.05
+          },
+          "throughput": {
+            "received_mb": 579.58,
+            "sent_mb": 2.29
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 0.9,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "mutation",
+      "name": "Create Post (Mutation)",
+      "complexity": "medium",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 31987,
+            "rate": 1776.86
+          },
+          "iterations": {
+            "total": 31987,
+            "rate": 1776.86
+          },
+          "latency_ms": {
+            "avg": 4.24,
+            "min": 2.24,
+            "max": 24.27,
+            "med": 4.08,
+            "p90": 5.32,
+            "p95": 5.87,
+            "p99": 8.09
+          },
+          "throughput": {
+            "received_mb": 9.27,
+            "sent_mb": 10.25
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.27,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "go-chi-gqlgen": {
+          "requests": {
+            "total": 32842,
+            "rate": 1824.29
+          },
+          "iterations": {
+            "total": 32842,
+            "rate": 1824.29
+          },
+          "latency_ms": {
+            "avg": 4.18,
+            "min": 3.08,
+            "max": 21.89,
+            "med": 3.61,
+            "p90": 4.48,
+            "p95": 6.35,
+            "p99": 15.71
+          },
+          "throughput": {
+            "received_mb": 7.55,
+            "sent_mb": 10.52
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.17,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    }
+  ],
+  "mixed_traffic": null,
+  "degradation": null
+}
