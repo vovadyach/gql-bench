@@ -62,6 +62,7 @@ export interface BenchmarkMeta {
   warmup_requests: number;
   node_version: string;
   python_version?: string; // only when the run included the Python server
+  dotnet_version?: string; // only when the run included the C# server
   platform: string;
   arch: string;
   cpus: number;

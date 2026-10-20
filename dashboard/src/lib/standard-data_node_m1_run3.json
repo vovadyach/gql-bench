@@ -1,0 +1,2858 @@
+{
+  "meta": {
+    "date": "2026-10-20T03:48:57.170Z",
+    "tool": "k6",
+    "profile": "standard",
+    "warmup_requests": 3000,
+    "node_version": "v24.19.0",
+    "python_version": "3.14.8",
+    "only": [
+      "node",
+      "python"
+    ],
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 10,
+    "cpu_model": "Apple M1 Max",
+    "memory_gb": 64,
+    "methodology": [
+      "Sequential execution — one server at a time, full CPU",
+      "Warmup: 3000 throwaway requests before each server",
+      "Profile: standard (k6 ramping-vus with gradual ramp-up)",
+      "Response validation: every GraphQL response checked for errors",
+      "Response sizes verified identical across all servers",
+      "Cooldown: 5s between servers",
+      "Python: single process (one uvicorn worker), same as the single-threaded Node servers"
+    ]
+  },
+  "preflight": {
+    "cold_starts": {
+      "express": 452,
+      "raw-express-apollo": 173,
+      "fastify": 374,
+      "raw-fastify-apollo": 170,
+      "mercurius": 372,
+      "raw-fastify-mercurius": 218,
+      "yoga": 377,
+      "raw-fastify-yoga": 223,
+      "raw-express-yoga": 175,
+      "yoga-standalone": 170,
+      "python-fastapi-strawberry": 326
+    },
+    "response_sizes": {
+      "express": {
+        "health": {
+          "bytes": 117,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1141,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9448,
+          "valid": true
+        }
+      },
+      "raw-express-apollo": {
+        "health": {
+          "bytes": 128,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1141,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9443,
+          "valid": true
+        }
+      },
+      "fastify": {
+        "health": {
+          "bytes": 117,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1138,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9442,
+          "valid": true
+        }
+      },
+      "raw-fastify-apollo": {
+        "health": {
+          "bytes": 126,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1140,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9431,
+          "valid": true
+        }
+      },
+      "mercurius": {
+        "health": {
+          "bytes": 118,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1140,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9447,
+          "valid": true
+        }
+      },
+      "raw-fastify-mercurius": {
+        "health": {
+          "bytes": 130,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1138,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9447,
+          "valid": true
+        }
+      },
+      "yoga": {
+        "health": {
+          "bytes": 113,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1138,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9442,
+          "valid": true
+        }
+      },
+      "raw-fastify-yoga": {
+        "health": {
+          "bytes": 125,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1138,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9445,
+          "valid": true
+        }
+      },
+      "raw-express-yoga": {
+        "health": {
+          "bytes": 123,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1137,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9443,
+          "valid": true
+        }
+      },
+      "yoga-standalone": {
+        "health": {
+          "bytes": 124,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1138,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9443,
+          "valid": true
+        }
+      },
+      "python-fastapi-strawberry": {
+        "health": {
+          "bytes": 134,
+          "valid": true
+        },
+        "single-user": {
+          "bytes": 1139,
+          "valid": true
+        },
+        "user-list": {
+          "bytes": 9449,
+          "valid": true
+        }
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "health",
+      "name": "Health Check (Scalar)",
+      "complexity": "light",
+      "servers": {
+        "express": {
+          "requests": {
+            "total": 766298,
+            "rate": 17028.84
+          },
+          "iterations": {
+            "total": 766298,
+            "rate": 17028.84
+          },
+          "latency_ms": {
+            "avg": 2.4,
+            "min": 0.07,
+            "max": 10.87,
+            "med": 2.56,
+            "p90": 3.08,
+            "p95": 3.62,
+            "p99": 5.51
+          },
+          "throughput": {
+            "received_mb": 276.76,
+            "sent_mb": 161.51
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 118
+          },
+          "cpu_cores": 1.01,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-apollo": {
+          "requests": {
+            "total": 801433,
+            "rate": 17809.53
+          },
+          "iterations": {
+            "total": 801433,
+            "rate": 17809.53
+          },
+          "latency_ms": {
+            "avg": 2.3,
+            "min": 0.07,
+            "max": 7.83,
+            "med": 2.44,
+            "p90": 2.92,
+            "p95": 3.52,
+            "p99": 5.24
+          },
+          "throughput": {
+            "received_mb": 297.87,
+            "sent_mb": 168.91
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 129
+          },
+          "cpu_cores": 1,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "fastify": {
+          "requests": {
+            "total": 942570,
+            "rate": 20945.92
+          },
+          "iterations": {
+            "total": 942570,
+            "rate": 20945.92
+          },
+          "latency_ms": {
+            "avg": 1.95,
+            "min": 0.07,
+            "max": 9.22,
+            "med": 2.08,
+            "p90": 2.49,
+            "p95": 3.02,
+            "p99": 4.47
+          },
+          "throughput": {
+            "received_mb": 282.9,
+            "sent_mb": 198.66
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 118
+          },
+          "cpu_cores": 1,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-apollo": {
+          "requests": {
+            "total": 977855,
+            "rate": 21729.99
+          },
+          "iterations": {
+            "total": 977855,
+            "rate": 21729.99
+          },
+          "latency_ms": {
+            "avg": 1.87,
+            "min": 0.06,
+            "max": 7.39,
+            "med": 2,
+            "p90": 2.39,
+            "p95": 2.97,
+            "p99": 4.31
+          },
+          "throughput": {
+            "received_mb": 303.75,
+            "sent_mb": 206.09
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 129
+          },
+          "cpu_cores": 1,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "mercurius": {
+          "requests": {
+            "total": 1404296,
+            "rate": 31206.43
+          },
+          "iterations": {
+            "total": 1404296,
+            "rate": 31206.43
+          },
+          "latency_ms": {
+            "avg": 1.29,
+            "min": 0.05,
+            "max": 6.25,
+            "med": 1.35,
+            "p90": 1.62,
+            "p95": 2.4,
+            "p99": 2.98
+          },
+          "throughput": {
+            "received_mb": 389.34,
+            "sent_mb": 295.97
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 119
+          },
+          "cpu_cores": 0.99,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 1334832,
+            "rate": 29662.79
+          },
+          "iterations": {
+            "total": 1334832,
+            "rate": 29662.79
+          },
+          "latency_ms": {
+            "avg": 1.36,
+            "min": 0.05,
+            "max": 6.18,
+            "med": 1.45,
+            "p90": 1.68,
+            "p95": 2.58,
+            "p99": 3.13
+          },
+          "throughput": {
+            "received_mb": 385.36,
+            "sent_mb": 281.33
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 131
+          },
+          "cpu_cores": 0.99,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga": {
+          "requests": {
+            "total": 781763,
+            "rate": 17372.42
+          },
+          "iterations": {
+            "total": 781763,
+            "rate": 17372.42
+          },
+          "latency_ms": {
+            "avg": 2.36,
+            "min": 0.07,
+            "max": 11.15,
+            "med": 2.51,
+            "p90": 3.06,
+            "p95": 3.51,
+            "p99": 5.38
+          },
+          "throughput": {
+            "received_mb": 213.01,
+            "sent_mb": 164.77
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 114
+          },
+          "cpu_cores": 1.06,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-yoga": {
+          "requests": {
+            "total": 807989,
+            "rate": 17955.21
+          },
+          "iterations": {
+            "total": 807989,
+            "rate": 17955.21
+          },
+          "latency_ms": {
+            "avg": 2.28,
+            "min": 0.07,
+            "max": 7.44,
+            "med": 2.44,
+            "p90": 2.93,
+            "p95": 3.34,
+            "p99": 5.16
+          },
+          "throughput": {
+            "received_mb": 229.41,
+            "sent_mb": 170.29
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 126
+          },
+          "cpu_cores": 1,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-yoga": {
+          "requests": {
+            "total": 876501,
+            "rate": 19477.72
+          },
+          "iterations": {
+            "total": 876501,
+            "rate": 19477.72
+          },
+          "latency_ms": {
+            "avg": 2.1,
+            "min": 0.07,
+            "max": 7.84,
+            "med": 2.24,
+            "p90": 2.71,
+            "p95": 3.17,
+            "p99": 4.76
+          },
+          "throughput": {
+            "received_mb": 267.25,
+            "sent_mb": 184.73
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 126
+          },
+          "cpu_cores": 1.01,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga-standalone": {
+          "requests": {
+            "total": 947464,
+            "rate": 21050.58
+          },
+          "iterations": {
+            "total": 947464,
+            "rate": 21050.58
+          },
+          "latency_ms": {
+            "avg": 1.94,
+            "min": 0.06,
+            "max": 7.23,
+            "med": 2.06,
+            "p90": 2.5,
+            "p95": 2.93,
+            "p99": 4.42
+          },
+          "throughput": {
+            "received_mb": 267.2,
+            "sent_mb": 199.69
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 125
+          },
+          "cpu_cores": 1.01,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 189666,
+            "rate": 4214.76
+          },
+          "iterations": {
+            "total": 189666,
+            "rate": 4214.76
+          },
+          "latency_ms": {
+            "avg": 9.84,
+            "min": 0.32,
+            "max": 31.39,
+            "med": 10.73,
+            "p90": 12.73,
+            "p95": 13.96,
+            "p99": 23.3
+          },
+          "throughput": {
+            "received_mb": 47.16,
+            "sent_mb": 39.97
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 135
+          },
+          "cpu_cores": 1.02,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "single-user",
+      "name": "Single User + Posts",
+      "complexity": "medium",
+      "servers": {
+        "express": {
+          "requests": {
+            "total": 410099,
+            "rate": 9112.78
+          },
+          "iterations": {
+            "total": 410099,
+            "rate": 9112.78
+          },
+          "latency_ms": {
+            "avg": 4.51,
+            "min": 0.31,
+            "max": 13.24,
+            "med": 4.29,
+            "p90": 6.72,
+            "p95": 7.5,
+            "p99": 8.88
+          },
+          "throughput": {
+            "received_mb": 548.52,
+            "sent_mb": 122.02
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1140
+          },
+          "cpu_cores": 0.94,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-apollo": {
+          "requests": {
+            "total": 423493,
+            "rate": 9410.78
+          },
+          "iterations": {
+            "total": 423493,
+            "rate": 9410.78
+          },
+          "latency_ms": {
+            "avg": 4.37,
+            "min": 0.25,
+            "max": 14.19,
+            "med": 4.18,
+            "p90": 6.4,
+            "p95": 7.12,
+            "p99": 8.52
+          },
+          "throughput": {
+            "received_mb": 566.43,
+            "sent_mb": 126.01
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.94,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "fastify": {
+          "requests": {
+            "total": 451707,
+            "rate": 10037.66
+          },
+          "iterations": {
+            "total": 451707,
+            "rate": 10037.66
+          },
+          "latency_ms": {
+            "avg": 4.09,
+            "min": 0.24,
+            "max": 17.3,
+            "med": 3.97,
+            "p90": 5.85,
+            "p95": 6.43,
+            "p99": 7.77
+          },
+          "throughput": {
+            "received_mb": 576.17,
+            "sent_mb": 134.4
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.91,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-apollo": {
+          "requests": {
+            "total": 458302,
+            "rate": 10183.71
+          },
+          "iterations": {
+            "total": 458302,
+            "rate": 10183.71
+          },
+          "latency_ms": {
+            "avg": 4.03,
+            "min": 0.25,
+            "max": 11.74,
+            "med": 3.92,
+            "p90": 5.72,
+            "p95": 6.28,
+            "p99": 7.61
+          },
+          "throughput": {
+            "received_mb": 584.58,
+            "sent_mb": 136.37
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1140
+          },
+          "cpu_cores": 0.9,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "mercurius": {
+          "requests": {
+            "total": 586223,
+            "rate": 13026.77
+          },
+          "iterations": {
+            "total": 586223,
+            "rate": 13026.77
+          },
+          "latency_ms": {
+            "avg": 3.13,
+            "min": 0.16,
+            "max": 20.82,
+            "med": 3.02,
+            "p90": 4.24,
+            "p95": 4.46,
+            "p99": 5.32
+          },
+          "throughput": {
+            "received_mb": 733.22,
+            "sent_mb": 174.43
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.75,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 591662,
+            "rate": 13147.89
+          },
+          "iterations": {
+            "total": 591662,
+            "rate": 13147.89
+          },
+          "latency_ms": {
+            "avg": 3.11,
+            "min": 0.18,
+            "max": 15.62,
+            "med": 2.92,
+            "p90": 4.24,
+            "p95": 4.45,
+            "p99": 5.41
+          },
+          "throughput": {
+            "received_mb": 740.02,
+            "sent_mb": 176.05
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1138
+          },
+          "cpu_cores": 0.77,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga": {
+          "requests": {
+            "total": 463215,
+            "rate": 10293.36
+          },
+          "iterations": {
+            "total": 463215,
+            "rate": 10293.36
+          },
+          "latency_ms": {
+            "avg": 3.99,
+            "min": 0.26,
+            "max": 13.18,
+            "med": 3.87,
+            "p90": 5.81,
+            "p95": 6.38,
+            "p99": 7.62
+          },
+          "throughput": {
+            "received_mb": 579.36,
+            "sent_mb": 137.83
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1138
+          },
+          "cpu_cores": 0.97,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-yoga": {
+          "requests": {
+            "total": 474690,
+            "rate": 10548.38
+          },
+          "iterations": {
+            "total": 474690,
+            "rate": 10548.38
+          },
+          "latency_ms": {
+            "avg": 3.89,
+            "min": 0.26,
+            "max": 12.84,
+            "med": 3.81,
+            "p90": 5.62,
+            "p95": 6.14,
+            "p99": 7.36
+          },
+          "throughput": {
+            "received_mb": 593.71,
+            "sent_mb": 141.24
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1138
+          },
+          "cpu_cores": 0.93,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-yoga": {
+          "requests": {
+            "total": 505027,
+            "rate": 11222.67
+          },
+          "iterations": {
+            "total": 505027,
+            "rate": 11222.67
+          },
+          "latency_ms": {
+            "avg": 3.65,
+            "min": 0.19,
+            "max": 10.36,
+            "med": 3.57,
+            "p90": 5.3,
+            "p95": 5.94,
+            "p99": 7.12
+          },
+          "throughput": {
+            "received_mb": 642.26,
+            "sent_mb": 150.27
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1138
+          },
+          "cpu_cores": 0.93,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga-standalone": {
+          "requests": {
+            "total": 507561,
+            "rate": 11278.58
+          },
+          "iterations": {
+            "total": 507561,
+            "rate": 11278.58
+          },
+          "latency_ms": {
+            "avg": 3.63,
+            "min": 0.24,
+            "max": 10.17,
+            "med": 3.57,
+            "p90": 5.16,
+            "p95": 5.64,
+            "p99": 6.89
+          },
+          "throughput": {
+            "received_mb": 634.34,
+            "sent_mb": 151.02
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.9,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 105528,
+            "rate": 2344.96
+          },
+          "iterations": {
+            "total": 105528,
+            "rate": 2344.96
+          },
+          "latency_ms": {
+            "avg": 17.69,
+            "min": 0.65,
+            "max": 51.17,
+            "med": 18.73,
+            "p90": 23.21,
+            "p95": 25.35,
+            "p99": 38.19
+          },
+          "throughput": {
+            "received_mb": 127.37,
+            "sent_mb": 31.4
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 1,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "user-list",
+      "name": "Paginated Users (10)",
+      "complexity": "heavy",
+      "servers": {
+        "express": {
+          "requests": {
+            "total": 121266,
+            "rate": 2694.05
+          },
+          "iterations": {
+            "total": 121266,
+            "rate": 2694.05
+          },
+          "latency_ms": {
+            "avg": 15.31,
+            "min": 2.67,
+            "max": 33.71,
+            "med": 17.03,
+            "p90": 17.79,
+            "p95": 18.05,
+            "p99": 18.7
+          },
+          "throughput": {
+            "received_mb": 1122.71,
+            "sent_mb": 37.01
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9444
+          },
+          "cpu_cores": 0.95,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-apollo": {
+          "requests": {
+            "total": 122333,
+            "rate": 2718.24
+          },
+          "iterations": {
+            "total": 122333,
+            "rate": 2718.24
+          },
+          "latency_ms": {
+            "avg": 15.17,
+            "min": 2.79,
+            "max": 28.6,
+            "med": 16.85,
+            "p90": 17.53,
+            "p95": 17.73,
+            "p99": 18.38
+          },
+          "throughput": {
+            "received_mb": 1132.59,
+            "sent_mb": 37.33
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9444
+          },
+          "cpu_cores": 0.95,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "fastify": {
+          "requests": {
+            "total": 126032,
+            "rate": 2800.65
+          },
+          "iterations": {
+            "total": 126032,
+            "rate": 2800.65
+          },
+          "latency_ms": {
+            "avg": 14.72,
+            "min": 2.64,
+            "max": 28.44,
+            "med": 16.2,
+            "p90": 16.91,
+            "p95": 17.19,
+            "p99": 17.83
+          },
+          "throughput": {
+            "received_mb": 1158.9,
+            "sent_mb": 38.46
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9444
+          },
+          "cpu_cores": 0.94,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-apollo": {
+          "requests": {
+            "total": 127177,
+            "rate": 2826.09
+          },
+          "iterations": {
+            "total": 127177,
+            "rate": 2826.09
+          },
+          "latency_ms": {
+            "avg": 14.59,
+            "min": 2.66,
+            "max": 31.51,
+            "med": 16.04,
+            "p90": 16.7,
+            "p95": 16.91,
+            "p99": 17.5
+          },
+          "throughput": {
+            "received_mb": 1169.43,
+            "sent_mb": 38.81
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9444
+          },
+          "cpu_cores": 0.94,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "mercurius": {
+          "requests": {
+            "total": 199768,
+            "rate": 4439.25
+          },
+          "iterations": {
+            "total": 199768,
+            "rate": 4439.25
+          },
+          "latency_ms": {
+            "avg": 9.23,
+            "min": 2.47,
+            "max": 17.81,
+            "med": 9.41,
+            "p90": 10.8,
+            "p95": 11.26,
+            "p99": 11.82
+          },
+          "throughput": {
+            "received_mb": 1831.97,
+            "sent_mb": 60.96
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.86,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 193482,
+            "rate": 4299.07
+          },
+          "iterations": {
+            "total": 193482,
+            "rate": 4299.07
+          },
+          "latency_ms": {
+            "avg": 9.54,
+            "min": 2.31,
+            "max": 20.55,
+            "med": 9.75,
+            "p90": 11.32,
+            "p95": 11.9,
+            "p99": 12.17
+          },
+          "throughput": {
+            "received_mb": 1774.33,
+            "sent_mb": 59.05
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.85,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga": {
+          "requests": {
+            "total": 161870,
+            "rate": 3596.91
+          },
+          "iterations": {
+            "total": 161870,
+            "rate": 3596.91
+          },
+          "latency_ms": {
+            "avg": 11.43,
+            "min": 2.37,
+            "max": 23.67,
+            "med": 12.12,
+            "p90": 13.29,
+            "p95": 13.8,
+            "p99": 16.24
+          },
+          "throughput": {
+            "received_mb": 1484.43,
+            "sent_mb": 49.4
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 1,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-yoga": {
+          "requests": {
+            "total": 158883,
+            "rate": 3530.33
+          },
+          "iterations": {
+            "total": 158883,
+            "rate": 3530.33
+          },
+          "latency_ms": {
+            "avg": 11.65,
+            "min": 2.56,
+            "max": 26.14,
+            "med": 12.43,
+            "p90": 13.56,
+            "p95": 13.9,
+            "p99": 14.65
+          },
+          "throughput": {
+            "received_mb": 1457.04,
+            "sent_mb": 48.49
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.92,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-yoga": {
+          "requests": {
+            "total": 165007,
+            "rate": 3666.5
+          },
+          "iterations": {
+            "total": 165007,
+            "rate": 3666.5
+          },
+          "latency_ms": {
+            "avg": 11.21,
+            "min": 2.44,
+            "max": 25.8,
+            "med": 11.99,
+            "p90": 13.04,
+            "p95": 13.41,
+            "p99": 14.06
+          },
+          "throughput": {
+            "received_mb": 1516.67,
+            "sent_mb": 50.36
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.93,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga-standalone": {
+          "requests": {
+            "total": 161722,
+            "rate": 3593.6
+          },
+          "iterations": {
+            "total": 161722,
+            "rate": 3593.6
+          },
+          "latency_ms": {
+            "avg": 11.44,
+            "min": 2.48,
+            "max": 25.71,
+            "med": 12.1,
+            "p90": 13.43,
+            "p95": 13.93,
+            "p99": 15.71
+          },
+          "throughput": {
+            "received_mb": 1482.92,
+            "sent_mb": 49.35
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.95,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 31991,
+            "rate": 710.89
+          },
+          "iterations": {
+            "total": 31991,
+            "rate": 710.89
+          },
+          "latency_ms": {
+            "avg": 58.42,
+            "min": 4.81,
+            "max": 130.7,
+            "med": 63.06,
+            "p90": 79.48,
+            "p95": 89.68,
+            "p99": 104.52
+          },
+          "throughput": {
+            "received_mb": 292.17,
+            "sent_mb": 9.76
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9450
+          },
+          "cpu_cores": 0.97,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "deep-nested",
+      "name": "Deep Nested (5×10×8)",
+      "complexity": "extreme",
+      "servers": {
+        "express": {
+          "requests": {
+            "total": 21582,
+            "rate": 479.51
+          },
+          "iterations": {
+            "total": 21582,
+            "rate": 479.51
+          },
+          "latency_ms": {
+            "avg": 86.06,
+            "min": 5.23,
+            "max": 174.33,
+            "med": 100.38,
+            "p90": 105.35,
+            "p95": 118.15,
+            "p99": 125.98
+          },
+          "throughput": {
+            "received_mb": 1863.65,
+            "sent_mb": 7.37
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90281
+          },
+          "cpu_cores": 1.12,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-apollo": {
+          "requests": {
+            "total": 21607,
+            "rate": 480.11
+          },
+          "iterations": {
+            "total": 21607,
+            "rate": 480.11
+          },
+          "latency_ms": {
+            "avg": 85.95,
+            "min": 4.66,
+            "max": 201.98,
+            "med": 99.75,
+            "p90": 106.25,
+            "p95": 124.67,
+            "p99": 127.08
+          },
+          "throughput": {
+            "received_mb": 1865.81,
+            "sent_mb": 7.38
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90281
+          },
+          "cpu_cores": 1.12,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "fastify": {
+          "requests": {
+            "total": 22168,
+            "rate": 492.59
+          },
+          "iterations": {
+            "total": 22168,
+            "rate": 492.59
+          },
+          "latency_ms": {
+            "avg": 83.76,
+            "min": 4.64,
+            "max": 178,
+            "med": 97.5,
+            "p90": 101.46,
+            "p95": 112.45,
+            "p99": 123.65
+          },
+          "throughput": {
+            "received_mb": 1912.84,
+            "sent_mb": 7.57
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90281
+          },
+          "cpu_cores": 1.13,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-apollo": {
+          "requests": {
+            "total": 22039,
+            "rate": 489.73
+          },
+          "iterations": {
+            "total": 22039,
+            "rate": 489.73
+          },
+          "latency_ms": {
+            "avg": 84.26,
+            "min": 5.08,
+            "max": 174.43,
+            "med": 97.73,
+            "p90": 101.76,
+            "p95": 122.15,
+            "p99": 125.3
+          },
+          "throughput": {
+            "received_mb": 1901.71,
+            "sent_mb": 7.52
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90281
+          },
+          "cpu_cores": 1.12,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "mercurius": {
+          "requests": {
+            "total": 40574,
+            "rate": 901.53
+          },
+          "iterations": {
+            "total": 40574,
+            "rate": 901.53
+          },
+          "latency_ms": {
+            "avg": 45.39,
+            "min": 3.33,
+            "max": 98.58,
+            "med": 52.9,
+            "p90": 54.75,
+            "p95": 55.48,
+            "p99": 66.66
+          },
+          "throughput": {
+            "received_mb": 3500.06,
+            "sent_mb": 13.85
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 1.06,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 39949,
+            "rate": 887.74
+          },
+          "iterations": {
+            "total": 39949,
+            "rate": 887.74
+          },
+          "latency_ms": {
+            "avg": 46.12,
+            "min": 3.29,
+            "max": 104.79,
+            "med": 53.82,
+            "p90": 55.14,
+            "p95": 55.97,
+            "p99": 66.52
+          },
+          "throughput": {
+            "received_mb": 3446.14,
+            "sent_mb": 13.64
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 1.04,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga": {
+          "requests": {
+            "total": 33888,
+            "rate": 753
+          },
+          "iterations": {
+            "total": 33888,
+            "rate": 753
+          },
+          "latency_ms": {
+            "avg": 54.51,
+            "min": 3.58,
+            "max": 114.47,
+            "med": 63.13,
+            "p90": 65.1,
+            "p95": 66.84,
+            "p99": 80
+          },
+          "throughput": {
+            "received_mb": 2923.3,
+            "sent_mb": 11.57
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 1.03,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-yoga": {
+          "requests": {
+            "total": 32688,
+            "rate": 726.38
+          },
+          "iterations": {
+            "total": 32688,
+            "rate": 726.38
+          },
+          "latency_ms": {
+            "avg": 56.55,
+            "min": 3.46,
+            "max": 122.29,
+            "med": 65.58,
+            "p90": 67.59,
+            "p95": 70.09,
+            "p99": 82.08
+          },
+          "throughput": {
+            "received_mb": 2819.78,
+            "sent_mb": 11.16
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 1.03,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-yoga": {
+          "requests": {
+            "total": 33275,
+            "rate": 739.42
+          },
+          "iterations": {
+            "total": 33275,
+            "rate": 739.42
+          },
+          "latency_ms": {
+            "avg": 55.54,
+            "min": 3.68,
+            "max": 109.72,
+            "med": 64.26,
+            "p90": 66.46,
+            "p95": 70.89,
+            "p99": 80.95
+          },
+          "throughput": {
+            "received_mb": 2871.12,
+            "sent_mb": 11.36
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 1.03,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga-standalone": {
+          "requests": {
+            "total": 32831,
+            "rate": 729.5
+          },
+          "iterations": {
+            "total": 32831,
+            "rate": 729.5
+          },
+          "latency_ms": {
+            "avg": 56.3,
+            "min": 3.71,
+            "max": 117.51,
+            "med": 65.16,
+            "p90": 67.21,
+            "p95": 70.15,
+            "p99": 81.27
+          },
+          "throughput": {
+            "received_mb": 2832.09,
+            "sent_mb": 11.21
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 1.03,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 6194,
+            "rate": 137.64
+          },
+          "iterations": {
+            "total": 6194,
+            "rate": 137.64
+          },
+          "latency_ms": {
+            "avg": 302.31,
+            "min": 10.06,
+            "max": 660.84,
+            "med": 336.68,
+            "p90": 405.22,
+            "p95": 454.05,
+            "p99": 551.28
+          },
+          "throughput": {
+            "received_mb": 534.1,
+            "sent_mb": 2.11
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90290
+          },
+          "cpu_cores": 0.99,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "mutation",
+      "name": "Create Post (Mutation)",
+      "complexity": "medium",
+      "servers": {
+        "express": {
+          "requests": {
+            "total": 425625,
+            "rate": 9457.59
+          },
+          "iterations": {
+            "total": 425625,
+            "rate": 9457.59
+          },
+          "latency_ms": {
+            "avg": 4.35,
+            "min": 2.22,
+            "max": 19.32,
+            "med": 4.25,
+            "p90": 5.4,
+            "p95": 5.65,
+            "p99": 6.18
+          },
+          "throughput": {
+            "received_mb": 159.93,
+            "sent_mb": 136.38
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 133
+          },
+          "cpu_cores": 0.67,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-apollo": {
+          "requests": {
+            "total": 418014,
+            "rate": 9288.8
+          },
+          "iterations": {
+            "total": 418014,
+            "rate": 9288.8
+          },
+          "latency_ms": {
+            "avg": 4.43,
+            "min": 2.21,
+            "max": 21.11,
+            "med": 4.25,
+            "p90": 5.5,
+            "p95": 5.71,
+            "p99": 6.29
+          },
+          "throughput": {
+            "received_mb": 157.07,
+            "sent_mb": 133.95
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 133
+          },
+          "cpu_cores": 0.63,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "fastify": {
+          "requests": {
+            "total": 447850,
+            "rate": 9951.29
+          },
+          "iterations": {
+            "total": 447850,
+            "rate": 9951.29
+          },
+          "latency_ms": {
+            "avg": 4.13,
+            "min": 2.16,
+            "max": 20.09,
+            "med": 3.94,
+            "p90": 5.09,
+            "p95": 5.45,
+            "p99": 5.83
+          },
+          "throughput": {
+            "received_mb": 140.94,
+            "sent_mb": 143.51
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 133
+          },
+          "cpu_cores": 0.59,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-apollo": {
+          "requests": {
+            "total": 442390,
+            "rate": 9830.24
+          },
+          "iterations": {
+            "total": 442390,
+            "rate": 9830.24
+          },
+          "latency_ms": {
+            "avg": 4.18,
+            "min": 2.17,
+            "max": 18.72,
+            "med": 3.94,
+            "p90": 5.03,
+            "p95": 5.32,
+            "p99": 5.91
+          },
+          "throughput": {
+            "received_mb": 139.23,
+            "sent_mb": 141.76
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 133
+          },
+          "cpu_cores": 0.56,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "mercurius": {
+          "requests": {
+            "total": 420995,
+            "rate": 9354.85
+          },
+          "iterations": {
+            "total": 420995,
+            "rate": 9354.85
+          },
+          "latency_ms": {
+            "avg": 4.38,
+            "min": 2.17,
+            "max": 28.39,
+            "med": 4.18,
+            "p90": 5.51,
+            "p95": 6.26,
+            "p99": 7.61
+          },
+          "throughput": {
+            "received_mb": 122.05,
+            "sent_mb": 134.9
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.45,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 410783,
+            "rate": 9128.4
+          },
+          "iterations": {
+            "total": 410783,
+            "rate": 9128.4
+          },
+          "latency_ms": {
+            "avg": 4.49,
+            "min": 2.16,
+            "max": 30.01,
+            "med": 4.21,
+            "p90": 5.8,
+            "p95": 6.46,
+            "p99": 8.15
+          },
+          "throughput": {
+            "received_mb": 119.09,
+            "sent_mb": 131.63
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.45,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga": {
+          "requests": {
+            "total": 423443,
+            "rate": 9409.03
+          },
+          "iterations": {
+            "total": 423443,
+            "rate": 9409.03
+          },
+          "latency_ms": {
+            "avg": 4.38,
+            "min": 2.2,
+            "max": 15.77,
+            "med": 4.25,
+            "p90": 5.38,
+            "p95": 5.57,
+            "p99": 6.18
+          },
+          "throughput": {
+            "received_mb": 122.76,
+            "sent_mb": 135.69
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.69,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-fastify-yoga": {
+          "requests": {
+            "total": 414719,
+            "rate": 9214.71
+          },
+          "iterations": {
+            "total": 414719,
+            "rate": 9214.71
+          },
+          "latency_ms": {
+            "avg": 4.47,
+            "min": 2.26,
+            "max": 12.01,
+            "med": 4.41,
+            "p90": 5.37,
+            "p95": 5.7,
+            "p99": 6.36
+          },
+          "throughput": {
+            "received_mb": 120.23,
+            "sent_mb": 132.89
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.66,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "raw-express-yoga": {
+          "requests": {
+            "total": 424301,
+            "rate": 9428.85
+          },
+          "iterations": {
+            "total": 424301,
+            "rate": 9428.85
+          },
+          "latency_ms": {
+            "avg": 4.37,
+            "min": 2.23,
+            "max": 14.6,
+            "med": 4.18,
+            "p90": 5.47,
+            "p95": 5.65,
+            "p99": 6.05
+          },
+          "throughput": {
+            "received_mb": 131.91,
+            "sent_mb": 135.96
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.63,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "yoga-standalone": {
+          "requests": {
+            "total": 445853,
+            "rate": 9907.07
+          },
+          "iterations": {
+            "total": 445853,
+            "rate": 9907.07
+          },
+          "latency_ms": {
+            "avg": 4.15,
+            "min": 2.19,
+            "max": 21.29,
+            "med": 3.98,
+            "p90": 5.22,
+            "p95": 5.35,
+            "p99": 5.71
+          },
+          "throughput": {
+            "received_mb": 128.84,
+            "sent_mb": 142.87
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.63,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "python-fastapi-strawberry": {
+          "requests": {
+            "total": 140707,
+            "rate": 3126.36
+          },
+          "iterations": {
+            "total": 140707,
+            "rate": 3126.36
+          },
+          "latency_ms": {
+            "avg": 13.27,
+            "min": 2.61,
+            "max": 42.37,
+            "med": 13.62,
+            "p90": 16.93,
+            "p95": 18.16,
+            "p99": 32.23
+          },
+          "throughput": {
+            "received_mb": 34.62,
+            "sent_mb": 45.09
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.98,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    }
+  ],
+  "mixed_traffic": {
+    "express": {
+      "requests": {
+        "total": 168151,
+        "rate": 3736.6
+      },
+      "iterations": {
+        "total": 168151,
+        "rate": 3736.6
+      },
+      "latency_ms": {
+        "avg": 11.03,
+        "min": 0.12,
+        "max": 36.25,
+        "med": 10.11,
+        "p90": 19.99,
+        "p95": 21.76,
+        "p99": 24.86
+      },
+      "throughput": {
+        "received_mb": 1196.13,
+        "sent_mb": 43.48
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.98,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-express-apollo": {
+      "requests": {
+        "total": 175779,
+        "rate": 3906.08
+      },
+      "iterations": {
+        "total": 175779,
+        "rate": 3906.08
+      },
+      "latency_ms": {
+        "avg": 10.55,
+        "min": 0.09,
+        "max": 35.63,
+        "med": 9.69,
+        "p90": 19.04,
+        "p95": 20.8,
+        "p99": 23.82
+      },
+      "throughput": {
+        "received_mb": 1227.11,
+        "sent_mb": 45.38
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.97,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "fastify": {
+      "requests": {
+        "total": 179668,
+        "rate": 3992.33
+      },
+      "iterations": {
+        "total": 179668,
+        "rate": 3992.33
+      },
+      "latency_ms": {
+        "avg": 10.32,
+        "min": 0.09,
+        "max": 38.43,
+        "med": 9.62,
+        "p90": 18.57,
+        "p95": 20.27,
+        "p99": 23.43
+      },
+      "throughput": {
+        "received_mb": 1266.07,
+        "sent_mb": 46.44
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.97,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-fastify-apollo": {
+      "requests": {
+        "total": 184973,
+        "rate": 4110.44
+      },
+      "iterations": {
+        "total": 184973,
+        "rate": 4110.44
+      },
+      "latency_ms": {
+        "avg": 10.02,
+        "min": 0.09,
+        "max": 35.16,
+        "med": 9.39,
+        "p90": 18.02,
+        "p95": 19.73,
+        "p99": 22.71
+      },
+      "throughput": {
+        "received_mb": 1296.27,
+        "sent_mb": 47.78
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.97,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "mercurius": {
+      "requests": {
+        "total": 311181,
+        "rate": 6914.67
+      },
+      "iterations": {
+        "total": 311181,
+        "rate": 6914.67
+      },
+      "latency_ms": {
+        "avg": 5.91,
+        "min": 0.07,
+        "max": 18.25,
+        "med": 5.83,
+        "p90": 10.43,
+        "p95": 11.38,
+        "p99": 13.07
+      },
+      "throughput": {
+        "received_mb": 2179.39,
+        "sent_mb": 80.42
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.94,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-fastify-mercurius": {
+      "requests": {
+        "total": 302802,
+        "rate": 6728.84
+      },
+      "iterations": {
+        "total": 302802,
+        "rate": 6728.84
+      },
+      "latency_ms": {
+        "avg": 6.08,
+        "min": 0.06,
+        "max": 18.04,
+        "med": 5.98,
+        "p90": 10.75,
+        "p95": 11.72,
+        "p99": 13.43
+      },
+      "throughput": {
+        "received_mb": 2145.7,
+        "sent_mb": 78.33
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.93,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "yoga": {
+      "requests": {
+        "total": 234311,
+        "rate": 5206.7
+      },
+      "iterations": {
+        "total": 234311,
+        "rate": 5206.7
+      },
+      "latency_ms": {
+        "avg": 7.89,
+        "min": 0.1,
+        "max": 25.96,
+        "med": 7.4,
+        "p90": 13.83,
+        "p95": 15.05,
+        "p99": 17.36
+      },
+      "throughput": {
+        "received_mb": 1647.65,
+        "sent_mb": 60.61
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 1.03,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-fastify-yoga": {
+      "requests": {
+        "total": 236693,
+        "rate": 5259.2
+      },
+      "iterations": {
+        "total": 236693,
+        "rate": 5259.2
+      },
+      "latency_ms": {
+        "avg": 7.81,
+        "min": 0.1,
+        "max": 21.71,
+        "med": 7.35,
+        "p90": 13.66,
+        "p95": 14.78,
+        "p99": 16.74
+      },
+      "throughput": {
+        "received_mb": 1641.38,
+        "sent_mb": 61.17
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.97,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-express-yoga": {
+      "requests": {
+        "total": 240460,
+        "rate": 5343.47
+      },
+      "iterations": {
+        "total": 240460,
+        "rate": 5343.47
+      },
+      "latency_ms": {
+        "avg": 7.68,
+        "min": 0.1,
+        "max": 22.22,
+        "med": 7.25,
+        "p90": 13.45,
+        "p95": 14.62,
+        "p99": 16.67
+      },
+      "throughput": {
+        "received_mb": 1696.58,
+        "sent_mb": 62.2
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.97,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "yoga-standalone": {
+      "requests": {
+        "total": 246533,
+        "rate": 5478.2
+      },
+      "iterations": {
+        "total": 246533,
+        "rate": 5478.2
+      },
+      "latency_ms": {
+        "avg": 7.49,
+        "min": 0.09,
+        "max": 21.44,
+        "med": 7.13,
+        "p90": 13.11,
+        "p95": 14.21,
+        "p99": 16.25
+      },
+      "throughput": {
+        "received_mb": 1721.08,
+        "sent_mb": 63.74
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.96,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "python-fastapi-strawberry": {
+      "requests": {
+        "total": 46327,
+        "rate": 1029.41
+      },
+      "iterations": {
+        "total": 46327,
+        "rate": 1029.41
+      },
+      "latency_ms": {
+        "avg": 40.33,
+        "min": 0.37,
+        "max": 121.56,
+        "med": 41.83,
+        "p90": 62.01,
+        "p95": 67.86,
+        "p99": 78.58
+      },
+      "throughput": {
+        "received_mb": 323.21,
+        "sent_mb": 11.96
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 0
+      },
+      "response_size_bytes": {
+        "avg": 0
+      },
+      "cpu_cores": 0.99,
+      "thresholds": {},
+      "thresholds_passed": true
+    }
+  },
+  "degradation": {
+    "express": {
+      "requests": {
+        "total": 2365392,
+        "rate": 18195.18
+      },
+      "iterations": {
+        "total": 2365392,
+        "rate": 18195.18
+      },
+      "latency_ms": {
+        "avg": 7.97,
+        "min": 0.07,
+        "max": 1152.14,
+        "med": 4.72,
+        "p90": 26.33,
+        "p95": 27.65,
+        "p99": 29.11
+      },
+      "throughput": {
+        "received_mb": 764.89,
+        "sent_mb": 417.33
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 79
+      },
+      "cpu_cores": 1,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-express-apollo": {
+      "requests": {
+        "total": 2493618,
+        "rate": 19181.52
+      },
+      "iterations": {
+        "total": 2493618,
+        "rate": 19181.52
+      },
+      "latency_ms": {
+        "avg": 7.56,
+        "min": 0.07,
+        "max": 910.08,
+        "med": 4.48,
+        "p90": 25.02,
+        "p95": 26.39,
+        "p99": 27.86
+      },
+      "throughput": {
+        "received_mb": 832.52,
+        "sent_mb": 439.95
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 90
+      },
+      "cpu_cores": 1,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "fastify": {
+      "requests": {
+        "total": 3176062,
+        "rate": 24431.04
+      },
+      "iterations": {
+        "total": 3176062,
+        "rate": 24431.04
+      },
+      "latency_ms": {
+        "avg": 5.93,
+        "min": 0.06,
+        "max": 220.47,
+        "med": 3.57,
+        "p90": 19.4,
+        "p95": 20.51,
+        "p99": 21.87
+      },
+      "throughput": {
+        "received_mb": 833.19,
+        "sent_mb": 560.35
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 79
+      },
+      "cpu_cores": 1,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-fastify-apollo": {
+      "requests": {
+        "total": 3108584,
+        "rate": 23912
+      },
+      "iterations": {
+        "total": 3108584,
+        "rate": 23912
+      },
+      "latency_ms": {
+        "avg": 6.05,
+        "min": 0.06,
+        "max": 295.63,
+        "med": 3.58,
+        "p90": 19.73,
+        "p95": 21.19,
+        "p99": 23
+      },
+      "throughput": {
+        "received_mb": 848.1,
+        "sent_mb": 548.45
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 90
+      },
+      "cpu_cores": 1,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "mercurius": {
+      "requests": {
+        "total": 4189515,
+        "rate": 32226.78
+      },
+      "iterations": {
+        "total": 4189515,
+        "rate": 32226.78
+      },
+      "latency_ms": {
+        "avg": 4.48,
+        "min": 0.04,
+        "max": 50.78,
+        "med": 2.7,
+        "p90": 14.87,
+        "p95": 15.63,
+        "p99": 17.09
+      },
+      "throughput": {
+        "received_mb": 1003.16,
+        "sent_mb": 739.16
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 80
+      },
+      "cpu_cores": 0.99,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-fastify-mercurius": {
+      "requests": {
+        "total": 4075618,
+        "rate": 31352.12
+      },
+      "iterations": {
+        "total": 4075618,
+        "rate": 31352.12
+      },
+      "latency_ms": {
+        "avg": 4.6,
+        "min": 0.05,
+        "max": 46.41,
+        "med": 2.77,
+        "p90": 14.9,
+        "p95": 15.67,
+        "p99": 17.21
+      },
+      "throughput": {
+        "received_mb": 1022.56,
+        "sent_mb": 719.06
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 92
+      },
+      "cpu_cores": 0.99,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "yoga": {
+      "requests": {
+        "total": 2286059,
+        "rate": 17584.99
+      },
+      "iterations": {
+        "total": 2286059,
+        "rate": 17584.99
+      },
+      "latency_ms": {
+        "avg": 8.25,
+        "min": 0.07,
+        "max": 1351.66,
+        "med": 4.7,
+        "p90": 26.9,
+        "p95": 29.51,
+        "p99": 31.34
+      },
+      "throughput": {
+        "received_mb": 536.47,
+        "sent_mb": 403.33
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 75
+      },
+      "cpu_cores": 1.05,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-fastify-yoga": {
+      "requests": {
+        "total": 2359937,
+        "rate": 18153.24
+      },
+      "iterations": {
+        "total": 2359937,
+        "rate": 18153.24
+      },
+      "latency_ms": {
+        "avg": 7.99,
+        "min": 0.07,
+        "max": 1081.8,
+        "med": 4.54,
+        "p90": 26.52,
+        "p95": 28.65,
+        "p99": 30.91
+      },
+      "throughput": {
+        "received_mb": 580.82,
+        "sent_mb": 416.36
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 87
+      },
+      "cpu_cores": 1,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "raw-express-yoga": {
+      "requests": {
+        "total": 2555846,
+        "rate": 19660.24
+      },
+      "iterations": {
+        "total": 2555846,
+        "rate": 19660.24
+      },
+      "latency_ms": {
+        "avg": 7.38,
+        "min": 0.06,
+        "max": 794.06,
+        "med": 4.24,
+        "p90": 24.55,
+        "p95": 26.63,
+        "p99": 28.82
+      },
+      "throughput": {
+        "received_mb": 682.65,
+        "sent_mb": 450.93
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 87
+      },
+      "cpu_cores": 1,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "yoga-standalone": {
+      "requests": {
+        "total": 2786543,
+        "rate": 21434.82
+      },
+      "iterations": {
+        "total": 2786543,
+        "rate": 21434.82
+      },
+      "latency_ms": {
+        "avg": 6.76,
+        "min": 0.06,
+        "max": 509.52,
+        "med": 3.85,
+        "p90": 22.67,
+        "p95": 24.62,
+        "p99": 26.57
+      },
+      "throughput": {
+        "received_mb": 680.49,
+        "sent_mb": 491.63
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 86
+      },
+      "cpu_cores": 1.01,
+      "thresholds": {},
+      "thresholds_passed": true
+    },
+    "python-fastapi-strawberry": {
+      "requests": {
+        "total": 533056,
+        "rate": 4100.4
+      },
+      "iterations": {
+        "total": 533056,
+        "rate": 4100.4
+      },
+      "latency_ms": {
+        "avg": 35.53,
+        "min": 0.32,
+        "max": 170.36,
+        "med": 17.24,
+        "p90": 124.72,
+        "p95": 130.52,
+        "p99": 156.54
+      },
+      "throughput": {
+        "received_mb": 112.38,
+        "sent_mb": 94.05
+      },
+      "errors": {
+        "http_failure_rate": 0,
+        "graphql_error_rate": 0,
+        "valid_response_rate": 1
+      },
+      "response_size_bytes": {
+        "avg": 96
+      },
+      "cpu_cores": 1.03,
+      "thresholds": {},
+      "thresholds_passed": true
+    }
+  }
+}

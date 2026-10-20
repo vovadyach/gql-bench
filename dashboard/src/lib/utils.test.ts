@@ -34,6 +34,7 @@ describe('chartOrder', () => {
       'raw-express-yoga',
       'yoga-standalone',
       'python-fastapi-strawberry',
+      'csharp-aspnetcore-hotchocolate',
     ]);
   });
 

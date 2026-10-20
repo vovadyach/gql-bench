@@ -159,13 +159,13 @@ for (const [k, v] of Object.entries(last.meta)) {
 }
 const name = add === 'csharp' ? 'C#' : add[0].toUpperCase() + add.slice(1); // python -> Python
 const note =
-  `${name} added later (${last.meta.date.slice(0, 10)}): median of ${runs.length} runs on the same machine` +
+  `${name} measured separately: median of ${runs.length} runs on the same machine` +
   (checks.length
     ? `; ${checks.join(', ')}, re-run alongside, stayed within ${Math.ceil(maxDrift)}% of the numbers here`
     : '');
 const newLines = last.meta.methodology.filter((l) => !base.meta.methodology.includes(l));
 base.meta.methodology = [
-  ...base.meta.methodology.filter((l) => !l.startsWith(`${name} added later`)),
+  ...base.meta.methodology.filter((l) => !l.startsWith(`${name} measured separately`)),
   ...newLines,
   note,
 ];

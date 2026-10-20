@@ -51,6 +51,7 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
                 meta.tool,
                 meta.node_version,
                 meta.python_version && `Python ${meta.python_version}`,
+                meta.dotnet_version && `.NET ${meta.dotnet_version}`,
                 `${meta.platform}/${meta.arch}`,
               ]
                 .filter(Boolean)

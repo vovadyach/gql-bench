@@ -66,6 +66,12 @@ export const SERVERS: Record<string, ServerConfig> = {
     tier: 'other',
     lang: 'Python',
   },
+  'csharp-aspnetcore-hotchocolate': {
+    key: 'csharp-aspnetcore-hotchocolate',
+    label: 'ASP.NET Core + Hot Chocolate',
+    tier: 'other',
+    lang: 'C#',
+  },
 };
 
 export const SERVER_KEYS = Object.keys(SERVERS);
