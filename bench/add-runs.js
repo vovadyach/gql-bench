@@ -46,7 +46,7 @@ function median(numbers) {
 function combine(values) {
   const [first] = values;
   if (typeof first === 'number') {
-    return +median(values).toFixed(Number.isInteger(first) ? 0 : 4);
+    return +median(values).toFixed(values.every(Number.isInteger) ? 0 : 4);
   }
   if (typeof first === 'boolean') return values.every(Boolean);
   if (first && typeof first === 'object' && !Array.isArray(first)) {
@@ -157,15 +157,15 @@ for (const [k, v] of Object.entries(last.meta)) {
   else if (base.meta[k] !== v)
     console.log(`\nNote: ${k} is ${v} in the runs, ${base.meta[k]} in the base`);
 }
-const name = add[0].toUpperCase() + add.slice(1);
+const name = add === 'csharp' ? 'C#' : add[0].toUpperCase() + add.slice(1); // python -> Python
 const note =
-  `${name} added later (${last.meta.date.slice(0, 10)}): median of ${runs.length} runs on the same machine` +
+  `${name} measured separately: median of ${runs.length} runs on the same machine` +
   (checks.length
     ? `; ${checks.join(', ')}, re-run alongside, stayed within ${Math.ceil(maxDrift)}% of the numbers here`
     : '');
 const newLines = last.meta.methodology.filter((l) => !base.meta.methodology.includes(l));
 base.meta.methodology = [
-  ...base.meta.methodology.filter((l) => !l.startsWith(`${name} added later`)),
+  ...base.meta.methodology.filter((l) => !l.startsWith(`${name} measured separately`)),
   ...newLines,
   note,
 ];

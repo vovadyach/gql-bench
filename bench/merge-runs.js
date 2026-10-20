@@ -34,7 +34,7 @@ function center(numbers) {
 function combine(values) {
   const [first] = values;
   if (typeof first === 'number') {
-    return +center(values).toFixed(Number.isInteger(first) ? 0 : 4);
+    return +center(values).toFixed(values.every(Number.isInteger) ? 0 : 4);
   }
   if (typeof first === 'boolean') return values.every(Boolean);
   if (first && typeof first === 'object' && !Array.isArray(first)) {

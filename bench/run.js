@@ -2,7 +2,7 @@
 
 // HOW THIS WORKS:
 //
-// 1. Build TypeScript (Node servers), sync the Python environment (uv)
+// 1. Build TypeScript (Node servers), sync the Python environment (uv), build the C# server (dotnet)
 // 2. For each server (one at a time, never parallel):
 //    a. Start the server
 //    b. Warm it up (throwaway requests)
@@ -11,11 +11,13 @@
 //       - k6 ramps up users gradually, holds load, ramps down
 //       - k6 validates every response (not just HTTP 200)
 //       - k6 exports detailed metrics JSON
+//       - Record how many CPU cores the server used meanwhile
 //    d. Kill the server
 //    e. Wait (let CPU cool)
 // 3. Save all results to results/latest.json
 //
-// REQUIRES: k6 installed (brew install k6 / snap install k6), uv for the Python server
+// REQUIRES: k6 installed (brew install k6 / snap install k6), uv for the Python server,
+// the .NET 10 SDK for the C# server
 //
 // --only=python,mercurius runs just the servers whose name or language matches
 // (for quick checks; partial results aren't meant for the dashboard)
@@ -97,6 +99,7 @@ const SCENARIOS = [
 
 const PYTHON_DIR = path.resolve(__dirname, '../servers/python');
 const PYTHON_BIN = path.join(PYTHON_DIR, '.venv/bin/python');
+const CSHARP_DIR = path.resolve(__dirname, '../servers/csharp');
 
 // Each NestJS server runs right before its direct twin, so every NestJS-vs-direct
 // comparison is measured minutes apart under the same machine conditions
@@ -171,9 +174,17 @@ const ALL_SERVERS = [
     command: [PYTHON_BIN, path.join(PYTHON_DIR, 'main.py')],
     env: { ADAPTER: 'python-fastapi-strawberry' },
   },
+  // C# runs on one thread pool thread with workstation GC, set in GqlBench.csproj, so no extra env
+  {
+    name: 'CSharp-AspNetCore-HotChocolate',
+    lang: 'csharp',
+    port: 3012,
+    command: ['dotnet', path.join(CSHARP_DIR, 'bin/Release/net10.0/GqlBench.dll')],
+    env: { ADAPTER: 'csharp-aspnetcore-hotchocolate' },
+  },
 
-  // Future: add Go, C#, Java here, e.g.
-  // { name: 'Go-Chi-Gqlgen', lang: 'go', port: 3012, command: [GO_BIN], env: { ADAPTER: 'go-chi-gqlgen' } },
+  // Future: add Go and Java here, e.g.
+  // { name: 'Go-Chi-Gqlgen', lang: 'go', port: 3013, command: [GO_BIN], env: { ADAPTER: 'go-chi-gqlgen' } },
 ];
 
 const langOf = (server) => server.lang || 'node';
@@ -187,6 +198,7 @@ if (!SERVERS.length) {
 }
 const RUNS_NODE = SERVERS.some((s) => langOf(s) === 'node');
 const RUNS_PYTHON = SERVERS.some((s) => langOf(s) === 'python');
+const RUNS_CSHARP = SERVERS.some((s) => langOf(s) === 'csharp');
 
 const estMinutes = Math.round(SERVERS.length * MINUTES_PER_SERVER);
 console.log(
@@ -256,6 +268,49 @@ async function warmup(port, count) {
       ),
     );
   }
+}
+
+// ─── CPU Use ───────────────────────────────────────────
+// Every server is meant to use one CPU core, like single-threaded Node. These record how many it did.
+
+// CPU time a process has used so far, in seconds; null once the process is gone.
+// ps prints [[DD-]HH:]MM:SS[.hh]: hundredths of a second on macOS, whole seconds on Linux
+function cpuSeconds(pid) {
+  try {
+    const time = execSync(`ps -o time= -p ${pid}`, { encoding: 'utf-8' }).trim();
+    const [days, clock] = time.includes('-') ? time.split('-') : ['0', time];
+    return (
+      clock.split(':').reduce((sum, part) => sum * 60 + Number(part), 0) + Number(days) * 86400
+    );
+  } catch {
+    return null;
+  }
+}
+
+// Runs `run` (a k6 run) and adds `cores`: the server's CPU time divided by the wall-clock time,
+// so 1.0 means one core busy for the whole run, ramp-up and ramp-down included
+async function withCpuCores(pid, run) {
+  const cpuStart = cpuSeconds(pid);
+  const wallStart = performance.now();
+  const result = await run();
+  const cpuEnd = cpuSeconds(pid);
+  const wallSeconds = (performance.now() - wallStart) / 1000;
+  const cores =
+    cpuStart === null || cpuEnd === null ? null : +((cpuEnd - cpuStart) / wallSeconds).toFixed(2);
+  return { ...result, cores };
+}
+
+const coresText = (cores) => (cores == null ? 'CPU unknown' : `${cores.toFixed(2)} cores`);
+
+// The .NET runtime the C# server runs on: GqlBench.dll asks for 10.0, and .NET picks the
+// newest installed 10.0.x
+function dotnetVersion() {
+  const patches = execSync('dotnet --list-runtimes', { encoding: 'utf-8' })
+    .split('\n')
+    .map((line) => line.match(/^Microsoft\.NETCore\.App 10\.0\.(\d+) /)?.[1])
+    .filter(Boolean)
+    .map(Number);
+  return patches.length ? `10.0.${Math.max(...patches)}` : 'unknown';
 }
 
 // ─── Run k6 ────────────────────────────────────────────
@@ -403,7 +458,7 @@ function runK6CustomWithQuery(scriptPath, port, query, outputFile) {
 }
 
 // ─── Extract Metrics from k6 Summary ───────────────────
-function extractMetrics(summary, k6ExitCode) {
+function extractMetrics(summary, k6ExitCode, cpuCores) {
   const m = summary.metrics || {};
 
   const dur = m.http_req_duration || {};
@@ -452,6 +507,7 @@ function extractMetrics(summary, k6ExitCode) {
     response_size_bytes: {
       avg: +(size.avg || 0).toFixed(0),
     },
+    cpu_cores: cpuCores, // average CPU cores the server used during the run (see withCpuCores)
     thresholds, // pass/fail per threshold
     thresholds_passed: k6ExitCode === 0, // all thresholds passed?
   };
@@ -512,6 +568,26 @@ async function main() {
       process.exit(1);
     }
     console.log('  ✅ Python ready\n');
+  }
+
+  // Release build with exactly the package versions in packages.lock.json. No build
+  // servers, so no compiler processes stay in the background while servers are measured
+  if (RUNS_CSHARP) {
+    console.log('  📦 Building C# server (dotnet)...');
+    try {
+      execSync(
+        'dotnet build -c Release -p:RestoreLockedMode=true --disable-build-servers -nologo',
+        {
+          cwd: CSHARP_DIR,
+          stdio: 'inherit',
+        },
+      );
+    } catch {
+      console.error('  ❌ C# build failed. Install the .NET 10 SDK, then run "npm run setup":');
+      console.error('     https://dotnet.microsoft.com/download/dotnet/10.0');
+      process.exit(1);
+    }
+    console.log('  ✅ C# build complete\n');
   }
 
   // ─── Pre-flight: Cold Start & Response Size Verification ──
@@ -594,6 +670,7 @@ async function main() {
       python_version: RUNS_PYTHON
         ? execSync(`"${PYTHON_BIN}" --version`, { encoding: 'utf-8' }).trim().replace('Python ', '')
         : undefined,
+      dotnet_version: RUNS_CSHARP ? dotnetVersion() : undefined,
       only: ONLY,
       platform: os.platform(),
       arch: os.arch(),
@@ -610,6 +687,11 @@ async function main() {
         ...(RUNS_PYTHON
           ? [
               'Python: single process (one uvicorn worker), same as the single-threaded Node servers',
+            ]
+          : []),
+        ...(RUNS_CSHARP
+          ? [
+              'C#: single process, all request work on one thread pool thread, workstation GC; same as the single-threaded Node servers',
             ]
           : []),
       ],
@@ -652,14 +734,11 @@ async function main() {
 
         if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
         try {
-          const { summary, code } = await runK6(
-            `http://127.0.0.1:${server.port}`,
-            scenario.query,
-            PROFILE,
-            outputFile,
+          const { summary, code, cores } = await withCpuCores(proc.pid, () =>
+            runK6(`http://127.0.0.1:${server.port}`, scenario.query, PROFILE, outputFile),
           );
 
-          const metrics = extractMetrics(summary, code);
+          const metrics = extractMetrics(summary, code, cores);
 
           // Find or create scenario entry
           let scenarioEntry = results.scenarios.find((s) => s.id === scenario.id);
@@ -676,7 +755,7 @@ async function main() {
 
           const pass = metrics.thresholds_passed ? '✅ PASS' : '⚠️  FAIL';
           console.log(
-            `             ${pass} | ${metrics.requests.rate} req/s | avg ${metrics.latency_ms.avg}ms | p99 ${metrics.latency_ms.p99}ms\n`,
+            `             ${pass} | ${metrics.requests.rate} req/s | avg ${metrics.latency_ms.avg}ms | p99 ${metrics.latency_ms.p99}ms | ${coresText(cores)}\n`,
           );
         } catch (err) {
           console.error(`      ❌ ${err.message}\n`);
@@ -721,12 +800,14 @@ async function main() {
         if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
 
         const k6Script = path.resolve(__dirname, '../k6/mixed-traffic.js');
-        const { summary, code } = await runK6Custom(k6Script, server.port, PROFILE, outputFile);
-        results.mixed_traffic[server.name.toLowerCase()] = extractMetrics(summary, code);
+        const { summary, code, cores } = await withCpuCores(proc.pid, () =>
+          runK6Custom(k6Script, server.port, PROFILE, outputFile),
+        );
+        results.mixed_traffic[server.name.toLowerCase()] = extractMetrics(summary, code, cores);
 
         const m = results.mixed_traffic[server.name.toLowerCase()];
         console.log(
-          `    ✅ ${server.name}: ${m.requests.rate} req/s (mixed) | p99 ${m.latency_ms.p99}ms\n`,
+          `    ✅ ${server.name}: ${m.requests.rate} req/s (mixed) | p99 ${m.latency_ms.p99}ms | ${coresText(cores)}\n`,
         );
       } catch (err) {
         console.error(`    ❌ ${server.name}: ${err.message}\n`);
@@ -757,16 +838,13 @@ async function main() {
 
         const k6Script = path.resolve(__dirname, '../k6/degradation.js');
         const healthQuery = '{ health { status adapter uptimeSeconds } }';
-        const { summary, code } = await runK6CustomWithQuery(
-          k6Script,
-          server.port,
-          healthQuery,
-          outputFile,
+        const { summary, code, cores } = await withCpuCores(proc.pid, () =>
+          runK6CustomWithQuery(k6Script, server.port, healthQuery, outputFile),
         );
-        results.degradation[server.name.toLowerCase()] = extractMetrics(summary, code);
+        results.degradation[server.name.toLowerCase()] = extractMetrics(summary, code, cores);
         const m = results.degradation[server.name.toLowerCase()];
         console.log(
-          `    ✅ ${server.name}: ${m.requests.rate} req/s avg | p99 ${m.latency_ms.p99}ms | max ${m.latency_ms.max}ms\n`,
+          `    ✅ ${server.name}: ${m.requests.rate} req/s avg | p99 ${m.latency_ms.p99}ms | max ${m.latency_ms.max}ms | ${coresText(cores)}\n`,
         );
       } catch (err) {
         console.error(`    ❌ ${server.name}: ${err.message}\n`);
@@ -821,7 +899,7 @@ async function main() {
           ? ''
           : `  (${(((rate - baseRate) / baseRate) * 100).toFixed(0) > 0 ? '+' : ''}${(((rate - baseRate) / baseRate) * 100).toFixed(0)}%)`;
       console.log(
-        `    ${name}:   ${rate} req/s  avg ${s.latency_ms.avg}ms  p99 ${s.latency_ms.p99}ms  ${pass}${delta}`,
+        `    ${name}:   ${rate} req/s  avg ${s.latency_ms.avg}ms  p99 ${s.latency_ms.p99}ms  ${coresText(s.cpu_cores)}  ${pass}${delta}`,
       );
     }
   }

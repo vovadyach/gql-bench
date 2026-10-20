@@ -25,6 +25,9 @@ which runs directly on Node.js HTTP without Express, Fastify, or Apollo Server.
 ✅ Raw Node.js — Fastify + Yoga
 ✅ Raw Node.js — Express + Yoga
 ✅ Raw Node.js — Yoga standalone (node:http, no HTTP framework)
+
+✅ Python — FastAPI + Strawberry
+✅ C# — ASP.NET Core + Hot Chocolate
 ```
 
 Raw servers pin the exact library versions NestJS 10 resolves (Express 4.22, Fastify 4.28,
@@ -33,12 +36,15 @@ not library upgrades. On newer majors (Fastify 5, Apollo Server 5, Mercurius 16)
 Fastify servers ran 10–17% slower than NestJS on `health` in an A/B test, which would otherwise
 show up as "raw is slower than NestJS".
 
+Python and C# run the same schema, data, simulated delays and CPU work. Every server, in every
+language, is one process on one thread, so the numbers compare speed per core: by default .NET
+would use all cores, and Node.js would need one process per core to do the same. The dashboard
+compares each language with the fastest Node.js server.
+
 ## Coming Soon
 
 ```
-🔜 Python — FastAPI + Strawberry
 🔜 Go — chi + gqlgen
-🔜 C# — ASP.NET + Hot Chocolate
 🔜 Java — Spring Boot + Netflix DGS
 ```
 
@@ -49,20 +55,30 @@ show up as "raw is slower than NestJS".
 brew install k6          # Mac
 # sudo snap install k6   # Linux
 # choco install k6       # Windows
+
+# Python server: uv (it installs Python 3.14 for you)
+brew install uv          # Mac (Apple Silicon)
+# curl -LsSf https://astral.sh/uv/install.sh | sh   # Intel Mac / Linux
+
+# C# server: the .NET 10 SDK
+# https://dotnet.microsoft.com/download/dotnet/10.0
 ```
 
 ## Run It
 
 ```bash
-# Step 1: Install dependencies (NestJS + raw Node.js servers)
+# Step 1: Install dependencies (Node.js, Python and C# servers)
 npm run setup
 
-# Step 2: Quick test (~16 minutes)
+# Step 2: Quick test (~19 minutes)
 npm run bench:quick
 
-# Step 3: Full benchmark (~70 minutes)
+# Step 3: Full benchmark (~85 minutes)
 npm run bench
 ```
+
+Node.js only (no uv or .NET needed): install with `npm run setup:node`, then add `-- --only=node`
+to the bench commands, e.g. `npm run bench -- --only=node`.
 
 Results in `results/latest.json`.
 
@@ -159,10 +175,23 @@ gql-bench/
 │   │   ├── package.json                    ← versions pinned to match NestJS 10
 │   │   └── tsconfig.json
 │   │
-│   ├── go/                                  ← add later 🔜
-│   ├── dotnet/                              ← add later 🔜
-│   ├── java/                                ← add later 🔜
-│   └── python/                              ← add later 🔜
+│   ├── python/                             ← FastAPI + Strawberry
+│   │   ├── main.py                         ← app + uvicorn, one worker
+│   │   ├── schema.py                       ← schema + resolvers (same delays and CPU work)
+│   │   ├── data.py                         ← same fake data as the Node.js servers
+│   │   ├── pyproject.toml
+│   │   └── uv.lock                         ← exact versions
+│   │
+│   ├── csharp/                             ← ASP.NET Core + Hot Chocolate
+│   │   ├── Program.cs                      ← server setup
+│   │   ├── Schema.cs                       ← resolvers (same delays and CPU work)
+│   │   ├── Data.cs                         ← same fake data, also the GraphQL types
+│   │   ├── GqlBench.csproj                 ← one thread pool thread, workstation GC
+│   │   ├── global.json                     ← .NET 10 SDK
+│   │   └── packages.lock.json              ← exact versions
+│   │
+│   ├── go/                                 ← add later 🔜
+│   └── java/                               ← add later 🔜
 │
 ├── k6/                                      ← Benchmark scripts (language-agnostic)
 │   ├── bench.js                             ← per-scenario benchmark
@@ -172,6 +201,7 @@ gql-bench/
 ├── bench/                                   ← Runner (language-agnostic)
 │   ├── run.js                               ← orchestrates everything
 │   ├── merge-runs.js                        ← combines several runs (mean or --median)
+│   ├── add-runs.js                          ← adds a language measured separately
 │   └── preflight.js                         ← cold start + response size checks
 │
 ├── results/                                 ← Output

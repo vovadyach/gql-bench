@@ -1,0 +1,411 @@
+{
+  "meta": {
+    "date": "2026-10-19T20:17:34.843Z",
+    "tool": "k6",
+    "profile": "quick",
+    "warmup_requests": 500,
+    "node_version": "v24.19.0",
+    "dotnet_version": "10.0.13",
+    "only": [
+      "csharp",
+      "raw-fastify-mercurius"
+    ],
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpus": 10,
+    "cpu_model": "Apple M1 Max",
+    "memory_gb": 64,
+    "methodology": [
+      "Sequential execution — one server at a time, full CPU",
+      "Warmup: 500 throwaway requests before each server",
+      "Profile: quick (k6 ramping-vus with gradual ramp-up)",
+      "Response validation: every GraphQL response checked for errors",
+      "Response sizes verified identical across all servers",
+      "Cooldown: 2s between servers",
+      "C#: single process, all request work on one thread pool thread, workstation GC; same as the single-threaded Node servers"
+    ]
+  },
+  "preflight": {
+    "cold_starts": {},
+    "response_sizes": {}
+  },
+  "scenarios": [
+    {
+      "id": "health",
+      "name": "Health Check (Scalar)",
+      "complexity": "light",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 485868,
+            "rate": 26993.03
+          },
+          "iterations": {
+            "total": 485868,
+            "rate": 26993.03
+          },
+          "latency_ms": {
+            "avg": 0.25,
+            "min": 0.05,
+            "max": 2.87,
+            "med": 0.21,
+            "p90": 0.43,
+            "p95": 0.47,
+            "p99": 0.57
+          },
+          "throughput": {
+            "received_mb": 140.13,
+            "sent_mb": 102.4
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 130
+          },
+          "cpu_cores": 0.94,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "csharp-aspnetcore-hotchocolate": {
+          "requests": {
+            "total": 484653,
+            "rate": 26925.25
+          },
+          "iterations": {
+            "total": 484653,
+            "rate": 26925.25
+          },
+          "latency_ms": {
+            "avg": 0.24,
+            "min": 0.04,
+            "max": 10.38,
+            "med": 0.22,
+            "p90": 0.36,
+            "p95": 0.41,
+            "p99": 0.69
+          },
+          "throughput": {
+            "received_mb": 137.94,
+            "sent_mb": 102.15
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 139
+          },
+          "cpu_cores": 1.01,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "single-user",
+      "name": "Single User + Posts",
+      "complexity": "medium",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 77306,
+            "rate": 4294.59
+          },
+          "iterations": {
+            "total": 77306,
+            "rate": 4294.59
+          },
+          "latency_ms": {
+            "avg": 1.73,
+            "min": 0.16,
+            "max": 13.45,
+            "med": 1.81,
+            "p90": 2.31,
+            "p95": 2.57,
+            "p99": 3.36
+          },
+          "throughput": {
+            "received_mb": 96.69,
+            "sent_mb": 23
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.47,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "csharp-aspnetcore-hotchocolate": {
+          "requests": {
+            "total": 69213,
+            "rate": 3844.76
+          },
+          "iterations": {
+            "total": 69213,
+            "rate": 3844.76
+          },
+          "latency_ms": {
+            "avg": 1.9,
+            "min": 0.18,
+            "max": 26.2,
+            "med": 1.77,
+            "p90": 2.55,
+            "p95": 3.02,
+            "p99": 3.8
+          },
+          "throughput": {
+            "received_mb": 85.71,
+            "sent_mb": 20.59
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 1139
+          },
+          "cpu_cores": 0.47,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "user-list",
+      "name": "Paginated Users (10)",
+      "complexity": "heavy",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 28288,
+            "rate": 1571.14
+          },
+          "iterations": {
+            "total": 28288,
+            "rate": 1571.14
+          },
+          "latency_ms": {
+            "avg": 4.79,
+            "min": 2.32,
+            "max": 22.9,
+            "med": 4.82,
+            "p90": 5.82,
+            "p95": 5.97,
+            "p99": 6.6
+          },
+          "throughput": {
+            "received_mb": 259.42,
+            "sent_mb": 8.63
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.43,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "csharp-aspnetcore-hotchocolate": {
+          "requests": {
+            "total": 25764,
+            "rate": 1430.77
+          },
+          "iterations": {
+            "total": 25764,
+            "rate": 1430.77
+          },
+          "latency_ms": {
+            "avg": 5.18,
+            "min": 2.39,
+            "max": 22.69,
+            "med": 5.11,
+            "p90": 6.03,
+            "p95": 6.55,
+            "p99": 7.52
+          },
+          "throughput": {
+            "received_mb": 236.3,
+            "sent_mb": 7.86
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 9443
+          },
+          "cpu_cores": 0.38,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "deep-nested",
+      "name": "Deep Nested (5×10×8)",
+      "complexity": "extreme",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 14602,
+            "rate": 811.12
+          },
+          "iterations": {
+            "total": 14602,
+            "rate": 811.12
+          },
+          "latency_ms": {
+            "avg": 8.87,
+            "min": 3.33,
+            "max": 16.02,
+            "med": 9.85,
+            "p90": 10.3,
+            "p95": 10.5,
+            "p99": 11.11
+          },
+          "throughput": {
+            "received_mb": 1259.62,
+            "sent_mb": 4.99
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 0.88,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "csharp-aspnetcore-hotchocolate": {
+          "requests": {
+            "total": 13778,
+            "rate": 765.34
+          },
+          "iterations": {
+            "total": 13778,
+            "rate": 765.34
+          },
+          "latency_ms": {
+            "avg": 9.03,
+            "min": 3.06,
+            "max": 23.72,
+            "med": 9.49,
+            "p90": 10.47,
+            "p95": 10.73,
+            "p99": 11.34
+          },
+          "throughput": {
+            "received_mb": 1190.56,
+            "sent_mb": 4.7
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 90280
+          },
+          "cpu_cores": 0.56,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    },
+    {
+      "id": "mutation",
+      "name": "Create Post (Mutation)",
+      "complexity": "medium",
+      "servers": {
+        "raw-fastify-mercurius": {
+          "requests": {
+            "total": 32689,
+            "rate": 1815.66
+          },
+          "iterations": {
+            "total": 32689,
+            "rate": 1815.66
+          },
+          "latency_ms": {
+            "avg": 4.15,
+            "min": 2.25,
+            "max": 20.37,
+            "med": 4.02,
+            "p90": 5.21,
+            "p95": 5.68,
+            "p99": 7.2
+          },
+          "throughput": {
+            "received_mb": 9.48,
+            "sent_mb": 10.47
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.27,
+          "thresholds": {},
+          "thresholds_passed": true
+        },
+        "csharp-aspnetcore-hotchocolate": {
+          "requests": {
+            "total": 28521,
+            "rate": 1584.36
+          },
+          "iterations": {
+            "total": 28521,
+            "rate": 1584.36
+          },
+          "latency_ms": {
+            "avg": 4.77,
+            "min": 2.24,
+            "max": 42.24,
+            "med": 4.62,
+            "p90": 5.86,
+            "p95": 6.3,
+            "p99": 7.93
+          },
+          "throughput": {
+            "received_mb": 7.92,
+            "sent_mb": 9.14
+          },
+          "errors": {
+            "http_failure_rate": 0,
+            "graphql_error_rate": 0,
+            "valid_response_rate": 1
+          },
+          "response_size_bytes": {
+            "avg": 132
+          },
+          "cpu_cores": 0.25,
+          "thresholds": {},
+          "thresholds_passed": true
+        }
+      }
+    }
+  ],
+  "mixed_traffic": null,
+  "degradation": null
+}

@@ -33,6 +33,23 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
               GraphQL. Standalone Yoga connects directly to Node.js HTTP, without Express, Fastify,
               or Apollo Server.
             </p>
+            <p>
+              Python and C# serve the same schema, data, and delays, and are compared with the
+              fastest Node.js server. Every server is one process on one thread; by default .NET
+              would use all cores, so this compares speed per core.
+            </p>
+          </div>
+          <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+            <p className="font-semibold text-foreground">Reading the results</p>
+            <p>
+              Quick (10 users) results depend partly on how precisely the operating system fires the
+              simulated 1–3 ms database delays. All servers in a profile were measured under the
+              same conditions.
+            </p>
+            <p>
+              Deep Nested also runs a CPU loop of sin/cos math, which .NET runs faster than Node.js.
+              That is part of the C# lead on that test.
+            </p>
           </div>
           {meta.methodology.map((m, i) => (
             <div key={i} className="flex gap-3 text-sm text-muted-foreground leading-relaxed">
@@ -51,6 +68,7 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
                 meta.tool,
                 meta.node_version,
                 meta.python_version && `Python ${meta.python_version}`,
+                meta.dotnet_version && `.NET ${meta.dotnet_version}`,
                 `${meta.platform}/${meta.arch}`,
               ]
                 .filter(Boolean)
