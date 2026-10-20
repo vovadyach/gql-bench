@@ -1,0 +1,23 @@
+# gqlgen builds the GraphQL layer from the shared schema: `go run github.com/99designs/gqlgen generate`
+schema:
+  - ../../schema/benchmark.graphql
+
+exec:
+  package: graph
+  layout: single-file
+  filename: graph/generated.go
+
+model:
+  filename: graph/model/models_gen.go
+  package: model
+
+resolver:
+  package: graph
+  layout: single-file
+  filename: graph/resolver.go
+  type: Resolver
+
+# Comment, Post, UserStats and User come from graph/model/models.go; gqlgen generates the rest
+autobind:
+  - gqlbench/graph/model
+
