@@ -3,6 +3,7 @@
 // HOW THIS WORKS:
 //
 // 1. Build TypeScript (Node servers), sync the Python environment (uv), build the C# server (dotnet)
+//    and the Go server (go build)
 // 2. For each server (one at a time, never parallel):
 //    a. Start the server
 //    b. Warm it up (throwaway requests)
@@ -17,7 +18,7 @@
 // 3. Save all results to results/latest.json
 //
 // REQUIRES: k6 installed (brew install k6 / snap install k6), uv for the Python server,
-// the .NET 10 SDK for the C# server
+// the .NET 10 SDK for the C# server, Go for the Go server
 //
 // --only=python,mercurius runs just the servers whose name or language matches
 // (for quick checks; partial results aren't meant for the dashboard)
@@ -100,6 +101,8 @@ const SCENARIOS = [
 const PYTHON_DIR = path.resolve(__dirname, '../servers/python');
 const PYTHON_BIN = path.join(PYTHON_DIR, '.venv/bin/python');
 const CSHARP_DIR = path.resolve(__dirname, '../servers/csharp');
+const GO_DIR = path.resolve(__dirname, '../servers/go');
+const GO_BIN = path.join(GO_DIR, 'gqlbench');
 
 // Each NestJS server runs right before its direct twin, so every NestJS-vs-direct
 // comparison is measured minutes apart under the same machine conditions
@@ -183,8 +186,16 @@ const ALL_SERVERS = [
     env: { ADAPTER: 'csharp-aspnetcore-hotchocolate' },
   },
 
-  // Future: add Go and Java here, e.g.
-  // { name: 'Go-Chi-Gqlgen', lang: 'go', port: 3013, command: [GO_BIN], env: { ADAPTER: 'go-chi-gqlgen' } },
+  // Go runs its code on one thread (GOMAXPROCS=1, set in main.go), so no extra env
+  {
+    name: 'Go-Chi-Gqlgen',
+    lang: 'go',
+    port: 3013,
+    command: [GO_BIN],
+    env: { ADAPTER: 'go-chi-gqlgen' },
+  },
+
+  // Future: add Java here
 ];
 
 const langOf = (server) => server.lang || 'node';
@@ -199,6 +210,7 @@ if (!SERVERS.length) {
 const RUNS_NODE = SERVERS.some((s) => langOf(s) === 'node');
 const RUNS_PYTHON = SERVERS.some((s) => langOf(s) === 'python');
 const RUNS_CSHARP = SERVERS.some((s) => langOf(s) === 'csharp');
+const RUNS_GO = SERVERS.some((s) => langOf(s) === 'go');
 
 const estMinutes = Math.round(SERVERS.length * MINUTES_PER_SERVER);
 console.log(
@@ -590,6 +602,20 @@ async function main() {
     console.log('  ✅ C# build complete\n');
   }
 
+  // Exactly the module versions in go.sum (-mod=readonly fails instead of updating them)
+  if (RUNS_GO) {
+    console.log('  📦 Building Go server (go build)...');
+    try {
+      execSync('go build -mod=readonly -o gqlbench .', { cwd: GO_DIR, stdio: 'inherit' });
+    } catch {
+      console.error('  ❌ Go build failed. Install Go 1.27 or newer, then run "npm run setup":');
+      console.error('     Mac: brew install go');
+      console.error('     https://go.dev/dl/');
+      process.exit(1);
+    }
+    console.log('  ✅ Go build complete\n');
+  }
+
   // ─── Pre-flight: Cold Start & Response Size Verification ──
   const { measureColdStart, measureResponseSizes } = require('./preflight');
   const IS_FULL = !IS_QUICK;
@@ -671,6 +697,10 @@ async function main() {
         ? execSync(`"${PYTHON_BIN}" --version`, { encoding: 'utf-8' }).trim().replace('Python ', '')
         : undefined,
       dotnet_version: RUNS_CSHARP ? dotnetVersion() : undefined,
+      // The Go version the binary was built with: "servers/go/gqlbench: go1.27.3" -> 1.27.3
+      go_version: RUNS_GO
+        ? execSync(`go version "${GO_BIN}"`, { encoding: 'utf-8' }).trim().split(' go').pop()
+        : undefined,
       only: ONLY,
       platform: os.platform(),
       arch: os.arch(),
@@ -692,6 +722,11 @@ async function main() {
         ...(RUNS_CSHARP
           ? [
               'C#: single process, all request work on one thread pool thread, workstation GC; same as the single-threaded Node servers',
+            ]
+          : []),
+        ...(RUNS_GO
+          ? [
+              'Go: single process, GOMAXPROCS=1 (Go code on one thread); same as the single-threaded Node servers',
             ]
           : []),
       ],
