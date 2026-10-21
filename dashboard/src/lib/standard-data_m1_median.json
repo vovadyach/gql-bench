@@ -69,9 +69,9 @@
           "java-spring-dgs"
         ],
         "runs": [
-          "2026-10-21T01:20:48.290Z",
-          "2026-10-21T01:39:52.237Z",
-          "2026-10-21T01:58:57.315Z"
+          "2026-10-21T03:57:46.964Z",
+          "2026-10-21T04:16:52.347Z",
+          "2026-10-21T04:35:57.118Z"
         ],
         "check": [
           "raw-fastify-mercurius"
@@ -96,7 +96,7 @@
       "python-fastapi-strawberry": 326,
       "csharp-aspnetcore-hotchocolate": 529,
       "go-chi-gqlgen": 224,
-      "java-spring-dgs": 2111
+      "java-spring-dgs": 2166
     },
     "response_sizes": {
       "express": {
@@ -287,7 +287,7 @@
           "valid": true
         },
         "single-user": {
-          "bytes": 1140,
+          "bytes": 1138,
           "valid": true
         },
         "user-list": {
@@ -747,25 +747,25 @@
         },
         "java-spring-dgs": {
           "requests": {
-            "total": 857045,
-            "rate": 19045.34
+            "total": 1223250,
+            "rate": 27155.87
           },
           "iterations": {
-            "total": 857045,
-            "rate": 19045.34
+            "total": 1223250,
+            "rate": 27155.87
           },
           "latency_ms": {
-            "avg": 2.13,
-            "min": 0.07,
-            "max": 14.92,
-            "med": 2.34,
-            "p90": 2.71,
-            "p95": 2.93,
-            "p99": 3.71
+            "avg": 1.47,
+            "min": 0.05,
+            "max": 13.91,
+            "med": 1.59,
+            "p90": 1.95,
+            "p95": 2.13,
+            "p99": 2.58
           },
           "throughput": {
-            "received_mb": 189.69,
-            "sent_mb": 180.63
+            "received_mb": 270.74,
+            "sent_mb": 257.81
           },
           "errors": {
             "http_failure_rate": 0,
@@ -775,7 +775,7 @@
           "response_size_bytes": {
             "avg": 125
           },
-          "cpu_cores": 1.24,
+          "cpu_cores": 1.31,
           "thresholds": {},
           "thresholds_passed": true
         }
@@ -1230,25 +1230,25 @@
         },
         "java-spring-dgs": {
           "requests": {
-            "total": 325082,
-            "rate": 7223.9
+            "total": 495439,
+            "rate": 11008.78
           },
           "iterations": {
-            "total": 325082,
-            "rate": 7223.9
+            "total": 495439,
+            "rate": 11008.78
           },
           "latency_ms": {
-            "avg": 5.7,
-            "min": 1.24,
-            "max": 82.74,
-            "med": 6.17,
-            "p90": 6.36,
-            "p95": 6.5,
-            "p99": 7.92
+            "avg": 3.72,
+            "min": 1.16,
+            "max": 72.36,
+            "med": 3.92,
+            "p90": 4.04,
+            "p95": 4.13,
+            "p99": 5.15
           },
           "throughput": {
-            "received_mb": 386.52,
-            "sent_mb": 96.73
+            "received_mb": 589.08,
+            "sent_mb": 147.42
           },
           "errors": {
             "http_failure_rate": 0,
@@ -1258,7 +1258,7 @@
           "response_size_bytes": {
             "avg": 1139
           },
-          "cpu_cores": 0.88,
+          "cpu_cores": 0.82,
           "thresholds": {},
           "thresholds_passed": true
         }
@@ -1713,25 +1713,25 @@
         },
         "java-spring-dgs": {
           "requests": {
-            "total": 124550,
-            "rate": 2767.71
+            "total": 156071,
+            "rate": 3468.03
           },
           "iterations": {
-            "total": 124550,
-            "rate": 2767.71
+            "total": 156071,
+            "rate": 3468.03
           },
           "latency_ms": {
-            "avg": 14.89,
-            "min": 3.38,
-            "max": 20.67,
-            "med": 15.93,
-            "p90": 16.67,
-            "p95": 17.49,
-            "p99": 18.34
+            "avg": 11.85,
+            "min": 3.33,
+            "max": 16.42,
+            "med": 12.54,
+            "p90": 12.97,
+            "p95": 13.77,
+            "p99": 14.75
           },
           "throughput": {
-            "received_mb": 1138.37,
-            "sent_mb": 38.01
+            "received_mb": 1426.47,
+            "sent_mb": 47.63
           },
           "errors": {
             "http_failure_rate": 0,
@@ -1741,7 +1741,7 @@
           "response_size_bytes": {
             "avg": 9450
           },
-          "cpu_cores": 0.76,
+          "cpu_cores": 0.7,
           "thresholds": {},
           "thresholds_passed": true
         }
@@ -2196,25 +2196,25 @@
         },
         "java-spring-dgs": {
           "requests": {
-            "total": 31206,
-            "rate": 693.42
+            "total": 36876,
+            "rate": 819.38
           },
           "iterations": {
-            "total": 31206,
-            "rate": 693.42
+            "total": 36876,
+            "rate": 819.38
           },
           "latency_ms": {
-            "avg": 59.26,
-            "min": 4.49,
-            "max": 73.08,
-            "med": 67.69,
-            "p90": 69.51,
-            "p95": 69.99,
-            "p99": 70.86
+            "avg": 50.03,
+            "min": 4.32,
+            "max": 62.27,
+            "med": 56.94,
+            "p90": 58.8,
+            "p95": 59.18,
+            "p99": 59.94
           },
           "throughput": {
-            "received_mb": 2693.4,
-            "sent_mb": 10.65
+            "received_mb": 3182.78,
+            "sent_mb": 12.59
           },
           "errors": {
             "http_failure_rate": 0,
@@ -2224,7 +2224,7 @@
           "response_size_bytes": {
             "avg": 90290
           },
-          "cpu_cores": 0.92,
+          "cpu_cores": 0.91,
           "thresholds": {},
           "thresholds_passed": true
         }
@@ -2679,25 +2679,25 @@
         },
         "java-spring-dgs": {
           "requests": {
-            "total": 262961,
-            "rate": 5843.54
+            "total": 307859,
+            "rate": 6840.63
           },
           "iterations": {
-            "total": 262961,
-            "rate": 5843.54
+            "total": 307859,
+            "rate": 6840.63
           },
           "latency_ms": {
-            "avg": 7.06,
-            "min": 3.24,
-            "max": 19.95,
-            "med": 7.23,
-            "p90": 7.53,
-            "p95": 7.7,
-            "p99": 8.84
+            "avg": 6.02,
+            "min": 3.15,
+            "max": 19.81,
+            "med": 5.91,
+            "p90": 7,
+            "p95": 7.52,
+            "p99": 8.68
           },
           "throughput": {
-            "received_mb": 59.98,
-            "sent_mb": 84.26
+            "received_mb": 70.23,
+            "sent_mb": 98.65
           },
           "errors": {
             "http_failure_rate": 0,
@@ -2707,7 +2707,7 @@
           "response_size_bytes": {
             "avg": 132
           },
-          "cpu_cores": 0.56,
+          "cpu_cores": 0.5,
           "thresholds": {},
           "thresholds_passed": true
         }
@@ -3159,25 +3159,25 @@
     },
     "java-spring-dgs": {
       "requests": {
-        "total": 223303,
-        "rate": 4961.82
+        "total": 273752,
+        "rate": 6082.66
       },
       "iterations": {
-        "total": 223303,
-        "rate": 4961.82
+        "total": 273752,
+        "rate": 6082.66
       },
       "latency_ms": {
-        "avg": 8.27,
-        "min": 0.08,
-        "max": 69.05,
-        "med": 8.55,
-        "p90": 14.35,
-        "p95": 15.74,
-        "p99": 18.11
+        "avg": 6.73,
+        "min": 0.07,
+        "max": 63.76,
+        "med": 7.09,
+        "p90": 12.52,
+        "p95": 13.79,
+        "p99": 16.01
       },
       "throughput": {
-        "received_mb": 1563.77,
-        "sent_mb": 57.76
+        "received_mb": 1911.19,
+        "sent_mb": 70.81
       },
       "errors": {
         "http_failure_rate": 0,
@@ -3187,7 +3187,7 @@
       "response_size_bytes": {
         "avg": 0
       },
-      "cpu_cores": 1.15,
+      "cpu_cores": 1.07,
       "thresholds": {},
       "thresholds_passed": true
     }
@@ -3637,25 +3637,25 @@
     },
     "java-spring-dgs": {
       "requests": {
-        "total": 2516057,
-        "rate": 19354.21
+        "total": 3489863,
+        "rate": 26845.18
       },
       "iterations": {
-        "total": 2516057,
-        "rate": 19354.21
+        "total": 3489863,
+        "rate": 26845.18
       },
       "latency_ms": {
-        "avg": 7.48,
-        "min": 0.07,
-        "max": 157.24,
-        "med": 3.17,
-        "p90": 26.48,
-        "p95": 27.59,
-        "p99": 42.66
+        "avg": 5.37,
+        "min": 0.06,
+        "max": 224.15,
+        "med": 2.38,
+        "p90": 19.28,
+        "p95": 20.25,
+        "p99": 32.91
       },
       "throughput": {
-        "received_mb": 461.78,
-        "sent_mb": 443.91
+        "received_mb": 640.51,
+        "sent_mb": 615.72
       },
       "errors": {
         "http_failure_rate": 0,
@@ -3665,7 +3665,7 @@
       "response_size_bytes": {
         "avg": 86
       },
-      "cpu_cores": 1.22,
+      "cpu_cores": 1.29,
       "thresholds": {},
       "thresholds_passed": true
     }
