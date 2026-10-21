@@ -94,6 +94,7 @@
   --server-python-fastapi-strawberry: #a16207;
   --server-csharp-aspnetcore-hotchocolate: #a21caf;
   --server-go-chi-gqlgen: #0e9fb5;
+  --server-java-spring-dgs: #be185d;
   /* Sequential (one-hue) scale for the relative-throughput heatmap */
   --heat: #2a78d6;
   --heat-max: 45%;
@@ -149,6 +150,7 @@
   --server-python-fastapi-strawberry: #eab308;
   --server-csharp-aspnetcore-hotchocolate: #d946ef;
   --server-go-chi-gqlgen: #67e8f9;
+  --server-java-spring-dgs: #ec4899;
   --heat: #5598e7;
   --heat-max: 60%;
   --complexity-light: #00e676;

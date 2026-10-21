@@ -2,8 +2,8 @@
 
 // HOW THIS WORKS:
 //
-// 1. Build TypeScript (Node servers), sync the Python environment (uv), build the C# server (dotnet)
-//    and the Go server (go build)
+// 1. Build TypeScript (Node servers), sync the Python environment (uv), build the C# server (dotnet),
+//    the Go server (go build) and the Java server (Maven wrapper)
 // 2. For each server (one at a time, never parallel):
 //    a. Start the server
 //    b. Warm it up (throwaway requests)
@@ -18,7 +18,7 @@
 // 3. Save all results to results/latest.json
 //
 // REQUIRES: k6 installed (brew install k6 / snap install k6), uv for the Python server,
-// the .NET 10 SDK for the C# server, Go for the Go server
+// the .NET 10 SDK for the C# server, Go for the Go server, Java 25 for the Java server
 //
 // --only=python,mercurius runs just the servers whose name or language matches
 // (for quick checks; partial results aren't meant for the dashboard)
@@ -103,6 +103,8 @@ const PYTHON_BIN = path.join(PYTHON_DIR, '.venv/bin/python');
 const CSHARP_DIR = path.resolve(__dirname, '../servers/csharp');
 const GO_DIR = path.resolve(__dirname, '../servers/go');
 const GO_BIN = path.join(GO_DIR, 'gqlbench');
+const JAVA_DIR = path.resolve(__dirname, '../servers/java');
+const JAVA_JAR = path.join(JAVA_DIR, 'target/gqlbench.jar');
 
 // Each NestJS server runs right before its direct twin, so every NestJS-vs-direct
 // comparison is measured minutes apart under the same machine conditions
@@ -195,7 +197,16 @@ const ALL_SERVERS = [
     env: { ADAPTER: 'go-chi-gqlgen' },
   },
 
-  // Future: add Java here
+  // The JVM sees one CPU, so request work runs on one virtual-thread carrier thread. Its JIT
+  // compiler is still busy after the plain warmup (1.6–2 cores on the first test), so it warms longer
+  {
+    name: 'Java-Spring-Dgs',
+    lang: 'java',
+    port: 3014,
+    warmupSeconds: 20,
+    command: ['java', '-XX:ActiveProcessorCount=1', '-jar', JAVA_JAR],
+    env: { ADAPTER: 'java-spring-dgs' },
+  },
 ];
 
 const langOf = (server) => server.lang || 'node';
@@ -211,6 +222,7 @@ const RUNS_NODE = SERVERS.some((s) => langOf(s) === 'node');
 const RUNS_PYTHON = SERVERS.some((s) => langOf(s) === 'python');
 const RUNS_CSHARP = SERVERS.some((s) => langOf(s) === 'csharp');
 const RUNS_GO = SERVERS.some((s) => langOf(s) === 'go');
+const RUNS_JAVA = SERVERS.some((s) => langOf(s) === 'java');
 
 const estMinutes = Math.round(SERVERS.length * MINUTES_PER_SERVER);
 console.log(
@@ -266,21 +278,29 @@ async function waitForServer(port, retries = 30) {
   throw new Error(`Server on port ${port} not ready`);
 }
 
-async function warmup(port, count) {
-  const body = JSON.stringify({ query: '{ health { status } }' });
+// WARMUP_COUNT health requests. A server with `warmupSeconds` keeps sending them for that long,
+// so a JIT that needs longer (Java) is done compiling before anything is measured, like Node is
+// after the plain warmup. Health only, like everyone's warmup: a mix of queries made Java's JIT
+// tune its code for the mix, and the one-query tests then ran 15-27% slower
+async function warmup(server) {
   const batch = 50;
-  for (let i = 0; i < Math.ceil(count / batch); i++) {
-    await Promise.all(
+  const body = JSON.stringify({ query: '{ health { status } }' });
+  const send = () =>
+    Promise.all(
       Array.from({ length: batch }, () =>
-        fetch(`http://127.0.0.1:${port}/graphql`, {
+        fetch(`http://127.0.0.1:${server.port}/graphql`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body,
         }),
       ),
     );
-  }
+  const end = performance.now() + (server.warmupSeconds || 0) * 1000;
+  for (let i = 0; i < Math.ceil(WARMUP_COUNT / batch) || performance.now() < end; i++) await send();
 }
+
+const warmupText = (server) =>
+  `${WARMUP_COUNT} requests${server.warmupSeconds ? `, at least ${server.warmupSeconds}s` : ''}`;
 
 // ─── CPU Use ───────────────────────────────────────────
 // Every server is meant to use one CPU core, like single-threaded Node. These record how many it did.
@@ -616,6 +636,20 @@ async function main() {
     console.log('  ✅ Go build complete\n');
   }
 
+  // Versions are pinned in pom.xml (Spring Boot parent + DGS platform); the wrapper fetches Maven
+  if (RUNS_JAVA) {
+    console.log('  📦 Building Java server (Maven)...');
+    try {
+      execSync('./mvnw -q -B -DskipTests package', { cwd: JAVA_DIR, stdio: 'inherit' });
+    } catch {
+      console.error('  ❌ Java build failed. Install Java 25, then run "npm run setup":');
+      console.error('     Mac: brew install --cask temurin@25');
+      console.error('     https://adoptium.net/temurin/releases/?version=25');
+      process.exit(1);
+    }
+    console.log('  ✅ Java build complete\n');
+  }
+
   // ─── Pre-flight: Cold Start & Response Size Verification ──
   const { measureColdStart, measureResponseSizes } = require('./preflight');
   const IS_FULL = !IS_QUICK;
@@ -701,6 +735,12 @@ async function main() {
       go_version: RUNS_GO
         ? execSync(`go version "${GO_BIN}"`, { encoding: 'utf-8' }).trim().split(' go').pop()
         : undefined,
+      // `java -version` prints to stderr: openjdk version "25.0.4.1" 2026-08-18 LTS
+      java_version: RUNS_JAVA
+        ? spawnSync('java', ['-version'], { encoding: 'utf-8' }).stderr.match(
+            /version "([^"]+)"/,
+          )?.[1]
+        : undefined,
       only: ONLY,
       platform: os.platform(),
       arch: os.arch(),
@@ -729,6 +769,11 @@ async function main() {
               'Go: single process, GOMAXPROCS=1 (Go code on one thread); same as the single-threaded Node servers',
             ]
           : []),
+        ...(RUNS_JAVA
+          ? [
+              'Java: single process, JVM limited to one CPU (-XX:ActiveProcessorCount=1), requests on virtual threads; same as the single-threaded Node servers. Warmup: at least 20s of health requests, so its JIT compiler finishes first (Node is done after the plain warmup)',
+            ]
+          : []),
       ],
     },
     preflight,
@@ -755,8 +800,8 @@ async function main() {
       console.log(`    ✅ ${server.name} ready`);
 
       // Warmup
-      console.log(`    ⏳ Warming up (${WARMUP_COUNT} requests)...`);
-      await warmup(server.port, WARMUP_COUNT);
+      console.log(`    ⏳ Warming up (${warmupText(server)})...`);
+      await warmup(server);
       await sleep(1000); // let GC settle
 
       // Run each scenario against this server
@@ -828,7 +873,7 @@ async function main() {
       const proc = startServer(server);
       try {
         await waitForServer(server.port);
-        await warmup(server.port, WARMUP_COUNT);
+        await warmup(server);
         await sleep(1000);
 
         const outputFile = path.join(tmpDir, `${server.name.toLowerCase()}-mixed.json`);
@@ -865,7 +910,7 @@ async function main() {
       const proc = startServer(server);
       try {
         await waitForServer(server.port);
-        await warmup(server.port, WARMUP_COUNT);
+        await warmup(server);
         await sleep(1000);
 
         const outputFile = path.join(tmpDir, `${server.name.toLowerCase()}-degradation.json`);

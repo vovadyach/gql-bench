@@ -38,9 +38,9 @@ async function measureColdStart(command, port, env) {
 
   const body = JSON.stringify({ query: '{ health { status } }' });
 
-  // Poll until first successful response
+  // Poll until first successful response (up to ~15s: the JVM and Spring take a few seconds)
   let firstResponseMs = null;
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 300; i++) {
     try {
       const res = await fetch(`http://127.0.0.1:${port}/graphql`, {
         method: 'POST',

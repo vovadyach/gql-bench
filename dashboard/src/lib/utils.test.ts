@@ -36,6 +36,7 @@ describe('chartOrder', () => {
       'python-fastapi-strawberry',
       'csharp-aspnetcore-hotchocolate',
       'go-chi-gqlgen',
+      'java-spring-dgs',
     ]);
   });
 
