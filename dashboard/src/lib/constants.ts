@@ -78,6 +78,12 @@ export const SERVERS: Record<string, ServerConfig> = {
     tier: 'other',
     lang: 'Go',
   },
+  'java-spring-dgs': {
+    key: 'java-spring-dgs',
+    label: 'Spring Boot + DGS',
+    tier: 'other',
+    lang: 'Java',
+  },
 };
 
 export const SERVER_KEYS = Object.keys(SERVERS);

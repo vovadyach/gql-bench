@@ -34,9 +34,9 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
               or Apollo Server.
             </p>
             <p>
-              Python, C#, and Go serve the same schema, data, and delays, and are compared with the
-              fastest Node.js server. Every server is one process on one thread; by default .NET and
-              Go would use all cores, so this compares speed per core.
+              Python, C#, Go, and Java serve the same schema, data, and delays, and are compared
+              with the fastest Node.js server. Every server is one process on one thread; by default
+              .NET, Go, and Java would use all cores, so this compares speed per core.
             </p>
           </div>
           <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
@@ -70,6 +70,7 @@ export function MethodologyDrawer({ meta }: MethodologyDrawerProps) {
                 meta.python_version && `Python ${meta.python_version}`,
                 meta.dotnet_version && `.NET ${meta.dotnet_version}`,
                 meta.go_version && `Go ${meta.go_version}`,
+                meta.java_version && `Java ${meta.java_version}`,
                 `${meta.platform}/${meta.arch}`,
               ]
                 .filter(Boolean)
