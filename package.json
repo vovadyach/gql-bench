@@ -4,11 +4,12 @@
   "description": "GraphQL Benchmark Suite: NestJS vs raw Node.js (Express/Fastify + Apollo/Mercurius/Yoga)",
   "type": "commonjs",
   "scripts": {
-    "setup": "npm run setup:node && npm run setup:python && npm run setup:csharp && npm run setup:go",
+    "setup": "npm run setup:node && npm run setup:python && npm run setup:csharp && npm run setup:go && npm run setup:java",
     "setup:node": "cd servers/nestjs && npm install && cd ../node && npm install",
     "setup:python": "cd servers/python && uv sync --locked --compile-bytecode",
     "setup:csharp": "cd servers/csharp && dotnet restore --locked-mode",
     "setup:go": "cd servers/go && go mod download",
+    "setup:java": "cd servers/java && ./mvnw -q -B -DskipTests package",
     "bench": "node bench/run.js",
     "bench:quick": "node bench/run.js --quick",
     "format": "prettier --write \"**/*.{ts,js,tsx}\""
